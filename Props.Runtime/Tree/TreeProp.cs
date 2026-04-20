@@ -4,32 +4,21 @@ using Props.Abstractions.PropVisualModels;
 
 namespace Props.Runtime.Tree;
 
-[PropDescriptor("BCD3FB69-4827-49EE-B877-BD2AE14E792D", "Tree", typeof(TreePropSetupWizard),
-    typeof(TreePropVisualModel))]
-public class TreeProp : Prop, IHasLights, IHasDimming, IPropVisualModelBuilder
+[PropDescriptor("BCD3FB69-4827-49EE-B877-BD2AE14E792D", "Tree", typeof(TreePropSetupWizard))]
+public class TreeProp : Prop, IHasLights, IHasDimming
 {
-    //Conceptual builder pattern
-    public IPropVisualModel Build()
+    private double _brightness = 0.5;
+    public double Brightness
+    {
+        get => _brightness;
+        set { _brightness = value; InvalidateVisualModel(); }
+    }
+
+    protected override IPropVisualModel BuildVisualModel()
     {
         return new PropVisualModel
         {
-            Elements = new IVisualElement[]
-            {
-                new PointCloud
-                {
-                    //Points = GenerateTreePoints(),
-                    Size = 2f
-                }
-            }
-            // FeatureData = new Dictionary<Type, IVisualFeatureData>
-            // {
-            //     [typeof(SegmentedFeatureData)] = new SegmentedFeatureData
-            //     {
-            //         SegmentOffsets = BuildSegments()
-            //     }
-            // }
+            Elements = [new PointCloud { Size = 2f }]
         };
     }
-
-    public double Brightness { get; set; } = .5;
 }

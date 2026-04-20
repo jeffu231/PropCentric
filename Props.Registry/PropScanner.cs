@@ -1,7 +1,5 @@
 using System.Reflection;
-using Props.Abstractions;
 using Props.Abstractions.Props;
-using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Wizards;
 
 namespace Props.Registry;
@@ -63,11 +61,6 @@ public static class PropScanner
         if (!typeof(IPropSetupWizard).IsAssignableFrom(descriptor.WizardType))
         {
             throw new Exception($"Invalid WizardType in {type.Name}: {descriptor.WizardType?.Name}");
-        }
-
-        if (!typeof(IPropVisualModel).IsAssignableFrom(descriptor.VisualModelType))
-        {
-            throw new Exception($"Invalid VisualModelType in {type.Name}: {descriptor.VisualModelType?.Name}");
         }
     }
     
