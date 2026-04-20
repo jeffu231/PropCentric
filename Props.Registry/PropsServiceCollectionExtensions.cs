@@ -10,24 +10,26 @@ public static class PropServiceCollectionExtensions
 {
     public static IServiceCollection AddPropSystem(
         this IServiceCollection services,
-        string pluginDirectory, string featureDirectory)
+        string pluginDirectory,
+        bool throwOnAssemblyLoadFailure = false)
     {
-        
-        var featureAssemblies = AssemblyLoader.LoadAll(featureDirectory);
-        PropFeatureRegistry.Initialize(featureAssemblies);
-        
-        var propAssemblies = AssemblyLoader.LoadAll(pluginDirectory);
-        var descriptors = PropScanner.Scan(propAssemblies);
+        var loadResult = AssemblyLoader.LoadAll(pluginDirectory);
+        services.AddSingleton(loadResult);
+
+        if (throwOnAssemblyLoadFailure && loadResult.Failures.Count > 0)
+        {
+            var files = string.Join(", ", loadResult.Failures.Select(f => f.File));
+            throw new InvalidOperationException($"Failed to load plugin assemblies: {files}");
+        }
+
+        var descriptors = PropScanner.Scan(loadResult.Loaded);
 
         // Register descriptors + registry
         services.AddSingleton(descriptors);
+        services.AddSingleton<PropFeatureInferrer>();
         services.AddSingleton<IPropRegistry, PropRegistry>();
         services.AddSingleton<IPropFeatureResolver, PropFeatureResolver>();
-        
-        // Factory is the ONLY public entry point
-        services.AddSingleton<IPropFactory, PropFactory>();
-        
-        // Factories
+        services.AddSingleton<IPropCatalogProvider, PropCatalogProvider>();
         services.AddSingleton<IPropFactory, PropFactory>();
         services.AddSingleton<IWizardFactory, WizardFactory>();
         

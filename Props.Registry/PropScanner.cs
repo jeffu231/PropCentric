@@ -16,10 +16,6 @@ public static class PropScanner
         {
             foreach (var type in SafeGetTypes(assembly))
             {
-                var typesWithAttribute = assembly.GetTypes()
-                    .Where(t => t.IsClass 
-                                && t.IsDefined(typeof(PropDescriptorAttribute), inherit: false))
-                    .ToList();
                 if (!IsConcrete(type))
                     continue;
                 

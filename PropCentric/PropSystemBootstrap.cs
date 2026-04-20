@@ -13,7 +13,7 @@ public static class PropSystemBootstrap
         string path = AppContext.BaseDirectory;
 
         // Register Prop system
-        services.AddPropSystem(path, path);
+        services.AddPropSystem(path);
 
         // Build provider
         var provider = services.BuildServiceProvider();

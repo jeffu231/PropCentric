@@ -5,17 +5,14 @@ namespace Props.Registry;
 
 public class PropRegistry : IPropRegistry
 {
-    private readonly IServiceProvider _services;
-
     private readonly Dictionary<Guid, PropDescriptor> _byId = new();
-    
     private readonly Dictionary<Type, PropDescriptor> _byType = new();
-
     private readonly Dictionary<PropFeatureFlags, HashSet<Guid>> _featureIndex = new();
+    private readonly PropFeatureInferrer _featureInferrer;
 
-    public PropRegistry(IServiceProvider services, IReadOnlyList<PropDescriptor> descriptors)
+    public PropRegistry(IReadOnlyList<PropDescriptor> descriptors, PropFeatureInferrer featureInferrer)
     {
-        _services = services; //If we need DI for something. 
+        _featureInferrer = featureInferrer;
         Build(descriptors);
     }
     
@@ -29,7 +26,7 @@ public class PropRegistry : IPropRegistry
     }
     private void Register(PropDescriptor descriptor)
     {
-        var inferredFlags = PropFeatureRegistry.Infer(descriptor.PropType);
+        var inferredFlags = _featureInferrer.Infer(descriptor.PropType);
 
         descriptor.Flags = inferredFlags; // cached result
 
@@ -62,16 +59,22 @@ public class PropRegistry : IPropRegistry
     public PropDescriptor GetDescriptor(Guid id)
     {
         if (_byId.TryGetValue(id, out var d))
-        {
             return d;
-        }
-        
-        throw new Exception($"Descriptor not found: {id}");
+
+        throw new InvalidOperationException(
+            $"No descriptor registered for prop id '{id}'. " +
+            "Ensure the type is decorated with [PropDescriptor] and its assembly is in the plugin directory.");
     }
 
     public PropDescriptor GetDescriptor(IProp prop)
     {
-        return _byType[prop.GetType()];
+        var type = prop.GetType();
+        if (_byType.TryGetValue(type, out var d))
+            return d;
+
+        throw new InvalidOperationException(
+            $"No descriptor registered for prop type '{type.FullName}'. " +
+            "Ensure the type is decorated with [PropDescriptor] and its assembly is in the plugin directory.");
     }
 
     public IEnumerable<PropDescriptor> GetAllDescriptors()

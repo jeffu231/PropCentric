@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 
 namespace Props.Registry;
@@ -15,43 +14,14 @@ public class PropFactory : IPropFactory
         _registry = registry;
     }
 
-    public Prop Create(Guid id)
+    public IProp Create(Guid id)
     {
         var d = _registry.GetDescriptor(id);
-        var prop = (Prop)_services.GetRequiredService(d.PropType);
-        return prop;
+        return (IProp)_services.GetRequiredService(d.PropType);
     }
 
-    public TProp Create<TProp>() where TProp : Prop
+    public TProp Create<TProp>() where TProp : IProp
     {
         return _services.GetRequiredService<TProp>();
-    }
-
-    public IEnumerable<IPropCatalogItem> GetPropCatalog()
-    {
-        foreach (var d in _registry.GetAllDescriptors())
-        {
-            yield return CreatePropCatalogItem(d);
-        }
-    }
-
-    public IEnumerable<IPropCatalogItem> GetPropCatalogByFeature(PropFeatureFlags flags)
-    {
-        return _registry
-            .GetDescriptorsByFeature(flags)
-            .Select(CreatePropCatalogItem);
-    }
-    
-    private static PropCatalogItem CreatePropCatalogItem(PropDescriptor d)
-    {
-        return new PropCatalogItem
-        {
-            Id = d.Id,
-            Name = d.Name,
-            Icon = d.Icon,
-            Features = d.Flags,
-            WizardType = d.WizardType,
-            PropType = d.PropType
-        };
     }
 }

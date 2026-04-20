@@ -11,12 +11,11 @@ class Program
     {
         Console.WriteLine("Hello, World!");
         var provider = PropSystemBootstrap.Initialize();
-        
-        // Resolve prop factory
-        var propFactory = provider.GetRequiredService<IPropFactory>();
+
+        var catalogProvider = provider.GetRequiredService<IPropCatalogProvider>();
         var wizardFactory = provider.GetRequiredService<IWizardFactory>();
-        
-        var propCatalog = propFactory.GetPropCatalog();
+
+        var propCatalog = catalogProvider.GetPropCatalog();
         foreach (var propCatalogItem in propCatalog)
         {
             Console.WriteLine($"Prop: {propCatalogItem.Name} ");

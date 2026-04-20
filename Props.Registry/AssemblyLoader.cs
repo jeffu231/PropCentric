@@ -4,36 +4,37 @@ namespace Props.Registry;
 
 public static class AssemblyLoader
 {
-    public static IReadOnlyList<Assembly> LoadAll(string directory)
+    public static AssemblyLoadResult LoadAll(string directory)
     {
-        var assemblies = new List<Assembly>();
+        var loaded = new List<Assembly>();
+        var failures = new List<(string File, Exception Error)>();
 
         // 1. Entry assembly (your app)
-        assemblies.Add(Assembly.GetExecutingAssembly());
+        loaded.Add(Assembly.GetExecutingAssembly());
 
-        // 2. Already loaded (optional but useful)
-        assemblies.AddRange(AppDomain.CurrentDomain.GetAssemblies());
+        // 2. Already loaded
+        loaded.AddRange(AppDomain.CurrentDomain.GetAssemblies());
 
         // 3. Plugins
         if (Directory.Exists(directory))
         {
-            Console.WriteLine($"Loading Props from '{directory}'");
             foreach (var file in Directory.GetFiles(directory, "*.dll"))
             {
                 try
                 {
-                    var asm = Assembly.LoadFrom(file);
-                    assemblies.Add(asm);
+                    loaded.Add(Assembly.LoadFrom(file));
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // log + continue (never crash startup on bad plugin)
+                    failures.Add((file, ex));
                 }
             }
         }
 
-        return assemblies
-            .Distinct()
-            .ToList();
+        return new AssemblyLoadResult
+        {
+            Loaded = loaded.Distinct().ToList(),
+            Failures = failures
+        };
     }
 }
