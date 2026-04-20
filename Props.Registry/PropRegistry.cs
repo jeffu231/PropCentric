@@ -1,4 +1,5 @@
 ﻿using Props.Abstractions.Features;
+using Props.Abstractions.Props;
 
 namespace Props.Registry;
 
@@ -7,6 +8,8 @@ public class PropRegistry : IPropRegistry
     private readonly IServiceProvider _services;
 
     private readonly Dictionary<Guid, PropDescriptor> _byId = new();
+    
+    private readonly Dictionary<Type, PropDescriptor> _byType = new();
 
     private readonly Dictionary<PropFeatureFlags, HashSet<Guid>> _featureIndex = new();
 
@@ -31,6 +34,7 @@ public class PropRegistry : IPropRegistry
         descriptor.Flags = inferredFlags; // cached result
 
         _byId[descriptor.Id] = descriptor;
+        _byType[descriptor.PropType] = descriptor;
 
         IndexFeatures(descriptor);
     }
@@ -65,7 +69,12 @@ public class PropRegistry : IPropRegistry
         throw new Exception($"Descriptor not found: {id}");
     }
 
-   public IEnumerable<PropDescriptor> GetAllDescriptors()
+    public PropDescriptor GetDescriptor(IProp prop)
+    {
+        return _byType[prop.GetType()];
+    }
+
+    public IEnumerable<PropDescriptor> GetAllDescriptors()
     {
         return _byId.Values.ToArray();
     }

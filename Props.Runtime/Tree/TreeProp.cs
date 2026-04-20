@@ -30,4 +30,6 @@ public class TreeProp : Prop, IHasLights, IHasDimming, IPropVisualModelBuilder
             // }
         };
     }
+
+    public double Brightness { get; set; } = .5;
 }

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Props.Abstractions;
+using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.Wizards;
 
@@ -21,6 +22,7 @@ public static class PropServiceCollectionExtensions
         // Register descriptors + registry
         services.AddSingleton(descriptors);
         services.AddSingleton<IPropRegistry, PropRegistry>();
+        services.AddSingleton<IPropFeatureResolver, PropFeatureResolver>();
         
         // Factory is the ONLY public entry point
         services.AddSingleton<IPropFactory, PropFactory>();
@@ -28,7 +30,7 @@ public static class PropServiceCollectionExtensions
         // Factories
         services.AddSingleton<IPropFactory, PropFactory>();
         services.AddSingleton<IWizardFactory, WizardFactory>();
-
+        
         // Register all discovered types into DI
         foreach (var d in descriptors)
         {
