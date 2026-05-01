@@ -1,13 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
+        <TargetFramework>net10.0-windows</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <UseWpf>true</UseWpf>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Props.Abstractions\Props.Abstractions.csproj" />
+      <ProjectReference Include="..\Props.WPFCommon\Props.WPFCommon.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="OpenTK" Version="4.9.4" />
+      <PackageReference Include="OpenTK.GLWpfControl" Version="4.3.6" />
+      <PackageReference Include="OpenTK.Graphics" Version="4.9.4" />
+      <PackageReference Include="OpenTK.Mathematics" Version="4.9.4" />
+      <PackageReference Include="Orc.Wizard" Version="5.2.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Drawing\" />
+      <Folder Include="Model\" />
     </ItemGroup>
 
 </Project>

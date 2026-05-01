@@ -5,7 +5,7 @@ using Props.Abstractions.PropVisualModels;
 
 namespace Props.Runtime.Tree;
 
-[PropDescriptor("BCD3FB69-4827-49EE-B877-BD2AE14E792D", "Tree", typeof(TreePropSetupWizard))]
+[PropDescriptor("BCD3FB69-4827-49EE-B877-BD2AE14E792D", "Tree", typeof(TreePropSetup))]
 public class TreeProp : Prop, IHasLights, IHasDimming
 {
     private double _brightness = 0.5;

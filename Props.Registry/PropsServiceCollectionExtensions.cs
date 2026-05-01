@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Props.Abstractions;
 using Props.Abstractions.Features;
 using Props.Abstractions.Props;
-using Props.Abstractions.Wizards;
+using Props.Abstractions.Setup;
 
 namespace Props.Registry;
 
@@ -31,7 +31,7 @@ public static class PropServiceCollectionExtensions
         services.AddSingleton<IPropFeatureResolver, PropFeatureResolver>();
         services.AddSingleton<IPropCatalogProvider, PropCatalogProvider>();
         services.AddSingleton<IPropFactory, PropFactory>();
-        services.AddSingleton<IWizardFactory, WizardFactory>();
+        services.AddSingleton<IPropSetupFactory, PropSetupFactory>();
         
         // Register all discovered types into DI
         foreach (var d in descriptors)

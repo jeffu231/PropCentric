@@ -1,4 +1,4 @@
-﻿namespace Props.Wizards;
+﻿namespace Props.Wizards.Pages;
 
 public class DimmingWizardPage
 {

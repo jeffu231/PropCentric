@@ -1,6 +1,6 @@
 using System.Reflection;
 using Props.Abstractions.Props;
-using Props.Abstractions.Wizards;
+using Props.Abstractions.Setup;
 
 namespace Props.Registry;
 
@@ -58,7 +58,7 @@ public static class PropScanner
     {
         if (attribute is not PropDescriptorAttribute descriptor)
             throw new Exception("Invalid attribute");
-        if (!typeof(IPropSetupWizard).IsAssignableFrom(descriptor.WizardType))
+        if (!typeof(IPropSetup).IsAssignableFrom(descriptor.WizardType))
         {
             throw new Exception($"Invalid WizardType in {type.Name}: {descriptor.WizardType?.Name}");
         }

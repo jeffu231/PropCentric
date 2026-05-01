@@ -1,0 +1,22 @@
+﻿namespace Props.Abstractions.Props;
+
+/// <summary>
+/// DTO for a collection of props.
+/// </summary>
+public interface IPropGroup<TProp> where TProp : IProp
+{
+    /// <summary>
+    /// True when collections of props are to be contained within a group.
+    /// </summary>
+    bool CreateGroup { get; set; }
+
+    /// <summary>
+    /// Name of the group node.
+    /// </summary>
+    string GroupName { get; set; }
+	
+    /// <summary>
+    /// Gets a Collection of props.
+    /// </summary>
+    IList<TProp> Props { get; }
+}

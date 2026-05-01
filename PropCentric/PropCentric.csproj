@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net10.0</TargetFramework>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net10.0-windows</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <UseWpf>true</UseWpf>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,10 +13,11 @@
       <ProjectReference Include="..\Props.Registry\Props.Registry.csproj" />
       <ProjectReference Include="..\Props.Runtime\Props.Runtime.csproj" />
       <ProjectReference Include="..\Props.Wizards\Props.Wizards.csproj" />
+      <ProjectReference Include="..\Props.WPFCommon\Props.WPFCommon.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
+      <PackageReference Include="Orc.Controls" Version="5.4.1" />
     </ItemGroup>
-
 </Project>

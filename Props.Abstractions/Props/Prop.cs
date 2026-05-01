@@ -5,6 +5,7 @@ namespace Props.Abstractions.Props;
 public abstract class Prop : IProp
 {
     public Guid Id { get; init; } = Guid.NewGuid();
+    public string Name { get; set; } = "Tree Prop";
 
     private IPropVisualModel? _visualModel;
     public IPropVisualModel VisualModel => _visualModel ??= BuildVisualModel();
