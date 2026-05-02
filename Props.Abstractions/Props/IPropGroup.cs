@@ -3,7 +3,7 @@
 /// <summary>
 /// DTO for a collection of props.
 /// </summary>
-public interface IPropGroup<TProp> where TProp : IProp
+public interface IPropGroup
 {
     /// <summary>
     /// True when collections of props are to be contained within a group.
@@ -14,9 +14,9 @@ public interface IPropGroup<TProp> where TProp : IProp
     /// Name of the group node.
     /// </summary>
     string GroupName { get; set; }
-	
+
     /// <summary>
     /// Gets a Collection of props.
     /// </summary>
-    IList<TProp> Props { get; }
+    IList<IProp> Props { get; }
 }

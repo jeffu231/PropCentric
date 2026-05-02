@@ -33,11 +33,4 @@ public class PropSetupFactory : IPropSetupFactory
         return CreateSetup(item);
     }
 
-    public IPropSetup<TProp> CreateSetup<TProp>() where TProp : IProp
-    {
-        var type = typeof(TProp);
-        var item = _catalog.GetPropCatalog().FirstOrDefault(x => x.PropType == type)
-            ?? throw new InvalidOperationException($"No catalog item for prop type '{type.FullName}'.");
-        return (IPropSetup<TProp>)Create(item.Id);
-    }
 }

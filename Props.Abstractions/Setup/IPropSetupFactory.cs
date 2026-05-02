@@ -7,5 +7,4 @@ public interface IPropSetupFactory
     IPropSetup Create(Guid id);
     IPropSetup CreateSetup(IPropCatalogItem item);
     IPropSetup CreateSetupFor(IProp prop);
-    IPropSetup<TProp> CreateSetup<TProp>() where TProp : IProp;
 }

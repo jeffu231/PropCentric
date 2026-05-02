@@ -1,9 +1,9 @@
-﻿namespace Props.Abstractions.Props;
+namespace Props.Abstractions.Props;
 
 /// <summary>
 /// DTO for a collection of props.
 /// </summary>
-public class PropGroup<TProp> : IPropGroup<TProp> where TProp : IProp
+public class PropGroup : IPropGroup
 {
     #region IPropGroup
 
@@ -14,7 +14,7 @@ public class PropGroup<TProp> : IPropGroup<TProp> where TProp : IProp
     public string GroupName { get; set; } = String.Empty;
 
     ///<inheritdoc/>
-    public IList<TProp> Props { get; init; } = new List<TProp>();
+    public IList<IProp> Props { get; init; } = new List<IProp>();
 
     #endregion
 }
