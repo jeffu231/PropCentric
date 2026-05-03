@@ -4,4 +4,6 @@ namespace Props.Abstractions.Features;
 public interface IHasDimming
 {
     double Brightness { get; set; }
+    
+    double Gamma { get; set; }
 }

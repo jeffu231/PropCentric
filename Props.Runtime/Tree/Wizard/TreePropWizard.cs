@@ -27,10 +27,7 @@ public class TreePropWizard : PropWizardBase
         // Set up the Wizard pages
         this.AddPage<TreePropWizardPage>();
         
-        //TODO Add logic to dynamically add feature pages here
-        
-        SummaryWizardPage summaryPage = this.AddPage<SummaryWizardPage>();
-        summaryPage.Description = $"Below is a summary of the {Title} selections.";
+       
     }
     
     #region IWizard

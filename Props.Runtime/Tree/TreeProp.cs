@@ -8,12 +8,29 @@ namespace Props.Runtime.Tree;
 [PropDescriptor("BCD3FB69-4827-49EE-B877-BD2AE14E792D", "Tree", typeof(TreePropSetup))]
 public class TreeProp : Prop, IHasLights, IHasDimming
 {
-    private double _brightness = 0.5;
+    #region IHasDimming
+    
     public double Brightness
     {
-        get => _brightness;
-        set { _brightness = value; InvalidateVisualModel(); }
-    }
+        get;
+        set
+        {
+            field = value;
+            InvalidateVisualModel();
+        }
+    } = 0.5;
+
+    public double Gamma
+    {
+        get;
+        set
+        {
+            field = value;
+            InvalidateVisualModel();
+        }
+    } = 2.0;
+    
+    #endregion
 
     protected override IPropVisualModel BuildVisualModel()
     {

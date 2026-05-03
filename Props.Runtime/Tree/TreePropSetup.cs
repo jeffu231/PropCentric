@@ -63,6 +63,11 @@ public class TreePropSetup : IPropSetup
 
         var wizard = new TreePropWizard(typeFactory, ms);
         
+        //TODO Add logic to dynamically add feature pages here
+        
+        SummaryWizardPage summaryPage = wizard.AddPage<SummaryWizardPage>();
+        summaryPage.Description = $"Below is a summary of the {wizard.Title} selections.";
+        
         //TODO Can these be extracted to the base class as a default?
         wizard.ShowInTaskbarWrapper = true;
         wizard.ShowHelpWrapper = true;
