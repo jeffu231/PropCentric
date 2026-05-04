@@ -23,9 +23,12 @@ public static class PropServiceCollectionExtensions
         }
 
         var descriptors = PropScanner.Scan(loadResult.Loaded);
+        var featurePageRegistrations = FeatureWizardPageScanner.Scan(loadResult.Loaded);
 
         // Register descriptors + registry
         services.AddSingleton(descriptors);
+        services.AddSingleton<IReadOnlyList<FeatureWizardPageRegistration>>(featurePageRegistrations);
+        services.AddSingleton<IFeatureWizardPageResolver, FeatureWizardPageResolver>();
         services.AddSingleton<PropFeatureInferrer>();
         services.AddSingleton<IPropRegistry, PropRegistry>();
         services.AddSingleton<IPropFeatureResolver, PropFeatureResolver>();
@@ -39,6 +42,9 @@ public static class PropServiceCollectionExtensions
             services.AddTransient(d.PropType);
             services.AddTransient(d.WizardType);
         }
+
+        foreach (var reg in featurePageRegistrations)
+            services.AddTransient(reg.PageType);
 
         return services;
     }

@@ -26,8 +26,6 @@ public class TreePropWizard : PropWizardBase
 
         // Set up the Wizard pages
         this.AddPage<TreePropWizardPage>();
-        
-       
     }
     
     #region IWizard

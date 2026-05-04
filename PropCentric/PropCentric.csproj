@@ -9,7 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Props.Adapter\Props.Adapter.csproj" />
       <ProjectReference Include="..\Props.Registry\Props.Registry.csproj" />
       <ProjectReference Include="..\Props.Runtime\Props.Runtime.csproj" />
       <ProjectReference Include="..\Props.Wizards\Props.Wizards.csproj" />

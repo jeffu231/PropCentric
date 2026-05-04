@@ -1,4 +1,4 @@
-﻿<catel:UserControl x:Class="VixenApplication.SetupDisplay.Wizards.Views.DimmingWizardPageView"
+﻿<catel:UserControl x:Class="Props.Runtime.Wizards.Views.DimmingWizardPageView"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:catel="http://schemas.catelproject.com">
@@ -6,7 +6,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Props.WPFCommon;component/Themes/Theme.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Props.WPFCommon;component/Themes/Generic.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -33,8 +33,8 @@
         <!-- <controls:NumericTextSpinBox x:Name="GammaSlider" Grid.Row="1" Grid.Column="1" Width="100" HorizontalAlignment="Left" -->
         <!--                              Minimum="0.0" Maximum="10.0" DecimalPlaces="1" -->
         <!--                              Value="{Binding Gamma}"/> -->
-        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Brightness}"></TextBox>
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Gamma}"></TextBox>
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Brightness}" Background="{StaticResource BackgroundDialogBrush}"></TextBox>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Gamma}" Background="{StaticResource BackgroundDialogBrush}"></TextBox>
         <Button Grid.Row="3" Grid.Column="1" Width="90" HorizontalAlignment="Right">Advanced</Button>
     </Grid>
 </catel:UserControl>

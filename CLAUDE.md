@@ -37,8 +37,9 @@ PropCentric is a **plugin-based system for managing stage/lighting Props** (phys
 `Program.cs` → `PropSystemBootstrap.Initialize()` → `IServiceCollection.AddPropSystem(pluginDirectory)`:
 1. `AssemblyLoader.LoadAll()` loads `.dll` files from the plugin directory, returning an `AssemblyLoadResult` (captures failures without crashing; register `throwOnAssemblyLoadFailure: true` in dev to fail fast)
 2. `PropScanner` discovers types decorated with `[PropDescriptor]` via reflection
-3. All discovered prop and wizard types are registered as Transient in the DI container
-4. `PropFeatureInferrer` (singleton) self-initializes from `Props.Abstractions` — no manual `Initialize()` call required
+3. `FeatureWizardPageScanner` discovers types decorated with `[FeatureWizardPage]` via reflection, capturing the feature interface, optional mapper type, and priority into `FeatureWizardPageRegistration` records
+4. All discovered prop, wizard, and feature page types are registered as Transient in the DI container
+5. `PropFeatureInferrer` (singleton) self-initializes from `Props.Abstractions` — no manual `Initialize()` call required
 
 ### Feature System
 
@@ -48,19 +49,28 @@ Each feature interface is decorated with `[PropFeature(flag)]`. `PropFeatureInfe
 
 ### Adding a New Prop
 
-1. Create a class decorated with `[PropDescriptor(id, name, wizardType, visualModelType, icon)]`
-2. Implement `IProp` (via the `Prop` base class) plus any feature interfaces (`IHasLights`, etc.)
-3. Implement `IPropSetupWizard<TYourProp>` for the wizard
+1. Create a class decorated with `[PropDescriptor(id, name, wizardType, icon)]`
+2. Implement `IProp` (via the `Prop` base class) plus any feature interfaces (`IHasLights`, `IHasDimming`, etc.)
+3. Implement `IPropSetup` for the wizard flow
 4. Optionally implement `IPropVisualModelBuilder` for 3D geometry (uses `System.Numerics.Vector3`)
 5. The plugin scanner picks it up automatically at runtime — no manual registration needed
+
+### Adding a Feature Wizard Page
+
+Feature wizard pages let any prop that implements a given feature interface automatically gain that page in its wizard, without the prop or its setup class needing to know about it.
+
+1. Create a page class extending `WizardPageBase` decorated with `[FeatureWizardPage(typeof(IHasFeature), mapperType: typeof(YourMapper))]` — the page holds UI state only, no prop references
+2. Create a companion mapper `class YourMapper(YourPage page) : IFeatureWizardDataMapper` — this owns all casting to the feature interface and data conversion between UI and prop representations
+3. The scanner picks both up automatically; `IFeatureWizardPageResolver` injects the page (via MEDI) and creates the mapper (via `ActivatorUtilities` with the page as a constructor argument)
+4. In each `IPropSetup` implementation, call `featurePageResolver.GetPagesFor(propType)` to get page instances and `featurePageResolver.GetMappersFor(pages)` to get mapper instances; iterate mappers directly with `foreach` for populate/apply
 
 ### Factory & Catalog Pattern
 
 - `IPropCatalogProvider.GetPropCatalog()` — returns `IPropCatalogItem` entries for all discovered props (use this for discovery, not `IPropFactory`)
 - `IPropCatalogProvider.GetPropCatalogByFeature(flags)` — filter catalog by feature flags
 - `IPropFactory.Create<TProp>()` / `IPropFactory.Create(Guid)` — creates a prop instance via DI; returns `IProp`
-- `IWizardFactory.CreateWizard<TProp>()` — creates a wizard; call `.CreateAsync()` / `.EditAsync()` to configure a prop
-- `IPropSetupStepWizardPage` — individual pages within a wizard; `FeatureWizardResolver` is the extension point for feature-specific pages
+- `IFeatureWizardPageResolver.GetPagesFor(Type propType)` — returns instantiated feature wizard pages for all features the prop implements, ordered by priority
+- `IFeatureWizardPageResolver.GetMappersFor(IReadOnlyList<IWizardPage> pages)` — returns instantiated `IFeatureWizardDataMapper` instances paired to the given pages; call `PopulateFrom(prop)` before showing the wizard and `ApplyTo(prop)` after
 
 ### Key Patterns
 
@@ -68,4 +78,5 @@ Each feature interface is decorated with `[PropFeature(flag)]`. `PropFeatureInfe
 - **Feature discovery:** attribute-driven (`[PropFeature]`) + `PropFeatureInferrer` (injected singleton, self-initializing — replaces the former static `PropFeatureRegistry`)
 - **Catalog vs factory separation:** `IPropCatalogProvider` owns discovery; `IPropFactory` and `IWizardFactory` own creation
 - **DI-backed factories:** `IServiceProvider` used for all runtime instantiation
+- **Feature wizard pages:** `[FeatureWizardPage(featureInterface, mapperType)]` marks a pure-UI page; its companion `IFeatureWizardDataMapper` owns all prop casting and data conversion. Pages are created via MEDI transient registration; mappers via `ActivatorUtilities` with the page as a constructor argument. Reflection runs once at startup (`FeatureWizardPageScanner`); `IPropSetup` classes call `GetPagesFor` / `GetMappersFor` with no runtime reflection.
 - **Visual builder:** `IPropVisualModelBuilder.Build()` → `IVisualElement` hierarchy (`PointCloud`, `LineSegment`, `Mesh`)

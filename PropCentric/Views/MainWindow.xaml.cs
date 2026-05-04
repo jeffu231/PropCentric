@@ -48,8 +48,8 @@ public partial class MainWindow
                     Console.WriteLine($"{prop.Name} Has Dimming: {hasDimming}");
                     if (hasDimming)
                     {
-                        var dimmingProp = propGroup as IHasDimming;
-                        Console.WriteLine($"{prop.Name} Dimming: {dimmingProp?.Brightness}");
+                        var dimmingProp = prop as IHasDimming;
+                        Console.WriteLine($"{prop.Name} Dimming: {dimmingProp!.Brightness * 100}%, Gamma: {dimmingProp!.Gamma}");
                     }
                 }
             }

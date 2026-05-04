@@ -1,8 +1,11 @@
 ﻿using Catel.Data;
 using Orc.Wizard;
+using Props.Abstractions.Features;
+using Props.Runtime.Wizards.Mappers;
 
 namespace Props.Runtime.Wizards.Pages;
 
+[FeatureWizardPage(typeof(IHasDimming), mapperType: typeof(DimmingWizardDataMapper), priority: 100)]
 public class DimmingWizardPage : WizardPageBase
 {
     #region Constructors
@@ -63,4 +66,5 @@ public class DimmingWizardPage : WizardPageBase
         };
     }
     #endregion
+
 }
