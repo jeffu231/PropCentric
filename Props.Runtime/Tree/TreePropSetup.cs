@@ -11,7 +11,7 @@ using Props.Runtime.Wizards;
 
 namespace Props.Runtime.Tree;
 
-public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver) : IPropSetup
+public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver, IPropFactory propFactory) : IPropSetup
 {
     public async Task<IProp> EditAsync(IProp existing)
     {
@@ -74,16 +74,9 @@ public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver) : IPr
         SummaryWizardPage summaryPage = wizard.AddPage<SummaryWizardPage>();
         summaryPage.Description = $"Below is a summary of the {wizard.Title} selections.";
 
-        //TODO Can these be extracted to the base class as a default?
-        wizard.ShowInTaskbarWrapper = true;
-        wizard.ShowHelpWrapper = true;
-        wizard.AllowQuickNavigationWrapper = true;
-        wizard.HandleNavigationStatesWrapper = true;
-        wizard.CacheViewsWrapper = false;
         var navController = typeFactory.CreateInstanceWithParametersAndAutoCompletion<PropWizardNavigationController>(wizard);
         ArgumentNullException.ThrowIfNull(navController);
         wizard.NavigationControllerWrapper = navController;
-        // end of extraction question
 
         return wizard;
     }
@@ -96,9 +89,9 @@ public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver) : IPr
         return (await ws.ShowWizardAsync(wizard)).DialogResult;
     }
 
-    private static IPropGroup BuildPropGroup(IPropWizard wizard, IReadOnlyList<IFeatureWizardDataMapper> mappers)
+    private IPropGroup BuildPropGroup(IPropWizard wizard, IReadOnlyList<IFeatureWizardDataMapper> mappers)
     {
-        var treeProp = new TreeProp();
+        var treeProp = propFactory.Create<TreeProp>();
         UpdateProp(treeProp, wizard, mappers);
 
         var propGroup = new PropGroup();

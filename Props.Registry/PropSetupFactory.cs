@@ -4,22 +4,12 @@ using Props.Abstractions.Setup;
 
 namespace Props.Registry;
 
-public class PropSetupFactory : IPropSetupFactory
+public class PropSetupFactory(IServiceProvider services, IPropRegistry registry) : IPropSetupFactory
 {
-    private readonly IServiceProvider _services;
-    private readonly IPropCatalogProvider _catalog;
-
-    public PropSetupFactory(IServiceProvider services, IPropCatalogProvider catalog)
-    {
-        _services = services;
-        _catalog = catalog;
-    }
-
     public IPropSetup Create(Guid id)
     {
-        var item = _catalog.GetPropCatalog().FirstOrDefault(x => x.Id == id)
-            ?? throw new InvalidOperationException($"No catalog item with id '{id}'.");
-        return (IPropSetup)_services.GetRequiredService(item.WizardType);
+        var descriptor = registry.GetDescriptor(id);
+        return (IPropSetup)services.GetRequiredService(descriptor.WizardType);
     }
 
     public IPropSetup CreateSetup(IPropCatalogItem item)
@@ -27,10 +17,7 @@ public class PropSetupFactory : IPropSetupFactory
 
     public IPropSetup CreateSetupFor(IProp prop)
     {
-        var type = prop.GetType();
-        var item = _catalog.GetPropCatalog().FirstOrDefault(x => x.PropType == type)
-            ?? throw new InvalidOperationException($"No catalog item for prop type '{type.FullName}'.");
-        return CreateSetup(item);
+        var descriptor = registry.GetDescriptor(prop);
+        return (IPropSetup)services.GetRequiredService(descriptor.WizardType);
     }
-
 }

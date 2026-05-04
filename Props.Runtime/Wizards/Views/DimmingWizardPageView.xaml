@@ -26,13 +26,9 @@
         <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Maximum Brightness</Label>
         <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Gamma</Label>
         <!-- <controls:SuperSlider x:Name="BrightnessSlider" Grid.Row="0" Grid.Column="1" Minimum="0" Maximum="100"  -->
-        <!--                         SmallChange="5" -->
-        <!--                         DefaultValue="{Binding BrightnessDefault}" -->
-        <!--                         Value="{Binding Brightness}" -->
-        <!--                         AutoToolTipPlacement="TopLeft"/> -->
+        <!--                         SmallChange="5" Value="{Binding Brightness}" AutoToolTipPlacement="TopLeft"/> -->
         <!-- <controls:NumericTextSpinBox x:Name="GammaSlider" Grid.Row="1" Grid.Column="1" Width="100" HorizontalAlignment="Left" -->
-        <!--                              Minimum="0.0" Maximum="10.0" DecimalPlaces="1" -->
-        <!--                              Value="{Binding Gamma}"/> -->
+        <!--                              Minimum="0.0" Maximum="10.0" DecimalPlaces="1" Value="{Binding Gamma}"/> -->
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Brightness}" Background="{StaticResource BackgroundDialogBrush}"></TextBox>
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Gamma}" Background="{StaticResource BackgroundDialogBrush}"></TextBox>
         <Button Grid.Row="3" Grid.Column="1" Width="90" HorizontalAlignment="Right">Advanced</Button>

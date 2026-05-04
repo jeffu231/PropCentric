@@ -6,11 +6,7 @@ namespace Props.Registry;
 public class PropFeatureResolver(IPropRegistry registry) : IPropFeatureResolver
 {
     public bool HasFeature(IProp prop, PropFeatureFlags feature)
-    {
-        var flags = GetDescriptor(prop).Flags;
-        if(flags.HasFlag(feature)) return true;
-        return false;
-    }
+        => GetDescriptor(prop).Flags.HasFlag(feature);
 
     public PropFeatureFlags GetFeatures(IProp prop)
     {

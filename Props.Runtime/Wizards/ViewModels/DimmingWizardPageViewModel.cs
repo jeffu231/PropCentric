@@ -20,14 +20,6 @@ namespace Props.Runtime.Wizards.ViewModels
 		private static readonly IPropertyData BrightnessProperty = RegisterProperty<int>(nameof(Brightness));
 
 		[ViewModelToModel]
-		public int BrightnessDefault
-		{
-			get { return GetValue<int>(BrightnessDefaultProperty); }
-			set { SetValue(BrightnessDefaultProperty, value); }
-		}
-		private static readonly IPropertyData BrightnessDefaultProperty = RegisterProperty<int>(nameof(BrightnessDefault));
-
-		[ViewModelToModel]
 		public double Gamma
 		{
 			get { return GetValue<double>(GammaProperty); }

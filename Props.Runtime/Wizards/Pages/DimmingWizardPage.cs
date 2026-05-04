@@ -24,20 +24,9 @@ public class DimmingWizardPage : WizardPageBase
     public int Brightness
     {
         get => GetValue<int>(BrightnessProperty);
-        set 
-        { 
-            SetValue(BrightnessProperty, value);
-            BrightnessDefault = value;
-        }
+        set => SetValue(BrightnessProperty, value);
     }
     private static readonly IPropertyData BrightnessProperty = RegisterProperty<int>(nameof(Brightness));
-
-    public int BrightnessDefault
-    {
-        get => GetValue<int>(BrightnessDefaultProperty);
-        set => SetValue(BrightnessDefaultProperty, value);
-    }
-    private static readonly IPropertyData BrightnessDefaultProperty = RegisterProperty<int>(nameof(BrightnessDefault));
 
     public double Gamma
     {

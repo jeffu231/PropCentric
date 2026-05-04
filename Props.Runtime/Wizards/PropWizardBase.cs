@@ -19,6 +19,11 @@ namespace Props.Runtime.Wizards
 		{
 			ResizeMode = System.Windows.ResizeMode.CanResize;
 			MaxSize = new System.Windows.Size(1050, 600);
+			ShowInTaskbar = true;
+			IsHelpVisible = true;
+			AllowQuickNavigation = true;
+			HandleNavigationStates = true;
+			CacheViews = false;
 		}
 
 		#endregion
