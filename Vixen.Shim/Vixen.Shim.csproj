@@ -4,17 +4,8 @@
         <TargetFramework>net10.0-windows</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <UseWpf>true</UseWpf>
+        <RootNamespace>Vixen</RootNamespace>
     </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Vixen.Shim\Vixen.Shim.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Debounce.Core" Version="1.0.0" />
-      <PackageReference Include="Orc.Wizard" Version="5.2.0" />
-    </ItemGroup>
 
     <ItemGroup>
       <Reference Include="Vixen.Core">

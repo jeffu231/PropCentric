@@ -1,6 +1,6 @@
 using System.Drawing;
 
-namespace Vixen.Core;
+namespace Props.Abstractions.Props;
 
 public class Segment
 {

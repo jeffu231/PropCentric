@@ -5,6 +5,11 @@ namespace Props.Abstractions.PropVisualModels;
 
 public interface IPropVisualModel
 {
+    /// <summary>
+    /// Unique Id of the prop model.
+    /// </summary>
+    Guid Id { get; init; }
+    
     IReadOnlyList<IVisualElement> Elements { get; init; }
     
     /// <summary>

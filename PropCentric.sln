@@ -10,11 +10,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Props.Runtime", "Props.Runt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Props.Wizards", "Props.Wizards\Props.Wizards.csproj", "{5A5C97B8-2D42-4D41-A850-A1B373BDF8CB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vixen.Core", "Vixen.Core\Vixen.Core.csproj", "{5E497013-07B8-4C48-8ACD-BFB606953A62}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vixen.Shim", "Vixen.Shim\Vixen.Shim.csproj", "{5E497013-07B8-4C48-8ACD-BFB606953A62}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Props.WPFCommon", "Props.WPFCommon\Props.WPFCommon.csproj", "{266A53BF-2105-4360-B060-BE9B53A4B8FB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{C4191101-1BEE-4C7B-90F0-121F48702482}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vixen.Library", "Vixen.Library\Vixen.Library.csproj", "{6D4E24ED-0E99-42D2-90BB-2D034BBE1419}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,5 +52,9 @@ Global
 		{266A53BF-2105-4360-B060-BE9B53A4B8FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{266A53BF-2105-4360-B060-BE9B53A4B8FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{266A53BF-2105-4360-B060-BE9B53A4B8FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D4E24ED-0E99-42D2-90BB-2D034BBE1419}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D4E24ED-0E99-42D2-90BB-2D034BBE1419}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D4E24ED-0E99-42D2-90BB-2D034BBE1419}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D4E24ED-0E99-42D2-90BB-2D034BBE1419}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

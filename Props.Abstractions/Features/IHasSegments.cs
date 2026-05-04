@@ -1,4 +1,4 @@
-using Vixen.Core;
+using Props.Abstractions.Props;
 
 namespace Props.Abstractions.Features;
 

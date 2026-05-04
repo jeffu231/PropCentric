@@ -17,10 +17,14 @@ public partial class MainWindow
     {
         Console.WriteLine("Theme Synchronized");
         var provider = PropSystemBootstrap.Initialize();
+        Console.WriteLine("PropSystemBootstrap initialized");
         var catalogProvider = provider.GetRequiredService<IPropCatalogProvider>();
+        Console.WriteLine("Catalog Provider obtained");
         var propSetupFactory = provider.GetRequiredService<IPropSetupFactory>();
+        Console.WriteLine("PropSetupFactory obtained");
 
         var propCatalog = catalogProvider.GetPropCatalog();
+        Console.WriteLine("PropCatalog obtained");
         foreach (var propCatalogItem in propCatalog)
         {
             Console.WriteLine($"Prop: {propCatalogItem.Name} ");

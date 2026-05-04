@@ -3,8 +3,9 @@ using System.Numerics;
 
 namespace Props.Abstractions.PropVisualModels;
 
-public class PropVisualModel : IPropVisualModel
+public abstract class PropVisualModel : IPropVisualModel
 {
+    public Guid Id { get; init; }  = Guid.NewGuid();
     public IReadOnlyList<IVisualElement> Elements { get; init; } = [];
     public ObservableCollection<AxisRotationModel> AxisRotations { get; set; }
     public Vector3? ReferencePoint { get; init; }
