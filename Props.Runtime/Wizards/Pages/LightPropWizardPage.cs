@@ -5,7 +5,7 @@ namespace Props.Runtime.Wizards.Pages
 	/// <summary>
 	/// Maintains base Light Prop Wizard page data.
 	/// </summary>
-	public abstract class LightPropWizardPage : BasePropWizardPage, ILightPropWizardPage
+	public abstract class LightPropWizardPage : PropWizardPageBase, ILightPropWizardPage
 	{
 		#region Constructor
 

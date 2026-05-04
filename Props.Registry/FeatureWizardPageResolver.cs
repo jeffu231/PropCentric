@@ -5,7 +5,7 @@ using Props.Abstractions.Features;
 namespace Props.Registry;
 
 public class FeatureWizardPageResolver(
-    IReadOnlyList<FeatureWizardPageRegistration> registrations,
+    IReadOnlyList<FeatureWizardPageDescriptor> registrations,
     IServiceProvider serviceProvider) : IFeatureWizardPageResolver
 {
     public IReadOnlyList<IWizardPage> GetPagesFor(Type propType)

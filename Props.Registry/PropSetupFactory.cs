@@ -8,16 +8,10 @@ public class PropSetupFactory(IServiceProvider services, IPropRegistry registry)
 {
     public IPropSetup Create(Guid id)
     {
-        var descriptor = registry.GetDescriptor(id);
+        var descriptor = registry.GetDescriptorById(id);
         return (IPropSetup)services.GetRequiredService(descriptor.WizardType);
     }
 
-    public IPropSetup CreateSetup(IPropCatalogItem item)
+    public IPropSetup CreateFromCatalogItem(IPropCatalogItem item)
         => Create(item.Id);
-
-    public IPropSetup CreateSetupFor(IProp prop)
-    {
-        var descriptor = registry.GetDescriptor(prop);
-        return (IPropSetup)services.GetRequiredService(descriptor.WizardType);
-    }
 }

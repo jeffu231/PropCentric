@@ -13,5 +13,5 @@ public class PropFeatureResolver(IPropRegistry registry) : IPropFeatureResolver
         return GetDescriptor(prop).Flags;
     }
     
-    private PropDescriptor GetDescriptor(IProp prop) => registry.GetDescriptor(prop);
+    private PropDescriptor GetDescriptor(IProp prop) => registry.GetDescriptorForProp(prop);
 }

@@ -3,7 +3,7 @@
 	/// <summary>
 	/// Maintains light prop wizard page data.
 	/// </summary>
-	public interface ILightPropWizardPage : IBasePropWizardPage
+	public interface ILightPropWizardPage : IPropWizardPageBase
 	{
 		/// <summary>
 		/// Size of the lights.

@@ -1,28 +1,22 @@
-﻿using Catel.Data;
+using Catel.Data;
 using Orc.Wizard;
 
 namespace Props.Runtime.Wizards.Pages
 {
-	/// <summary>
-	/// Maintains base prop wizard page data.
-	/// </summary>
-	public abstract class BasePropWizardPage : WizardPageBase, IBasePropWizardPage
+	public abstract class PropWizardPageBase : WizardPageBase, IPropWizardPageBase
 	{
 		#region Constructor
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		protected BasePropWizardPage()
+		protected PropWizardPageBase()
 		{
-			
+
 		}
 
 		#endregion
 
-		#region IBasePropWizardPage
+		#region IPropWizardPageBase
 
-		/// <inheritdoc/>		
+		/// <inheritdoc/>
 		public string Name
 		{
 			get { return GetValue<string>(NameProperty); }
@@ -30,8 +24,6 @@ namespace Props.Runtime.Wizards.Pages
 		}
 
 		private static readonly IPropertyData NameProperty = RegisterProperty<string>(nameof(Name));
-		
-		
 
 		#endregion
 	}

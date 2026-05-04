@@ -16,8 +16,8 @@ public class PropFactory : IPropFactory
 
     public IProp Create(Guid id)
     {
-        var d = _registry.GetDescriptor(id);
-        return (IProp)_services.GetRequiredService(d.PropType);
+        var descriptor = _registry.GetDescriptorById(id);
+        return (IProp)_services.GetRequiredService(descriptor.PropType);
     }
 
     public TProp Create<TProp>() where TProp : IProp

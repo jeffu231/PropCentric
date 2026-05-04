@@ -27,7 +27,7 @@ public static class PropServiceCollectionExtensions
 
         // Register descriptors + registry
         services.AddSingleton(descriptors);
-        services.AddSingleton<IReadOnlyList<FeatureWizardPageRegistration>>(featurePageRegistrations);
+        services.AddSingleton<IReadOnlyList<FeatureWizardPageDescriptor>>(featurePageRegistrations);
         services.AddSingleton<IFeatureWizardPageResolver, FeatureWizardPageResolver>();
         services.AddSingleton<PropFeatureInferrer>();
         services.AddSingleton<IPropRegistry, PropRegistry>();

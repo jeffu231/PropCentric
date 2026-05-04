@@ -26,7 +26,7 @@ public partial class MainWindow
             Console.WriteLine($"Prop: {propCatalogItem.Name} ");
             Console.WriteLine($"Prop Features: {propCatalogItem.Features}");
 
-            var propSetup = propSetupFactory.CreateSetup(propCatalogItem);
+            var propSetup = propSetupFactory.CreateFromCatalogItem(propCatalogItem);
             Console.WriteLine($"Prop Setup created: {propSetup.GetType().Name}");
             var propGroup = propSetup.CreateAsync().Result;
             if (propGroup != null)

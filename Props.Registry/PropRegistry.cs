@@ -18,12 +18,13 @@ public class PropRegistry : IPropRegistry
     
     private void Build(IEnumerable<PropDescriptor> descriptors)
     {
-        foreach (var d in descriptors)
+        foreach (var descriptor in descriptors)
         {
-            _byId[d.Id] = d;
-            Register(d);
+            _byId[descriptor.Id] = descriptor;
+            Register(descriptor);
         }
     }
+
     private void Register(PropDescriptor descriptor)
     {
         var inferredFlags = _featureInferrer.Infer(descriptor.PropType);
@@ -35,15 +36,15 @@ public class PropRegistry : IPropRegistry
 
         IndexFeatures(descriptor);
     }
-    
-    private void IndexFeatures(PropDescriptor d)
+
+    private void IndexFeatures(PropDescriptor descriptor)
     {
         foreach (PropFeatureFlags flag in Enum.GetValues(typeof(PropFeatureFlags)))
         {
             if (flag == PropFeatureFlags.None)
                 continue;
 
-            if (d.Flags.HasFlag(flag))
+            if (descriptor.Flags.HasFlag(flag))
             {
                 if (!_featureIndex.TryGetValue(flag, out var set))
                 {
@@ -51,26 +52,26 @@ public class PropRegistry : IPropRegistry
                     _featureIndex[flag] = set;
                 }
 
-                set.Add(d.Id);
+                set.Add(descriptor.Id);
             }
         }
     }
 
-    public PropDescriptor GetDescriptor(Guid id)
+    public PropDescriptor GetDescriptorById(Guid id)
     {
-        if (_byId.TryGetValue(id, out var d))
-            return d;
+        if (_byId.TryGetValue(id, out var descriptor))
+            return descriptor;
 
         throw new InvalidOperationException(
             $"No descriptor registered for prop id '{id}'. " +
             "Ensure the type is decorated with [PropDescriptor] and its assembly is in the plugin directory.");
     }
 
-    public PropDescriptor GetDescriptor(IProp prop)
+    public PropDescriptor GetDescriptorForProp(IProp prop)
     {
         var type = prop.GetType();
-        if (_byType.TryGetValue(type, out var d))
-            return d;
+        if (_byType.TryGetValue(type, out var descriptor))
+            return descriptor;
 
         throw new InvalidOperationException(
             $"No descriptor registered for prop type '{type.FullName}'. " +
@@ -82,9 +83,9 @@ public class PropRegistry : IPropRegistry
         return _byId.Values.ToArray();
     }
 
-    public IEnumerable<PropDescriptor> GetDescriptorsByFeature(PropFeatureFlags flag)
+    public IEnumerable<PropDescriptor> GetDescriptorsByFeature(PropFeatureFlags flags)
     {
-        return _byId.Values.Where(d => d.Flags.HasFlag(flag));
+        return _byId.Values.Where(descriptor => descriptor.Flags.HasFlag(flags));
     }
     
 }

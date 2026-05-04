@@ -5,9 +5,9 @@ namespace Props.Registry;
 
 public static class FeatureWizardPageScanner
 {
-    public static IReadOnlyList<FeatureWizardPageRegistration> Scan(IEnumerable<Assembly> assemblies)
+    public static IReadOnlyList<FeatureWizardPageDescriptor> Scan(IEnumerable<Assembly> assemblies)
     {
-        var results = new List<FeatureWizardPageRegistration>();
+        var results = new List<FeatureWizardPageDescriptor>();
 
         foreach (var assembly in assemblies)
         {
@@ -24,7 +24,7 @@ public static class FeatureWizardPageScanner
                     throw new InvalidOperationException(
                         $"[FeatureWizardPage] on '{type.FullName}': '{attr.FeatureInterface.FullName}' must be an interface.");
 
-                results.Add(new FeatureWizardPageRegistration
+                results.Add(new FeatureWizardPageDescriptor
                 {
                     PageType = type,
                     FeatureInterface = attr.FeatureInterface,

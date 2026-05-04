@@ -6,8 +6,8 @@ namespace Props.Registry;
 public interface IPropRegistry
 {
     
-    PropDescriptor GetDescriptor(Guid id);
-    PropDescriptor GetDescriptor(IProp prop);
+    PropDescriptor GetDescriptorById(Guid id);
+    PropDescriptor GetDescriptorForProp(IProp prop);
     IEnumerable<PropDescriptor> GetAllDescriptors();
-    IEnumerable<PropDescriptor> GetDescriptorsByFeature(PropFeatureFlags flag);
+    IEnumerable<PropDescriptor> GetDescriptorsByFeature(PropFeatureFlags flags);
 }
