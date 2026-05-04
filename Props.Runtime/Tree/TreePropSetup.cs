@@ -47,6 +47,7 @@ public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver, IProp
 
         var page = (TreePropWizardPage)treeWizard.Pages.Single(p => p is TreePropWizardPage);
         page.Name = treeProp.Name;
+        //TODO Fill in the remaining properties, not critical for POC.
         foreach (var mapper in featureMappers) mapper.PopulateFrom(treeProp);
 
         bool? result = await ShowWizard(treeWizard);

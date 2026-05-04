@@ -13,6 +13,10 @@ public class DimmingWizardDataMapper(DimmingWizardPage page) : IFeatureWizardDat
             dimming.Brightness = Math.Clamp(page.Brightness, 0, 100) / 100.0;
             dimming.Gamma = page.Gamma;
         }
+        else
+        {
+            throw new InvalidOperationException($"Prop {prop.GetType()} does not implement IHasDimming.");
+        }
     }
 
     public void PopulateFrom(IProp prop)
@@ -21,6 +25,10 @@ public class DimmingWizardDataMapper(DimmingWizardPage page) : IFeatureWizardDat
         {
             page.Brightness = (int)Math.Round(Math.Clamp(dimming.Brightness, 0.0, 1.0) * 100);
             page.Gamma = dimming.Gamma;
+        }
+        else
+        {
+            throw new InvalidOperationException($"Prop {prop.GetType()} does not implement IHasDimming.");
         }
     }
 }
