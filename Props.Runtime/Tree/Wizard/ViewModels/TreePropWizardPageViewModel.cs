@@ -1,4 +1,5 @@
 ﻿using Catel.Data;
+using Catel.MVVM;
 using Props.Runtime.Tree.Wizard.Pages;
 using Props.Runtime.Wizards.ViewModels;
 
@@ -15,7 +16,7 @@ public class TreePropWizardPageViewModel: LightWizardPageViewModel<TreePropWizar
     /// <summary>
     /// Gets or sets the Strings value.
     /// </summary>
-    //[ViewModelToModel]
+    [ViewModelToModel]
     public int Strings
     {
         get { return GetValue<int>(NodeCountProperty); }
@@ -34,7 +35,7 @@ public class TreePropWizardPageViewModel: LightWizardPageViewModel<TreePropWizar
     /// <summary>
     /// Gets or sets the NodesPerString value.
     /// </summary>
-    //[ViewModelToModel]
+    [ViewModelToModel]
     public int NodesPerString
     {
         get { return GetValue<int>(NodesPerStringProperty); }

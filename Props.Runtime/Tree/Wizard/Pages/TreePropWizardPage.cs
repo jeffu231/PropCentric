@@ -1,5 +1,6 @@
 ﻿using Catel.Data;
 using Orc.Wizard;
+using Props.Abstractions.Props;
 using Props.Runtime.Wizards.Pages;
 
 namespace Props.Runtime.Tree.Wizard.Pages
@@ -19,7 +20,7 @@ namespace Props.Runtime.Tree.Wizard.Pages
             Title = "Basic Attributes";
             Description = $"Enter attributes for Tree";
 
-            // Generic parameters
+            // Generic parameters, but should be sourced from a Tree Prop on init.
             Name = "Tree 1";
             Strings = 16;
             NodesPerString = 50;
@@ -100,12 +101,12 @@ namespace Props.Runtime.Tree.Wizard.Pages
         }
         public static readonly IPropertyData TopWidthProperty = RegisterProperty<int>(nameof(TopWidth));
 
-        // public StartLocation StartLocation
-        // {
-        //     get { return GetValue<StartLocation>(StartLocationProperty); }
-        //     set { SetValue(StartLocationProperty, value); }
-        // }
-        // public static readonly IPropertyData StartLocationProperty = RegisterProperty<StartLocation>(nameof(StartLocation));
+        public StartLocation StartLocation
+        {
+            get { return GetValue<StartLocation>(StartLocationProperty); }
+            set { SetValue(StartLocationProperty, value); }
+        }
+        public static readonly IPropertyData StartLocationProperty = RegisterProperty<StartLocation>(nameof(StartLocation));
 
         public bool ZigZag
         {

@@ -11,6 +11,11 @@ using Props.Runtime.Wizards;
 
 namespace Props.Runtime.Tree;
 
+/// <summary>
+/// Setup wrapper around the TreePropWizard
+/// </summary>
+/// <param name="featurePageResolver"></param>
+/// <param name="propFactory"></param>
 public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver, IPropFactory propFactory) : IPropSetup
 {
     public async Task<IProp> EditAsync(IProp existing)
@@ -31,10 +36,14 @@ public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver, IProp
         var featurePages = featurePageResolver.GetPagesFor(typeof(TreeProp));
         var featureMappers = featurePageResolver.GetMappersFor(featurePages);
         var treeWizard = CreateTreeWizard(featurePages);
+        
+        var treeProp = propFactory.Create<TreeProp>();
+        //Initialize wizard with defaults from TreeProp
+        UpdateProp(treeProp, treeWizard, featureMappers);
 
         bool? result = await ShowWizard(treeWizard);
         if (result.HasValue && result.Value)
-            return BuildPropGroup(treeWizard, featureMappers);
+            return BuildPropGroup(treeProp, treeWizard, featureMappers);
 
         return null;
     }
@@ -46,8 +55,23 @@ public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver, IProp
         var treeWizard = CreateTreeWizard(featurePages);
 
         var page = (TreePropWizardPage)treeWizard.Pages.Single(p => p is TreePropWizardPage);
+        // fill page with current values 
         page.Name = treeProp.Name;
-        //TODO Fill in the remaining properties, not critical for POC.
+        page.Strings = treeProp.Strings;
+        page.NodesPerString = treeProp.NodesPerString;
+        page.LightSize = treeProp.LightSize;
+        page.DegreeOffset = treeProp.DegreeOffset;
+        page.DegreesCoverage = treeProp.DegreesCoverage;
+        page.BaseHeight = treeProp.BaseHeight;
+        page.TopHeight = treeProp.TopHeight;
+        page.TopWidth = treeProp.TopWidth;
+        page.StartLocation = treeProp.StartLocation;
+        page.ZigZag = treeProp.ZigZag;
+        page.ZigZagOffset = treeProp.ZigZagOffset;
+        page.TopRadius = treeProp.TopRadius;
+        page.BottomRadius = treeProp.BottomRadius;
+       
+        //Fill the feature pages
         foreach (var mapper in featureMappers) mapper.PopulateFrom(treeProp);
 
         bool? result = await ShowWizard(treeWizard);
@@ -90,13 +114,13 @@ public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver, IProp
         return (await ws.ShowWizardAsync(wizard)).DialogResult;
     }
 
-    private IPropGroup BuildPropGroup(IPropWizard wizard, IReadOnlyList<IFeatureWizardDataMapper> mappers)
+    private IPropGroup BuildPropGroup(TreeProp treeProp, IPropWizard wizard, IReadOnlyList<IFeatureWizardDataMapper> mappers)
     {
-        var treeProp = propFactory.Create<TreeProp>();
         UpdateProp(treeProp, wizard, mappers);
 
         var propGroup = new PropGroup();
         propGroup.Props.Add(treeProp);
+        // TODO logic to determine if we need to populate more items in the group obtained from the group page
         return propGroup;
     }
 
@@ -104,6 +128,20 @@ public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver, IProp
     {
         var page = (TreePropWizardPage)wizard.Pages.Single(p => p is TreePropWizardPage);
         treeProp.Name = page.Name;
+        treeProp.Strings = page.Strings;
+        treeProp.NodesPerString = page.NodesPerString;
+        treeProp.LightSize = page.LightSize;
+        treeProp.DegreeOffset = page.DegreeOffset;
+        treeProp.DegreesCoverage = page.DegreesCoverage;
+        treeProp.BaseHeight = page.BaseHeight;
+        treeProp.TopHeight = page.TopHeight;
+        treeProp.TopWidth = page.TopWidth;
+        treeProp.StartLocation = page.StartLocation;
+        treeProp.ZigZag = page.ZigZag;
+        treeProp.ZigZagOffset = page.ZigZagOffset;
+        treeProp.TopRadius = page.TopRadius;
+        treeProp.BottomRadius = page.BottomRadius;
+        //Map feature page data into prop
         foreach (var mapper in mappers) mapper.ApplyTo(treeProp);
     }
 }

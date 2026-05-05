@@ -2,41 +2,30 @@
 using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.PropVisualModels;
-using Vixen.Sys.Props;
 
 namespace Props.Runtime.Tree;
 
 [PropDescriptor("BCD3FB69-4827-49EE-B877-BD2AE14E792D", "Tree", typeof(TreePropSetup))]
-public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights, IHasDimming
+public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights
 {
     
     #region Constructors
 
-    public TreeProp() : this("Tree 1", 0, 0)
+    public TreeProp() : base("Tree 1")
     {
-        //Set initial to 0 so creation does not trigger element generation.
-    }
-
-    public TreeProp(string name, int strings, int nodesPerString) : this(name, strings, nodesPerString, StringTypes.ColorMixingRGB)
-    {
-    }
-
-    public TreeProp(string name, int strings = 0, int nodesPerString = 0, StringTypes stringType = StringTypes.ColorMixingRGB) : base(name)
-    {			
-        Name = name;
-        StringType = stringType;
-        ZigZagOffset = 50;
-        StartLocation = StartLocation.BottomLeft;
-        TopWidth = 20;
-        TopHeight = TopWidth / 2;
-        BaseHeight = 40;
-        DegreesCoverage = 360;
-        DegreeOffset = 0;
-        Strings = 16;
-        NodesPerString = 50;
-        LightSize = 2;
-        TopRadius = 10;
-        BottomRadius = 100;					
+	    //Sensible defaults
+	    ZigZagOffset = 50;
+	    StartLocation = StartLocation.BottomLeft;
+	    TopWidth = 20;
+	    TopHeight = TopWidth / 2;
+	    BaseHeight = 40;
+	    DegreesCoverage = 360;
+	    DegreeOffset = 0;
+	    Strings = 16;
+	    NodesPerString = 50;
+	    LightSize = 2;
+	    TopRadius = 10;
+	    BottomRadius = 100;			
     }
 
     #endregion
