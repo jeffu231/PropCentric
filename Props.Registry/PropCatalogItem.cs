@@ -7,7 +7,7 @@ public sealed record PropCatalogItem:IPropCatalogItem
 {
     public Guid Id { get; init; }
     public string Name { get; init; } = "Unnamed Prop";
-    public string Icon { get; init; }
+    public string Icon { get; init; } = string.Empty;
     public required Type WizardType { get; init; }
     public required Type PropType { get; init; }
     public PropFeatureFlags Features { get; init; }

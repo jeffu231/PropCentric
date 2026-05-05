@@ -76,9 +76,9 @@ namespace Props.Runtime.Wizards.Views
 		protected void PropWizardPageView_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
 			// Initialize the camera to the origin
-			float cameraX = 0.0f;
-			float cameraY = 0.0f;
-			float cameraZ = 0.0f;
+			// float cameraX = 0.0f;
+			// float cameraY = 0.0f;
+			// float cameraZ = 0.0f;
 
 			// Initialize the drawing engine with the camera position and size of the drawing area
 			// GetViewModel().DrawingEngine.Initialize(

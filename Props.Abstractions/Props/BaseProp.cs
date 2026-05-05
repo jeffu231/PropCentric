@@ -20,8 +20,8 @@ namespace Props.Abstractions.Props
 	/// of associated components and target nodes.
 	/// </remarks>
 	[Serializable]
-	public abstract class BaseProp<TModel> : BindableBase, IProp 
-		where TModel : PropVisualModel, IPropVisualModel, new ()
+	public abstract class BaseProp<TModel> : BindableBase, IProp
+		where TModel : IPropVisualModel, new ()
 	{
 		#region Protected Static Properties
 

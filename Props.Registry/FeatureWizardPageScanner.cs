@@ -8,10 +8,10 @@ public static class FeatureWizardPageScanner
     public static IReadOnlyList<FeatureWizardPageDescriptor> Scan(IEnumerable<Assembly> assemblies)
     {
         var results = new List<FeatureWizardPageDescriptor>();
-        Console.WriteLine($"Scanning {assemblies.Count()} assemblies");
+        Console.WriteLine("Scanning assemblies for features");
         foreach (var assembly in assemblies)
         {
-            if(!assembly.FullName.StartsWith("Props")) continue;
+            if(assembly.FullName != null && !assembly.FullName.StartsWith("Props")) continue;
             Console.WriteLine($"Scanning {assembly.FullName}");
             foreach (var type in assembly.GetExportedTypes())
             {
