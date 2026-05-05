@@ -39,7 +39,7 @@ public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver, IProp
         
         var treeProp = propFactory.Create<TreeProp>();
         //Initialize wizard with defaults from TreeProp
-        UpdateProp(treeProp, treeWizard, featureMappers);
+        PopulateWizardFromProp(treeProp, treeWizard, featureMappers);
 
         bool? result = await ShowWizard(treeWizard);
         if (result.HasValue && result.Value)
@@ -54,29 +54,14 @@ public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver, IProp
         var featureMappers = featurePageResolver.GetMappersFor(featurePages);
         var treeWizard = CreateTreeWizard(featurePages);
 
-        var page = (TreePropWizardPage)treeWizard.Pages.Single(p => p is TreePropWizardPage);
-        // fill page with current values 
-        page.Name = treeProp.Name;
-        page.Strings = treeProp.Strings;
-        page.NodesPerString = treeProp.NodesPerString;
-        page.LightSize = treeProp.LightSize;
-        page.DegreeOffset = treeProp.DegreeOffset;
-        page.DegreesCoverage = treeProp.DegreesCoverage;
-        page.BaseHeight = treeProp.BaseHeight;
-        page.TopHeight = treeProp.TopHeight;
-        page.TopWidth = treeProp.TopWidth;
-        page.StartLocation = treeProp.StartLocation;
-        page.ZigZag = treeProp.ZigZag;
-        page.ZigZagOffset = treeProp.ZigZagOffset;
-        page.TopRadius = treeProp.TopRadius;
-        page.BottomRadius = treeProp.BottomRadius;
-       
-        //Fill the feature pages
-        foreach (var mapper in featureMappers) mapper.PopulateFrom(treeProp);
+        PopulateWizardFromProp(treeProp, treeWizard, featureMappers);
 
         bool? result = await ShowWizard(treeWizard);
         if (result.HasValue && result.Value)
-            UpdateProp(treeProp, treeWizard, featureMappers);
+        {
+            //Apply the edits back to the prop
+            ApplyWizardDataToProp(treeProp, treeWizard, featureMappers);
+        }
     }
 
     private TreePropWizard CreateTreeWizard(IReadOnlyList<IWizardPage> featurePages)
@@ -116,7 +101,7 @@ public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver, IProp
 
     private IPropGroup BuildPropGroup(TreeProp treeProp, IPropWizard wizard, IReadOnlyList<IFeatureWizardDataMapper> mappers)
     {
-        UpdateProp(treeProp, wizard, mappers);
+        ApplyWizardDataToProp(treeProp, wizard, mappers);
 
         var propGroup = new PropGroup();
         propGroup.Props.Add(treeProp);
@@ -124,7 +109,31 @@ public class TreePropSetup(IFeatureWizardPageResolver featurePageResolver, IProp
         return propGroup;
     }
 
-    private static void UpdateProp(TreeProp treeProp, IPropWizard wizard, IReadOnlyList<IFeatureWizardDataMapper> mappers)
+    private static void PopulateWizardFromProp(TreeProp treeProp, IWizard wizard,
+        IReadOnlyList<IFeatureWizardDataMapper> mappers)
+    {
+        var page = (TreePropWizardPage)wizard.Pages.Single(p => p is TreePropWizardPage);
+        // fill page with current values 
+        page.Name = treeProp.Name;
+        page.Strings = treeProp.Strings;
+        page.NodesPerString = treeProp.NodesPerString;
+        page.LightSize = treeProp.LightSize;
+        page.DegreeOffset = treeProp.DegreeOffset;
+        page.DegreesCoverage = treeProp.DegreesCoverage;
+        page.BaseHeight = treeProp.BaseHeight;
+        page.TopHeight = treeProp.TopHeight;
+        page.TopWidth = treeProp.TopWidth;
+        page.StartLocation = treeProp.StartLocation;
+        page.ZigZag = treeProp.ZigZag;
+        page.ZigZagOffset = treeProp.ZigZagOffset;
+        page.TopRadius = treeProp.TopRadius;
+        page.BottomRadius = treeProp.BottomRadius;
+       
+        //Fill the feature pages
+        foreach (var mapper in mappers) mapper.PopulateFrom(treeProp);
+    }
+
+    private static void ApplyWizardDataToProp(TreeProp treeProp, IPropWizard wizard, IReadOnlyList<IFeatureWizardDataMapper> mappers)
     {
         var page = (TreePropWizardPage)wizard.Pages.Single(p => p is TreePropWizardPage);
         treeProp.Name = page.Name;
