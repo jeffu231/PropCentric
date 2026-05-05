@@ -9,7 +9,6 @@ public sealed class PropDescriptor
     public required string Name { get; init; }
     public required string Icon { get; init; } //Use real icon class
     public required Type PropType { get; init; }
-    //public required IPropMetaData Meta { get; init; }
-    public required Type WizardType { get; init; }
+    public required Type SetupType { get; init; }
     public PropFeatureFlags Flags { get; set; } = PropFeatureFlags.None;
 }

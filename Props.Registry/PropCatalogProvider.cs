@@ -24,7 +24,7 @@ public sealed class PropCatalogProvider : IPropCatalogProvider
         Name = d.Name,
         Icon = d.Icon,
         Features = d.Flags,
-        WizardType = d.WizardType,
+        WizardType = d.SetupType,
         PropType = d.PropType
     };
 }

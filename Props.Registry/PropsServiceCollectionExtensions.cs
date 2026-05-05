@@ -48,7 +48,7 @@ public static class PropServiceCollectionExtensions
         foreach (var d in descriptors)
         {
             services.AddTransient(d.PropType);
-            services.AddTransient(d.WizardType);
+            services.AddTransient(d.SetupType);
         }
 
         foreach (var reg in featurePageRegistrations)

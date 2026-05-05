@@ -30,7 +30,7 @@ public static class PropScanner
                         Name = attribute.Name,
                         Icon = attribute.Icon,
                         PropType = type,
-                        WizardType = attribute.WizardType
+                        SetupType = attribute.SetupType
                     });
                     
                 }
@@ -58,9 +58,9 @@ public static class PropScanner
     {
         if (attribute is not PropDescriptorAttribute descriptor)
             throw new Exception("Invalid attribute");
-        if (!typeof(IPropSetup).IsAssignableFrom(descriptor.WizardType))
+        if (!typeof(IPropSetup).IsAssignableFrom(descriptor.SetupType))
         {
-            throw new Exception($"Invalid WizardType in {type.Name}: {descriptor.WizardType?.Name}");
+            throw new Exception($"Invalid WizardType in {type.Name}: {descriptor.SetupType?.Name}");
         }
     }
     

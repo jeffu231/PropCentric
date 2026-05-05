@@ -5,12 +5,18 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Vixen</RootNamespace>
+        <UseWindowsForms>true</UseWindowsForms>
+        <UseWpf>true</UseWpf>
     </PropertyGroup>
 
     <ItemGroup>
       <Reference Include="Vixen.Core">
         <HintPath>..\Vixen.Library\Lib\Vixen.Core.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\WPFCommon\" />
     </ItemGroup>
 
 </Project>
