@@ -47,6 +47,7 @@ namespace Props.Abstractions.Props
 			_createdBy = Environment.UserName;
 			//PropType = propType;			
 			UserDefinedPropComponents = new();
+			AxisRotations = new ObservableCollection<AxisRotationModel>();
 			
 			PropertyChanged += Prop_PropertyChanged;
 		}
