@@ -24,18 +24,42 @@ public sealed class TreeVisualModelFactory : IPropVisualModelFactory<TreeVisualI
 
     private static IReadOnlyList<List<LightPoint>> GeneratePoints(TreeVisualInput input)
     {
-        var points = new List<List<LightPoint>>();
+        const double maxWidth = 0.5;
+        double topRadius    = input.TopRadius    / 100.0 * maxWidth;
+        double bottomRadius = input.BottomRadius / 100.0 * maxWidth;
+        double radiusDelta  = (bottomRadius - topRadius) / input.NodesPerString;
+
+        var points = new List<List<LightPoint>>(input.Strings);
         for (int i = 0; i < input.Strings; i++)
         {
-            points.Add(Enumerable.Range(0, input.NodesPerString)
-                .Select(n => new LightPoint
-                {
-                    Position = new Vector3(0, n * 2, 0),
-                    ElementId = Guid.NewGuid()
-                })
-                .ToList()
-            );
+            double angle = (double)input.DegreesCoverage / input.Strings * i + input.DegreeOffset;
+            points.Add(CreateStrand(input.NodesPerString, angle, bottomRadius, radiusDelta,
+                                    yStart: -0.5, yDelta: 1.0 / input.NodesPerString));
         }
         return points;
+    }
+
+    private static List<LightPoint> CreateStrand(
+        int count, double angle, double startRadius, double radiusDelta,
+        double yStart, double yDelta)
+    {
+        double radians = angle * Math.PI / 180.0;
+        double y      = yStart;
+        double radius = startRadius;
+        var strand = new List<LightPoint>(count);
+
+        for (int p = 0; p < count; p++)
+        {
+            strand.Add(new LightPoint
+            {
+                Position  = new Vector3((float)(Math.Cos(radians) * radius),
+                                        (float)y,
+                                        (float)(Math.Sin(radians) * radius)),
+                ElementId = Guid.NewGuid()
+            });
+            radius -= radiusDelta;
+            y      += yDelta;
+        }
+        return strand;
     }
 }
