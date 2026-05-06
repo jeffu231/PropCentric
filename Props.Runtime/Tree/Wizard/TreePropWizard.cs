@@ -15,7 +15,7 @@ public class TreePropWizard : PropWizardBase
     private const string HelpUrl =
         "https://www.vixenlights.com/docs/usage/preview/smart-objects/preview-mega-tree/";
     
-    public TreePropWizard(ITypeFactory typeFactory, IMessageService messageService) : base(typeFactory)
+    public TreePropWizard(ITypeFactory typeFactory, IMessageService messageService, TreePropWizardPage page) : base(typeFactory)
     {
         ArgumentNullException.ThrowIfNull(messageService);
 
@@ -24,8 +24,7 @@ public class TreePropWizard : PropWizardBase
         Title = $"Tree Prop";
         ShowInTaskbar = true;
 
-        // Set up the Wizard pages
-        this.AddPage<TreePropWizardPage>();
+        this.AddPage(page);
     }
     
     #region IWizard

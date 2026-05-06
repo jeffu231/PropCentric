@@ -1,146 +1,119 @@
-﻿using Catel.Data;
+using System.ComponentModel;
 using Orc.Wizard;
 using Props.Abstractions.Props;
+using Props.Abstractions.Visuals;
+using Props.Runtime.Tree.Setup;
 using Props.Runtime.Wizards.Pages;
 
 namespace Props.Runtime.Tree.Wizard.Pages
 {
-	/// <summary>
-	/// Maintains a tree wizard page.
-	/// </summary>
+    /// <summary>
+    /// Maintains a tree wizard page. Properties delegate to the shared draft so the
+    /// preview coordinator always reads current values without a separate sync step.
+    /// </summary>
     public class TreePropWizardPage : LightPropWizardPage
     {
-		#region Constructor
+        private readonly TreePropDraft _draft;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public TreePropWizardPage()
+        #region Constructor
+
+        public TreePropWizardPage(TreePropDraft draft, IWizardPreviewCoordinator<TreePropDraft> coordinator)
         {
+            _draft = draft;
+            Coordinator = coordinator;
+
             Title = "Basic Attributes";
-            Description = $"Enter attributes for Tree";
+            Description = "Enter attributes for Tree";
 
-            // Generic parameters, but should be sourced from a Tree Prop on init.
-            Name = "Tree 1";
-            Strings = 16;
-            NodesPerString = 50;
-            DegreesCoverage = 360;
-            LightSize = 2;
-            TopRadius = 10;
-            BottomRadius = 100;			
-		}
-
-		#endregion
-		
-        #region Strings property
-
-        /// <summary>
-        /// Gets or sets the Strings value.
-        /// </summary>
-        public int Strings
-        {
-            get { return GetValue<int>(NodeCountProperty); }
-            set { SetValue(NodeCountProperty, value); }
+            // Keep parent-class Catel-stored properties (Name, LightSize) in sync with the draft.
+            PropertyChanged += OnParentPropertyChanged;
         }
-        public static readonly IPropertyData NodeCountProperty = RegisterProperty<int>(nameof(Strings));
 
         #endregion
 
-        #region NodesPerString property
+        #region Properties
 
-        /// <summary>
-        /// Gets or sets the NodesPerString value.
-        /// </summary>
+        public IWizardPreviewCoordinator<TreePropDraft> Coordinator { get; }
+
+        public TreePropDraft Draft => _draft;
+
+        public int Strings
+        {
+            get => _draft.Strings;
+            set { _draft.Strings = value; RaisePropertyChanged(nameof(Strings)); }
+        }
+
         public int NodesPerString
         {
-            get { return GetValue<int>(NodesPerStringProperty); }
-            set { SetValue(NodesPerStringProperty, value); }
+            get => _draft.NodesPerString;
+            set { _draft.NodesPerString = value; RaisePropertyChanged(nameof(NodesPerString)); }
         }
 
-        /// <summary>
-        /// NodesPerString property data.
-        /// </summary>
-        public static readonly IPropertyData NodesPerStringProperty = RegisterProperty<int>(nameof(NodesPerString));
-
-		#endregion
-
-		#region Public Properties
-
-		public int DegreesCoverage
+        public int DegreesCoverage
         {
-            get { return GetValue<int>(DegreesCoverageProperty); }
-            set { SetValue(DegreesCoverageProperty, value); }
+            get => _draft.DegreesCoverage;
+            set { _draft.DegreesCoverage = value; RaisePropertyChanged(nameof(DegreesCoverage)); }
         }
-        public static readonly IPropertyData DegreesCoverageProperty = RegisterProperty<int>(nameof(DegreesCoverage));
 
         public int DegreeOffset
         {
-            get { return GetValue<int>(DegreeOffsetProperty); }
-            set { SetValue(DegreeOffsetProperty, value); }
+            get => _draft.DegreeOffset;
+            set { _draft.DegreeOffset = value; RaisePropertyChanged(nameof(DegreeOffset)); }
         }
-        public static readonly IPropertyData DegreeOffsetProperty = RegisterProperty<int>(nameof(DegreeOffset));
 
         public int BaseHeight
         {
-            get { return GetValue<int>(BaseHeightProperty); }
-            set { SetValue(BaseHeightProperty, value); }
+            get => _draft.BaseHeight;
+            set { _draft.BaseHeight = value; RaisePropertyChanged(nameof(BaseHeight)); }
         }
-        public static readonly IPropertyData BaseHeightProperty = RegisterProperty<int>(nameof(BaseHeight));
 
         public int TopHeight
         {
-            get { return GetValue<int>(TopHeightProperty); }
-            set { SetValue(TopHeightProperty, value); }
+            get => _draft.TopHeight;
+            set { _draft.TopHeight = value; RaisePropertyChanged(nameof(TopHeight)); }
         }
-        public static readonly IPropertyData TopHeightProperty = RegisterProperty<int>(nameof(TopHeight));
 
         public int TopWidth
         {
-            get { return GetValue<int>(TopWidthProperty); }
-            set { SetValue(TopWidthProperty, value); }
+            get => _draft.TopWidth;
+            set { _draft.TopWidth = value; RaisePropertyChanged(nameof(TopWidth)); }
         }
-        public static readonly IPropertyData TopWidthProperty = RegisterProperty<int>(nameof(TopWidth));
 
         public StartLocation StartLocation
         {
-            get { return GetValue<StartLocation>(StartLocationProperty); }
-            set { SetValue(StartLocationProperty, value); }
+            get => _draft.StartLocation;
+            set { _draft.StartLocation = value; RaisePropertyChanged(nameof(StartLocation)); }
         }
-        public static readonly IPropertyData StartLocationProperty = RegisterProperty<StartLocation>(nameof(StartLocation));
 
         public bool ZigZag
         {
-            get { return GetValue<bool>(ZigZagProperty); }
-            set { SetValue(ZigZagProperty, value); }
+            get => _draft.ZigZag;
+            set { _draft.ZigZag = value; RaisePropertyChanged(nameof(ZigZag)); }
         }
-        public static readonly IPropertyData ZigZagProperty = RegisterProperty<bool>(nameof(ZigZag));
 
         public int ZigZagOffset
         {
-            get { return GetValue<int>(ZigZagOffsetProperty); }
-            set { SetValue(ZigZagOffsetProperty, value); }
+            get => _draft.ZigZagOffset;
+            set { _draft.ZigZagOffset = value; RaisePropertyChanged(nameof(ZigZagOffset)); }
         }
-        public static readonly IPropertyData ZigZagOffsetProperty = RegisterProperty<int>(nameof(ZigZagOffset));
 
         public float TopRadius
         {
-            get { return GetValue<float>(TopRadiusProperty); }
-            set { SetValue(TopRadiusProperty, value); }
+            get => _draft.TopRadius;
+            set { _draft.TopRadius = value; RaisePropertyChanged(nameof(TopRadius)); }
         }
-        public static readonly IPropertyData TopRadiusProperty = RegisterProperty<float>(nameof(TopRadius));
 
         public float BottomRadius
         {
-            get { return GetValue<float>(BottomRadiusProperty); }
-            set { SetValue(BottomRadiusProperty, value); }
+            get => _draft.BottomRadius;
+            set { _draft.BottomRadius = value; RaisePropertyChanged(nameof(BottomRadius)); }
         }
-        public static readonly IPropertyData BottomRadiusProperty = RegisterProperty<float>(nameof(BottomRadius));
 
-		#endregion
+        #endregion
 
-		#region Public Methods
+        #region Public Methods
 
-		public override ISummaryItem GetSummary()
+        public override ISummaryItem GetSummary()
         {
             return new SummaryItem
             {
@@ -149,7 +122,6 @@ namespace Props.Runtime.Tree.Wizard.Pages
                           $"Name: {Name}\n" +
                           $"Strings: {Strings}\n" +
                           $"Light Size: {LightSize}\n" +
-                         // $"Start Location: {EnumValueTypeConverter.GetDescription(StartLocation)}\n" +
                           $"Nodes Per String: {NodesPerString}\n" +
                           $"Degree Offset: {DegreeOffset}\n" +
                           $"Degrees Coverage: {DegreesCoverage}\n" +
@@ -160,12 +132,24 @@ namespace Props.Runtime.Tree.Wizard.Pages
                           $"ZigZag Offset: {ZigZagOffset}\n" +
                           $"Top Radius: {TopRadius}\n" +
                           $"Bottom Radius: {BottomRadius}\n"
-                         // $"{Rotations[0].Axis} Rotation: {Rotations[0].RotationAngle}\u00B0\n" +
-                         // $"{Rotations[1].Axis} Rotation: {Rotations[1].RotationAngle}\u00B0\n" +
-                         // $"{Rotations[2].Axis} Rotation: {Rotations[2].RotationAngle}\u00B0"
             };
         }
 
-		#endregion	
+        #endregion
+
+        #region Private Methods
+
+        // Keeps parent-class Catel-stored Name and LightSize mirrored to the draft
+        // so the preview coordinator always has current values.
+        private void OnParentPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(Name): _draft.Name = Name; break;
+                case nameof(LightSize): _draft.LightSize = LightSize; break;
+            }
+        }
+
+        #endregion
     }
 }

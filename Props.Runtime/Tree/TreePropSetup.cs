@@ -5,6 +5,7 @@ using Orc.Wizard;
 using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.Setup;
+using Props.Abstractions.Visuals;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Wizard;
 using Props.Runtime.Tree.Wizard.Pages;
@@ -18,7 +19,8 @@ namespace Props.Runtime.Tree;
 public class TreePropSetup(
     IFeatureWizardPageResolver featurePageResolver,
     IPropFactory propFactory,
-    IPropDraftMapper<TreePropDraft, TreeProp> draftMapper) : IPropSetup
+    IPropDraftMapper<TreePropDraft, TreeProp> draftMapper,
+    IWizardPreviewCoordinator<TreePropDraft> previewCoordinator) : IPropSetup
 {
     public async Task<IProp> EditAsync(IProp existing)
     {
@@ -41,13 +43,13 @@ public class TreePropSetup(
 
         var featurePages = featurePageResolver.GetPagesFor(typeof(TreeProp));
         var featureMappers = featurePageResolver.GetMappersFor(featurePages);
-        var treeWizard = CreateTreeWizard(featurePages);
+        var treeWizard = CreateTreeWizard(draft, featurePages);
 
         PopulateWizardFromDraft(draft, treeWizard, treeProp, featureMappers);
 
         bool? result = await ShowWizard(treeWizard);
         if (result.HasValue && result.Value)
-            return BuildPropGroup(treeProp, draft, treeWizard, featureMappers);
+            return BuildPropGroup(treeProp, draft, featureMappers);
 
         return null;
     }
@@ -59,23 +61,21 @@ public class TreePropSetup(
 
         var featurePages = featurePageResolver.GetPagesFor(typeof(TreeProp));
         var featureMappers = featurePageResolver.GetMappersFor(featurePages);
-        var treeWizard = CreateTreeWizard(featurePages);
+        var treeWizard = CreateTreeWizard(draft, featurePages);
 
         PopulateWizardFromDraft(draft, treeWizard, treeProp, featureMappers);
 
         bool? result = await ShowWizard(treeWizard);
         if (result.HasValue && result.Value)
         {
-            ReadWizardIntoDraft(draft, treeWizard);
             draftMapper.ApplyDraft(draft, treeProp);
             foreach (var mapper in featureMappers) mapper.ApplyTo(treeProp);
         }
     }
 
-    private IPropGroup BuildPropGroup(TreeProp treeProp, TreePropDraft draft, IPropWizard wizard,
+    private IPropGroup BuildPropGroup(TreeProp treeProp, TreePropDraft draft,
         IReadOnlyList<IFeatureWizardDataMapper> mappers)
     {
-        ReadWizardIntoDraft(draft, wizard);
         draftMapper.ApplyDraft(draft, treeProp);
         foreach (var mapper in mappers) mapper.ApplyTo(treeProp);
 
@@ -84,48 +84,19 @@ public class TreePropSetup(
         return propGroup;
     }
 
+    // Seeds the two parent-class Catel-stored properties (Name, LightSize) and all feature pages.
+    // Tree-specific properties are read directly from the draft by the page — no explicit seeding needed.
     private static void PopulateWizardFromDraft(TreePropDraft draft, IWizard wizard, TreeProp treeProp,
         IReadOnlyList<IFeatureWizardDataMapper> mappers)
     {
         var page = (TreePropWizardPage)wizard.Pages.Single(p => p is TreePropWizardPage);
         page.Name = draft.Name;
-        page.Strings = draft.Strings;
-        page.NodesPerString = draft.NodesPerString;
         page.LightSize = draft.LightSize;
-        page.DegreeOffset = draft.DegreeOffset;
-        page.DegreesCoverage = draft.DegreesCoverage;
-        page.BaseHeight = draft.BaseHeight;
-        page.TopHeight = draft.TopHeight;
-        page.TopWidth = draft.TopWidth;
-        page.StartLocation = draft.StartLocation;
-        page.ZigZag = draft.ZigZag;
-        page.ZigZagOffset = draft.ZigZagOffset;
-        page.TopRadius = draft.TopRadius;
-        page.BottomRadius = draft.BottomRadius;
 
         foreach (var mapper in mappers) mapper.PopulateFrom(treeProp);
     }
 
-    private static void ReadWizardIntoDraft(TreePropDraft draft, IWizard wizard)
-    {
-        var page = (TreePropWizardPage)wizard.Pages.Single(p => p is TreePropWizardPage);
-        draft.Name = page.Name;
-        draft.Strings = page.Strings;
-        draft.NodesPerString = page.NodesPerString;
-        draft.LightSize = page.LightSize;
-        draft.DegreeOffset = page.DegreeOffset;
-        draft.DegreesCoverage = page.DegreesCoverage;
-        draft.BaseHeight = page.BaseHeight;
-        draft.TopHeight = page.TopHeight;
-        draft.TopWidth = page.TopWidth;
-        draft.StartLocation = page.StartLocation;
-        draft.ZigZag = page.ZigZag;
-        draft.ZigZagOffset = page.ZigZagOffset;
-        draft.TopRadius = page.TopRadius;
-        draft.BottomRadius = page.BottomRadius;
-    }
-
-    private TreePropWizard CreateTreeWizard(IReadOnlyList<IWizardPage> featurePages)
+    private TreePropWizard CreateTreeWizard(TreePropDraft draft, IReadOnlyList<IWizardPage> featurePages)
     {
         IDependencyResolver dependencyResolver = this.GetDependencyResolver();
         IMessageService? ms = dependencyResolver.Resolve<IMessageService>();
@@ -138,7 +109,8 @@ public class TreePropSetup(
 
         baseColorService.SetBaseColorScheme("Dark");
 
-        var wizard = new TreePropWizard(typeFactory, ms);
+        var treePropPage = new TreePropWizardPage(draft, previewCoordinator);
+        var wizard = new TreePropWizard(typeFactory, ms, treePropPage);
 
         foreach (var page in featurePages)
             wizard.AddPage(page);

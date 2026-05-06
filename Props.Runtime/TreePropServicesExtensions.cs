@@ -15,6 +15,7 @@ public static class TreePropServicesExtensions
         services.AddTransient<IVisualInputMapper<TreePropDraft, TreeVisualInput>, TreeDraftToVisualInputMapper>();
         services.AddTransient<IPropVisualModelFactory<TreeVisualInput>, TreeVisualModelFactory>();
         services.AddTransient<IPropDraftMapper<TreePropDraft, TreeProp>, TreePropDraftMapper>();
+        services.AddTransient<IWizardPreviewCoordinator<TreePropDraft>, TreeWizardPreviewCoordinator>();
         return services;
     }
 }

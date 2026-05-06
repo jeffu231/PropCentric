@@ -4,6 +4,7 @@ using Catel.Data;
 using Catel.MVVM;
 using Orc.Wizard;
 using Props.Abstractions.PropVisualModels;
+using Props.Runtime.Utilities;
 using Props.Runtime.ViewModels;
 
 namespace Props.Runtime.Wizards.ViewModels;
@@ -12,8 +13,10 @@ public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPa
         where TWizardPage : class, IWizardPage
         where TPropModel : class, IPropVisualModel, new()
     {
+        private readonly Debouncer _previewDebouncer = new(TimeSpan.FromMilliseconds(150));
+
         #region Constructor
-        
+
 		/// <summary>
         /// Constructor
         /// </summary>
@@ -28,19 +31,27 @@ public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPa
 			//DrawingEngine = new OpenGLPropDrawingEngine(propModels, 1, 100.0f);
 
 			AttachRotationHandlers(Rotations);
+
+            PropertyChanged += (_, _) => _previewDebouncer.Invoke(TriggerPreviewRebuild);
         }
 
         #endregion
 
         #region Protected Properties
-        
+
 		protected TPropModel PropVisualModel
         {
             get { return GetValue<TPropModel>(PropModelProperty); }
             set { SetValue(PropModelProperty, value); }
         }
         private static readonly IPropertyData PropModelProperty = RegisterProperty<TPropModel>(nameof(PropVisualModel));
-        
+
+        /// <summary>
+        /// Set by a concrete ViewModel to supply a fresh IPropVisualModel on each preview rebuild.
+        /// The closure should read the current draft state at call time.
+        /// </summary>
+        protected Func<IPropVisualModel>? PreviewBuilder { get; set; }
+
 		#endregion
 
         #region Public Properties
@@ -217,4 +228,16 @@ public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPa
         }
 
 		#endregion
+
+        #region Private Methods
+
+        private void TriggerPreviewRebuild()
+        {
+            if (PreviewBuilder is null) return;
+            var model = PreviewBuilder();
+            if (model is TPropModel typed)
+                PropVisualModel = typed;
+        }
+
+        #endregion
 	}
