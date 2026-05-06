@@ -219,7 +219,7 @@ public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights
     protected override Task GenerateElementsAsync()
     {
 	    //TODO pass this off to a common adapter or service that is outside this POC scope.
-	    throw new NotImplementedException();
+	    return Task.CompletedTask;
     }
 
     protected override IPropVisualModel BuildVisualModel()

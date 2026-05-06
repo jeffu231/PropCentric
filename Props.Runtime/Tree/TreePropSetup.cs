@@ -49,7 +49,7 @@ public class TreePropSetup(
 
         bool? result = await ShowWizard(treeWizard);
         if (result.HasValue && result.Value)
-            return BuildPropGroup(treeProp, draft, featureMappers);
+            return await BuildPropGroupAsync(treeProp, draft, featureMappers);
 
         return null;
     }
@@ -70,14 +70,16 @@ public class TreePropSetup(
         {
             draftMapper.ApplyDraft(draft, treeProp);
             foreach (var mapper in featureMappers) mapper.ApplyTo(treeProp);
+            await treeProp.CommitAsync();
         }
     }
 
-    private IPropGroup BuildPropGroup(TreeProp treeProp, TreePropDraft draft,
+    private async Task<IPropGroup> BuildPropGroupAsync(TreeProp treeProp, TreePropDraft draft,
         IReadOnlyList<IFeatureWizardDataMapper> mappers)
     {
         draftMapper.ApplyDraft(draft, treeProp);
         foreach (var mapper in mappers) mapper.ApplyTo(treeProp);
+        await treeProp.CommitAsync();
 
         var propGroup = new PropGroup();
         propGroup.Props.Add(treeProp);

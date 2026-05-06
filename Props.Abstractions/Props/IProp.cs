@@ -68,6 +68,12 @@ public interface IProp: ITargetNodeProvider, INotifyPropertyChanged
     ObservableCollection<IPropComponent> UserDefinedPropComponents { get; }
 
     /// <summary>
+    /// Called by setup orchestrators after all draft and feature data has been applied.
+    /// Light props use this to trigger element-node generation; non-light props return CompletedTask.
+    /// </summary>
+    Task CommitAsync();
+
+    /// <summary>
     /// Should be called when the IProp is being removed so it can clean up any related items
     /// </summary>
     void CleanUp();

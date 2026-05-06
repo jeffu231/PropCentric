@@ -260,6 +260,8 @@ namespace Props.Abstractions.Props
 
 		public abstract string GetSummary();
 
+		public virtual Task CommitAsync() => Task.CompletedTask;
+
 		public virtual void CleanUp()
 		{
 			RemovePropElementNode();

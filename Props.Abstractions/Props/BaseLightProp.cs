@@ -121,6 +121,8 @@ namespace Props.Abstractions.Props
 
 		#region Protected Methods
 
+		public override Task CommitAsync() => GenerateElementsAsync();
+
 		protected override void Prop_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName != null)

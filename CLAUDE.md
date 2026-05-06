@@ -52,7 +52,7 @@ Each feature interface is decorated with `[PropFeature(flag)]`. `PropFeatureInfe
 1. Create a class decorated with `[PropDescriptor(id, name, wizardType, icon)]`
 2. Implement `IProp` (via the `Prop` base class) plus any feature interfaces (`IHasLights`, `IHasDimming`, etc.)
 3. Implement `IPropSetup` for the wizard flow
-4. Optionally implement `IPropVisualModelBuilder` for 3D geometry (uses `System.Numerics.Vector3`)
+4. Follow the three-layer visual model pattern (see below) for geometry and live wizard preview
 5. The plugin scanner picks it up automatically at runtime — no manual registration needed
 
 ### Adding a Feature Wizard Page
@@ -72,6 +72,48 @@ Feature wizard pages let any prop that implements a given feature interface auto
 - `IFeatureWizardPageResolver.GetPagesFor(Type propType)` — returns instantiated feature wizard pages for all features the prop implements, ordered by priority
 - `IFeatureWizardPageResolver.GetMappersFor(IReadOnlyList<IWizardPage> pages)` — returns instantiated `IFeatureWizardDataMapper` instances paired to the given pages; call `PopulateFrom(prop)` before showing the wizard and `ApplyTo(prop)` after
 
+### Three-Layer Visual Model Pattern
+
+Every prop's geometry pipeline uses three layers so the wizard preview, the runtime prop, and the geometry algorithm stay fully decoupled:
+
+```
+Draft / Prop  ──►  VisualInput (record)  ──►  VisualFactory  ──►  IPropVisualModel
+```
+
+**Layer 1 — Draft (`IPropDraft`)**: wizard-owned POCO holding only the user-entered fields. Excludes feature state (Brightness, Gamma — those stay in feature wizard pages). `TreePropDraft` is the canonical example.
+
+**Layer 2 — Visual Input**: a `sealed record` (e.g., `TreeVisualInput`) whose positional parameters are exactly the fields that affect geometry. Using a `record` gives free structural equality; `IWizardPreviewCoordinator` caches the last input and skips factory calls when nothing changed.
+
+**Layer 3 — Visual Factory (`IPropVisualModelFactory<TVisualInput>`)**: a pure function that owns the geometry algorithm and produces a fresh `IPropVisualModel` from an input record. The factory is the single owner of the geometry logic — it lives here and nowhere else.
+
+**Two input mappers** project onto the same record:
+- `IVisualInputMapper<TDraft, TVisualInput>` — used by the wizard preview coordinator
+- `IVisualInputMapper<TProp, TVisualInput>` — used by the prop's `BuildVisualModel()` at runtime
+
+**Draft mapper (`IPropDraftMapper<TDraft, TProp>`)**: `PopulateDraft(draft, prop)` copies prop → draft before the wizard opens; `ApplyDraft(draft, prop)` copies draft → prop after the user confirms. The mapper is a pure field copier — no side effects.
+
+**Element-node generation**: After `ApplyDraft` and all `mapper.ApplyTo(prop)` calls, the setup orchestrator calls `await prop.CommitAsync()`. `IProp.CommitAsync()` is a lifecycle hook — `BaseProp` returns `Task.CompletedTask`; `BaseLightProp` overrides it to call the protected `GenerateElementsAsync()`. Element nodes are built once at commit time, never during wizard editing.
+
+**Wizard preview wiring**:
+1. `IPropSetup` creates the draft, constructs `TreePropWizardPage(draft, coordinator)`, and passes the page to the wizard
+2. Page properties forward directly to draft fields (`get => _draft.X; set { _draft.X = value; RaisePropertyChanged(...); }`)
+3. Parent-class Catel properties (`Name`, `LightSize`) sync to the draft via a `PropertyChanged` subscription on the page
+4. `GraphicsWizardPageViewModelBase` debounces all `PropertyChanged` events (150 ms) and calls `TriggerPreviewRebuild()`
+5. The concrete ViewModel sets `PreviewBuilder` — a closure that syncs rotation state to the draft then calls `coordinator.BuildPreview(draft)`
+6. `IWizardPreviewCoordinator` maps draft → `TVisualInput`, skips factory if unchanged, otherwise calls the factory and caches the result
+7. `InitializeAsync` calls `TriggerPreviewRebuild()` so the preview is populated when the wizard first opens
+
+**DI registration per prop** (add to your `*ServicesExtensions.cs`):
+```csharp
+services.AddTransient<IVisualInputMapper<TProp, TVisualInput>, TPropToVisualInputMapper>();
+services.AddTransient<IVisualInputMapper<TDraft, TVisualInput>, TDraftToVisualInputMapper>();
+services.AddTransient<IPropVisualModelFactory<TVisualInput>, TVisualModelFactory>();
+services.AddTransient<IPropDraftMapper<TDraft, TProp>, TPropDraftMapper>();
+services.AddTransient<IWizardPreviewCoordinator<TDraft>, TWizardPreviewCoordinator>();
+```
+
+**Drawing engine (`IPropDrawingEngine`)**: defined in `Props.Abstractions.Drawing`. Accepts `IReadOnlyList<IPropVisualModel>` via `SetModels`. The wizard passes a single-element list; the world view passes all active models. The OpenTK/WPF implementation is deferred until the wizard preview control is connected.
+
 ### Key Patterns
 
 - **Plugin architecture:** dynamic assembly loading + `[PropDescriptor]` attribute scanning; load failures captured in `AssemblyLoadResult` (registered as singleton)
@@ -79,4 +121,4 @@ Feature wizard pages let any prop that implements a given feature interface auto
 - **Catalog vs factory separation:** `IPropCatalogProvider` owns discovery; `IPropFactory` and `IWizardFactory` own creation
 - **DI-backed factories:** `IServiceProvider` used for all runtime instantiation
 - **Feature wizard pages:** `[FeatureWizardPage(featureInterface, mapperType)]` marks a pure-UI page; its companion `IFeatureWizardDataMapper` owns all prop casting and data conversion. Pages are created via MEDI transient registration; mappers via `ActivatorUtilities` with the page as a constructor argument. Reflection runs once at startup (`FeatureWizardPageScanner`); `IPropSetup` classes call `GetPagesFor` / `GetMappersFor` with no runtime reflection.
-- **Visual builder:** `IPropVisualModelBuilder.Build()` → `IVisualElement` hierarchy (`PointCloud`, `LineSegment`, `Mesh`)
+- **Visual model:** see Three-Layer Visual Model Pattern above
