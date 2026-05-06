@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
-using System.Numerics;
 using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.PropVisualModels;
+using Props.Abstractions.Visuals;
+using Props.Runtime.Tree.Visuals;
 using Vixen.Common.WPFCommon.Converters;
 using Vixen.Controls.Theme;
 
@@ -12,11 +13,17 @@ namespace Props.Runtime.Tree;
 [PropDescriptor("BCD3FB69-4827-49EE-B877-BD2AE14E792D", "Tree", typeof(TreePropSetup))]
 public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights
 {
-    
+    private readonly IVisualInputMapper<TreeProp, TreeVisualInput> _inputMapper;
+    private readonly IPropVisualModelFactory<TreeVisualInput> _factory;
+
     #region Constructors
 
-    public TreeProp() : base("Tree 1")
+    public TreeProp(
+        IVisualInputMapper<TreeProp, TreeVisualInput> inputMapper,
+        IPropVisualModelFactory<TreeVisualInput> factory) : base("Tree 1")
     {
+        _inputMapper = inputMapper;
+        _factory = factory;
 	    //Sensible defaults
 	    ZigZagOffset = 50;
 	    StartLocation = StartLocation.BottomLeft;
@@ -215,20 +222,10 @@ public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights
 	    throw new NotImplementedException();
     }
 
-   protected override IPropVisualModel BuildVisualModel()
+    protected override IPropVisualModel BuildVisualModel()
     {
-	    Console.WriteLine("Building Visual");
-        var points = GenerateVisual();
-        List<LightPointCloud> cloudPoints = new List<LightPointCloud>();
-        foreach (var point in points)
-        {
-	        cloudPoints.Add(new LightPointCloud { Points = point, PointSize = LightSize });
-        }
-        return new TreePropVisualModel
-        {
-            ReferencePoint = points[0][0].Position,
-            Elements = cloudPoints
-        };
+        var input = _inputMapper.Map(this);
+        return _factory.Create(input);
     }
 
     public override string GetSummary()
@@ -272,21 +269,4 @@ public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights
 	    return summary;
     }
 
-    private IReadOnlyList<List<LightPoint>> GenerateVisual()
-    {
-	    List<List<LightPoint>> points = new List<List<LightPoint>>();
-	    for (int i = 0; i < Strings; i++)
-	    {
-		    points.Add(Enumerable.Range(0, NodesPerString)
-			    .Select(i => new LightPoint
-			    {
-				    Position = new Vector3(0, i * 2, 0),
-				    ElementId = Guid.NewGuid()
-			    })
-			    .ToList()
-		    );
-	    }
-
-	    return points;
-    }
 }
