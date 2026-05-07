@@ -4,12 +4,13 @@ using Catel.Data;
 using Catel.MVVM;
 using Orc.Wizard;
 using Props.Abstractions.PropVisualModels;
+using Props.OpenGlCommon;
 using Props.Runtime.Utilities;
 using Props.Runtime.ViewModels;
 
 namespace Props.Runtime.Wizards.ViewModels;
 
-public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPageViewModelBase<TWizardPage>
+public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPageViewModelBase<TWizardPage>, IPropWizardPageViewModel
         where TWizardPage : class, IWizardPage
         where TPropModel : class, IPropVisualModel, new()
     {
@@ -24,11 +25,9 @@ public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPa
         protected GraphicsWizardPageViewModelBase(TWizardPage wizardPage) : base(wizardPage)
         {
             PropVisualModel = new TPropModel();
-            List<IPropVisualModel> propModels = new List<IPropVisualModel>();
-            propModels.Add(PropVisualModel);
 
-			// Create the prop drawing engine
-			//DrawingEngine = new OpenGLPropDrawingEngine(propModels, 1, 100.0f);
+			DrawingEngine = new OpenGLPropDrawingEngine();
+			DrawingEngine.SetModels([PropVisualModel]);
 
 			AttachRotationHandlers(Rotations);
 
@@ -91,7 +90,10 @@ public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPa
 		/// <summary>
 		/// OpenGL prop drawing engine.
 		/// </summary>
-		//public OpenGLPropDrawingEngine DrawingEngine { get; set; } = new OpenGLPropDrawingEngine(new List<IPropVisualModel>(), 1, 100f);
+		public OpenGLPropDrawingEngine DrawingEngine { get; }
+
+		/// <inheritdoc />
+		public bool IsDrawingEngineInitialized => DrawingEngine.IsInitialized;
 
 		#endregion
 
@@ -239,7 +241,10 @@ public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPa
             if (PreviewBuilder is null) return;
             var model = PreviewBuilder();
             if (model is TPropModel typed)
+            {
                 PropVisualModel = typed;
+                DrawingEngine.SetModels([PropVisualModel]);
+            }
         }
 
         #endregion

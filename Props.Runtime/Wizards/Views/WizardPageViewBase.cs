@@ -1,9 +1,6 @@
-﻿using System.Windows;
-using System.Windows.Forms;
+using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 
-using OpenTK.Graphics.OpenGL;
 using OpenTK.Wpf;
 using Props.Runtime.Wizards.ViewModels;
 
@@ -64,10 +61,10 @@ namespace Props.Runtime.Wizards.Views
 				throw new InvalidOperationException(nameof(OpenTkCntrl) + " is null!");
 			}
 
-			// Sets up the OpenGL context and prepares the control to render OpenGL content 
+			// Sets up the OpenGL context and prepares the control to render OpenGL content
 			OpenTkCntrl.Start(settings);
 		}
-		
+
 		/// <summary>re
 		/// User control loaded event, used to initialize the drawing engine and camera.
 		/// </summary>
@@ -75,16 +72,7 @@ namespace Props.Runtime.Wizards.Views
 		/// <param name="e"><Event arguments/param>
 		protected void PropWizardPageView_Loaded(object sender, System.Windows.RoutedEventArgs e)
 		{
-			// Initialize the camera to the origin
-			// float cameraX = 0.0f;
-			// float cameraY = 0.0f;
-			// float cameraZ = 0.0f;
-
-			// Initialize the drawing engine with the camera position and size of the drawing area
-			// GetViewModel().DrawingEngine.Initialize(
-			// 	cameraX,
-			// 	cameraY,
-			// 	cameraZ);
+			// GL context is not current here; initialization deferred to first render frame.
 		}
 
 		/// <summary>
@@ -104,10 +92,26 @@ namespace Props.Runtime.Wizards.Views
 		/// <param name="delta">Time between render calls</param>
 		protected void OpenTkControl_OnRender(TimeSpan delta)
 		{
-			// Have the drawing engine refresh the frame
-			//GetViewModel().DrawingEngine.RenderPreview();			
+			if (DataContext is not IPropWizardPageViewModel vm)
+				return;
+
+			if (OpenTkCntrl is not null)
+			{
+				int w = (int)OpenTkCntrl.ActualWidth;
+				int h = (int)OpenTkCntrl.ActualHeight;
+				if (w > 0 && h > 0 &&
+					(vm.DrawingEngine.OpenTkControl_Width != w || vm.DrawingEngine.OpenTkControl_Height != h))
+				{
+					vm.DrawingEngine.OpenTKDrawingAreaChanged(w, h);
+				}
+			}
+
+			if (!vm.IsDrawingEngineInitialized)
+				vm.DrawingEngine.Initialize(0f, 0f, 0f);
+
+			vm.DrawingEngine.Render();
 		}
-		
+
 		/// <summary>
 		/// Event when the OpenTK control changes sizes.
 		/// </summary>
@@ -115,21 +119,10 @@ namespace Props.Runtime.Wizards.Views
 		/// <param name="e">Event arguments</param>
 		protected void OpenTkControl_SizeChanged(object sender, SizeChangedEventArgs e)
 		{
-			// Forward the call to the drawing engine
-			// GetViewModel().DrawingEngine.OpenTKDrawingAreaChanged(e.NewSize.Width, e.NewSize.Height);
-			//
-			// if (OpenTkCntrl is null)
-			// {
-			// 	throw new InvalidOperationException(nameof(OpenTkCntrl) + " is null!");
-			// }
-			//
-			// var dpiScale = VisualTreeHelper.GetDpi(OpenTkCntrl);
-			// int pixelWidth = (int)(OpenTkCntrl.ActualWidth * dpiScale.DpiScaleX);
-			// int pixelHeight = (int)(OpenTkCntrl.ActualHeight * dpiScale.DpiScaleY);
-			//
-			// GL.Viewport(0, 0, pixelWidth, pixelHeight);			
+			if (DataContext is IPropWizardPageViewModel vm)
+				vm.DrawingEngine.OpenTKDrawingAreaChanged(e.NewSize.Width, e.NewSize.Height);
 		}
-		
+
 		/// <summary>
 		/// Event when the Mouse wheel is moved over the OpenTK control.
 		/// </summary>
@@ -153,7 +146,7 @@ namespace Props.Runtime.Wizards.Views
 			// }
 			//
 			// // This should trigger the control to redraw
-			// OpenTkCntrl.InvalidateVisual();			
+			// OpenTkCntrl.InvalidateVisual();
 		}
 
 		/// <summary>
@@ -192,10 +185,10 @@ namespace Props.Runtime.Wizards.Views
 			// If the mouse has not moved significantly then exit
 			if (eX == _prevMousePositionX && eY == _prevMousePositionY) return;
 
-			// If the Left mouse button is down then...			
+			// If the Left mouse button is down then...
 			if (_mouseDown && e.LeftButton == MouseButtonState.Pressed)
 			{
-				// Move the view camera 
+				// Move the view camera
 				// GetViewModel().DrawingEngine.MoveCamera(_prevMousePositionX, _prevMousePositionY, eX, eY);
 				//
 				// // Save off the mouse position
@@ -223,7 +216,7 @@ namespace Props.Runtime.Wizards.Views
 			Cursor = System.Windows.Input.Cursors.Arrow;
 
 			// Set flag to remember that the mouse button is no longer being pressed
-			_mouseDown = false;			
+			_mouseDown = false;
 		}
 
 		/// <summary>

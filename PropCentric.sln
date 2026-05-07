@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{C4191101-1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vixen.Library", "Vixen.Library\Vixen.Library.csproj", "{6D4E24ED-0E99-42D2-90BB-2D034BBE1419}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Props.OpenGlCommon", "Props.OpenGlCommon\Props.OpenGlCommon.csproj", "{C56C5F03-92D5-4DEE-9A0A-023A9DD5F9D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,5 +58,9 @@ Global
 		{6D4E24ED-0E99-42D2-90BB-2D034BBE1419}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D4E24ED-0E99-42D2-90BB-2D034BBE1419}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D4E24ED-0E99-42D2-90BB-2D034BBE1419}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C56C5F03-92D5-4DEE-9A0A-023A9DD5F9D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C56C5F03-92D5-4DEE-9A0A-023A9DD5F9D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C56C5F03-92D5-4DEE-9A0A-023A9DD5F9D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C56C5F03-92D5-4DEE-9A0A-023A9DD5F9D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

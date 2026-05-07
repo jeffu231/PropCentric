@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using GlPixelFormat = OpenTK.Graphics.OpenGL.PixelFormat;
 
 namespace Props.OpenGlCommon.Constructs.Shaders
 {
@@ -92,7 +94,7 @@ namespace Props.OpenGlCommon.Constructs.Shaders
 			GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1); // set pixel alignment
 			GL.BindTexture(TextureTarget, TextureID);     // bind the texture to memory in OpenGL
 			
-			GL.TexImage2D(TextureTarget, 0, PixelInternalFormat.Rgba8, BitmapImage.Width, BitmapImage.Height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, bitmapData.Scan0);
+			GL.TexImage2D(TextureTarget, 0, PixelInternalFormat.Rgba8, BitmapImage.Width, BitmapImage.Height, 0, GlPixelFormat.Bgra, PixelType.UnsignedByte, bitmapData.Scan0);
 			GL.TexParameter(TextureTarget, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
 			GL.TexParameter(TextureTarget, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
 			GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
@@ -200,7 +202,7 @@ namespace Props.OpenGlCommon.Constructs.Shaders
 							PixelType pixelType = imageData.PixelFormat.RGBBitCount == 16 ? PixelType.UnsignedShort4444Reversed : PixelType.UnsignedInt8888Reversed;
 
 							nSize = nWidth * nHeight * imageData.PixelFormat.RGBBitCount / 8;
-							GL.TexImage2D(TextureTarget, i, pixelFormat, nWidth, nHeight, 0, PixelFormat.Bgra, pixelType, (IntPtr)(pinned.AddrOfPinnedObject().ToInt64() + nOffset));
+							GL.TexImage2D(TextureTarget, i, pixelFormat, nWidth, nHeight, 0, GlPixelFormat.Bgra, pixelType, (IntPtr)(pinned.AddrOfPinnedObject().ToInt64() + nOffset));
 						}
 
 						nOffset += nSize;

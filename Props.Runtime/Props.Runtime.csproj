@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Props.Abstractions\Props.Abstractions.csproj" />
+      <ProjectReference Include="..\Props.OpenGlCommon\Props.OpenGlCommon.csproj" />
       <ProjectReference Include="..\Props.WPFCommon\Props.WPFCommon.csproj" />
     </ItemGroup>
 
