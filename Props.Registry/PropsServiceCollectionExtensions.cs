@@ -6,8 +6,26 @@ using Props.Abstractions.Setup;
 
 namespace Props.Registry;
 
+/// <summary>
+/// Provides the <see cref="AddPropSystem"/> extension method for bootstrapping the prop plugin system
+/// into an <see cref="IServiceCollection"/>.
+/// </summary>
 public static class PropServiceCollectionExtensions
 {
+    /// <summary>
+    /// Scans the plugin directory, discovers all prop and feature wizard page types, and registers
+    /// the prop system services into the DI container.
+    /// </summary>
+    /// <param name="services">The service collection to configure.</param>
+    /// <param name="pluginDirectory">The path to the directory containing plugin DLLs.</param>
+    /// <param name="throwOnAssemblyLoadFailure">
+    /// <see langword="true"/> to throw if any plugin assembly fails to load;
+    /// <see langword="false"/> to silently capture failures in <see cref="AssemblyLoadResult"/>. The default is <see langword="false"/>.
+    /// </param>
+    /// <returns>The same <see cref="IServiceCollection"/> instance, for chaining.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// <paramref name="throwOnAssemblyLoadFailure"/> is <see langword="true"/> and at least one plugin assembly could not be loaded.
+    /// </exception>
     public static IServiceCollection AddPropSystem(
         this IServiceCollection services,
         string pluginDirectory,

@@ -2,15 +2,21 @@
 
 namespace Vixen.Sys.Props
 {
-	public enum StringTypes
-	{
-		[Description("All Lights are a single color")] 
-		SingleColor,
+    /// <summary>
+    /// Specifies the color wiring mode of the light strings on a prop.
+    /// </summary>
+    public enum StringTypes
+    {
+        /// <summary>All lights share a single fixed color.</summary>
+        [Description("All Lights are a single color")]
+        SingleColor,
 
-		[Description("Multiple Independent Color Strings")]
-		MultiColor,
+        /// <summary>Each string carries an independent color signal.</summary>
+        [Description("Multiple Independent Color Strings")]
+        MultiColor,
 
-		[Description("Full RGB color mixing")]
-		ColorMixingRGB
-	}
+        /// <summary>Lights support full per-pixel RGB color mixing.</summary>
+        [Description("Full RGB color mixing")]
+        ColorMixingRGB
+    }
 }

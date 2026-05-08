@@ -5,6 +5,9 @@ using Props.Runtime.Wizards.Mappers;
 
 namespace Props.Runtime.Wizards.Pages;
 
+/// <summary>
+/// Wizard page that captures brightness and gamma settings for props that implement <see cref="IHasDimming"/>.
+/// </summary>
 [FeatureWizardPage(typeof(IHasDimming), mapperType: typeof(DimmingWizardDataMapper), priority: 100)]
 public class DimmingWizardPage : WizardPageBase
 {
@@ -21,6 +24,7 @@ public class DimmingWizardPage : WizardPageBase
     #endregion
 
     #region Public Properties
+    /// <summary>Gets or sets the maximum brightness level as an integer percentage (0–100).</summary>
     public int Brightness
     {
         get => GetValue<int>(BrightnessProperty);
@@ -28,6 +32,7 @@ public class DimmingWizardPage : WizardPageBase
     }
     private static readonly IPropertyData BrightnessProperty = RegisterProperty<int>(nameof(Brightness));
 
+    /// <summary>Gets or sets the gamma correction factor applied to the light output.</summary>
     public double Gamma
     {
         get => GetValue<double>(GammaProperty);

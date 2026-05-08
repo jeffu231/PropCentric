@@ -3,8 +3,19 @@ using Props.Abstractions.Features;
 
 namespace Props.Registry;
 
+/// <summary>
+/// Scans assemblies for classes decorated with <see cref="FeatureWizardPageAttribute"/> and returns
+/// their registration descriptors.
+/// </summary>
+/// <remarks>Reflection runs once at startup; no runtime scanning occurs after initialization.</remarks>
 public static class FeatureWizardPageScanner
 {
+    /// <summary>Scans the provided assemblies and returns a descriptor for each discovered feature wizard page.</summary>
+    /// <param name="assemblies">The assemblies to scan. Only assemblies whose names start with <c>"Props"</c> are inspected.</param>
+    /// <returns>A read-only list of <see cref="FeatureWizardPageDescriptor"/> records for all discovered pages.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// The <see cref="FeatureWizardPageAttribute.FeatureInterface"/> on a decorated class is not an interface type.
+    /// </exception>
     public static IReadOnlyList<FeatureWizardPageDescriptor> Scan(IEnumerable<Assembly> assemblies)
     {
         var results = new List<FeatureWizardPageDescriptor>();

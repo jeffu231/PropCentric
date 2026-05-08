@@ -15,6 +15,8 @@ namespace Props.Abstractions.Props.Components
 		/// </value>
 		Guid Id { get; }
 		
+		/// <summary>Gets the unique identifier of the prop that owns this component.</summary>
+		/// <value>The <see cref="Guid"/> of the owning prop.</value>
 		Guid OwnerId { get; }
 		
 		/// <summary>

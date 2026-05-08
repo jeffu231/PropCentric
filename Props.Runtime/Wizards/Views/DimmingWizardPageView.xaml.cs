@@ -4,8 +4,12 @@ using Props.Runtime.Wizards.ViewModels;
 
 namespace Props.Runtime.Wizards.Views
 {
+	/// <summary>
+	/// Code-behind for the dimming wizard page view.
+	/// </summary>
 	public partial class DimmingWizardPageView : INotifyPropertyChanged
 	{
+		/// <summary>Initializes a new instance of the <see cref="DimmingWizardPageView"/> class.</summary>
 		public DimmingWizardPageView()
 		{
 			InitializeComponent();

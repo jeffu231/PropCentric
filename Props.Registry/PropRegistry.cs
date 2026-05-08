@@ -3,6 +3,10 @@ using Props.Abstractions.Props;
 
 namespace Props.Registry;
 
+/// <summary>
+/// Stores and indexes all registered <see cref="PropDescriptor"/> entries, enabling lookup by ID,
+/// type, and feature flag.
+/// </summary>
 public class PropRegistry : IPropRegistry
 {
     private readonly Dictionary<Guid, PropDescriptor> _byId = new();
@@ -10,6 +14,9 @@ public class PropRegistry : IPropRegistry
     private readonly Dictionary<PropFeatureFlags, HashSet<Guid>> _featureIndex = new();
     private readonly PropFeatureInferrer _featureInferrer;
 
+    /// <summary>Initializes a new instance of the <see cref="PropRegistry"/> class.</summary>
+    /// <param name="descriptors">The descriptors produced by <see cref="PropScanner.Scan"/>.</param>
+    /// <param name="featureInferrer">The inferrer used to compute feature flags for each descriptor.</param>
     public PropRegistry(IReadOnlyList<PropDescriptor> descriptors, PropFeatureInferrer featureInferrer)
     {
         _featureInferrer = featureInferrer;

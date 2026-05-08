@@ -3,6 +3,9 @@ using Props.Abstractions.Props;
 
 namespace Props.Registry;
 
+/// <summary>
+/// Resolves feature flags for a prop instance by looking up its descriptor in the registry.
+/// </summary>
 public class PropFeatureResolver(IPropRegistry registry) : IPropFeatureResolver
 {
     public bool HasFeature(IProp prop, PropFeatureFlags feature)

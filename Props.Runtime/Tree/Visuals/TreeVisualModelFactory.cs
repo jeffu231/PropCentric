@@ -5,6 +5,10 @@ using Props.Abstractions.Visuals;
 
 namespace Props.Runtime.Tree.Visuals;
 
+/// <summary>
+/// Generates a <see cref="TreePropVisualModel"/> from a <see cref="TreeVisualInput"/> by
+/// computing the 3-D positions of all light points arranged in a conical tree shape.
+/// </summary>
 public sealed class TreeVisualModelFactory : IPropVisualModelFactory<TreeVisualInput>
 {
     public IPropVisualModel Create(TreeVisualInput input)

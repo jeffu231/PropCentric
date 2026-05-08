@@ -17,5 +17,7 @@ public sealed class LightSegment : IVisualElement
     public Vector3 Start { get; init; }
     public Vector3 End { get; init; }
     public IReadOnlyList<LightPoint> Lights { get; init; } = [];
+    /// <summary>Gets the rendered diameter of each light point in screen pixels.</summary>
+    /// <value>A positive float. The default is <c>2</c>.</value>
     public float PointSize { get; init; } = 2f;
 }

@@ -2,7 +2,9 @@
 
 namespace Props.Runtime.Tree;
 
-public class TreePropVisualModel:BaseLightPropVisualModel
+/// <summary>
+/// Visual model produced by <see cref="Visuals.TreeVisualModelFactory"/> for rendering a tree prop.
+/// </summary>
+public class TreePropVisualModel : BaseLightPropVisualModel
 {
-  
 }

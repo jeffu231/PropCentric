@@ -4,8 +4,16 @@ using Props.Abstractions.Setup;
 
 namespace Props.Registry;
 
+/// <summary>
+/// Scans assemblies for concrete classes decorated with <see cref="PropDescriptorAttribute"/>
+/// that implement <see cref="IProp"/>, and returns a descriptor for each one.
+/// </summary>
+/// <remarks>Reflection runs once at startup; no runtime scanning occurs after initialization.</remarks>
 public static class PropScanner
 {
+    /// <summary>Scans the provided assemblies and returns a descriptor for each discovered prop type.</summary>
+    /// <param name="assemblies">The assemblies to inspect for decorated prop classes.</param>
+    /// <returns>A read-only list of <see cref="PropDescriptor"/> records for all valid discovered props.</returns>
     public static IReadOnlyList<PropDescriptor> Scan(IEnumerable<Assembly> assemblies)
     {
         var descriptors = new List<PropDescriptor>();

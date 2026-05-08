@@ -3,7 +3,10 @@ using Props.Abstractions.Props;
 
 namespace Props.Registry;
 
-public sealed record PropCatalogItem:IPropCatalogItem
+/// <summary>
+/// Immutable catalog entry that exposes discovery metadata for a single prop type.
+/// </summary>
+public sealed record PropCatalogItem : IPropCatalogItem
 {
     public Guid Id { get; init; }
     public string Name { get; init; } = "Unnamed Prop";

@@ -6,13 +6,18 @@ using Props.Abstractions.Setup;
 
 namespace PropCentric.Views;
 
-public partial class MainWindow 
+/// <summary>
+/// The application's main window, which bootstraps the prop system and exercises the catalog on startup.
+/// </summary>
+public partial class MainWindow
 {
+    /// <summary>Initializes a new instance of the <see cref="MainWindow"/> class.</summary>
     public MainWindow()
     {
         InitializeComponent();
     }
 
+    /// <inheritdoc/>
     protected override void Initialize()
     {
         Console.WriteLine("Theme Synchronized");

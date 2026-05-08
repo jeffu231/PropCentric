@@ -4,6 +4,9 @@ using Props.Abstractions.Setup;
 
 namespace Props.Runtime.Tree.Setup;
 
+/// <summary>
+/// Copies field values between a <see cref="TreePropDraft"/> and a <see cref="TreeProp"/>.
+/// </summary>
 public sealed class TreePropDraftMapper : IPropDraftMapper<TreePropDraft, TreeProp>
 {
     public void PopulateDraft(TreePropDraft draft, TreeProp prop)

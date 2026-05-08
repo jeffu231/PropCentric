@@ -13,6 +13,7 @@ namespace Props.Abstractions.Props
 	public abstract class BaseLightProp<TModel> : BaseProp<TModel>, IHasDimming 
 		where TModel : BaseLightPropVisualModel, IPropVisualModel, new()	
 	{
+		/// <summary>Guards against concurrent element-generation updates.</summary>
 		protected bool UpdateInProgress = false;
 
 		protected BaseLightProp(string name) : base(name)
@@ -31,12 +32,16 @@ namespace Props.Abstractions.Props
 
 		#region Public Properties
 
+		/// <summary>Gets or sets the color wiring mode for the prop's light strings.</summary>
+		/// <value>One of the <see cref="StringTypes"/> enumeration values that specifies the color mode.</value>
 		public StringTypes StringType
 		{
 			get;
 			set => SetProperty(ref field, value);
 		}
 
+		/// <summary>Gets or sets the diameter of each individual light element in pixels.</summary>
+		/// <value>A positive integer representing the rendered light size.</value>
 		public int LightSize
 		{
 			get;
@@ -88,6 +93,9 @@ namespace Props.Abstractions.Props
 		#endregion
 
 		private Color _singleColorOption;
+
+		/// <summary>Gets or sets the fixed color used when the string type is <see cref="StringTypes.SingleColor"/>.</summary>
+		/// <value>The <see cref="System.Drawing.Color"/> applied to all lights on the prop.</value>
 		public Color SingleColorOption
 		{
 			get => _singleColorOption;
@@ -98,6 +106,8 @@ namespace Props.Abstractions.Props
 			}
 		}
 
+		/// <summary>Gets or sets the active color-set identifier used for multi-color or RGB string modes.</summary>
+		/// <value>A string key that identifies the selected color set (e.g., <c>"RGB"</c>).</value>
 		public string SelectedColorSet
 		{
 			get;

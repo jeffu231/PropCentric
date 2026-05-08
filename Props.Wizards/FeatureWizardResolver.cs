@@ -1,6 +1,12 @@
 namespace Props.Wizards;
 
-public class FeatureWizardResolver  //or factory of some sort
+/// <summary>
+/// Reserved extension point for custom wizard page resolution strategies.
+/// </summary>
+/// <remarks>
+/// Intended to allow overriding how feature wizard pages are selected for specific features
+/// such as dimming, color, or orientation. Not yet implemented.
+/// </remarks>
+public class FeatureWizardResolver
 {
-    //Possible extension point to allow for custom wizard page resolution for specific features like dimming, etc.
 }

@@ -9,6 +9,10 @@ using Props.Runtime.Wizards.ViewModels;
 
 namespace Props.Runtime.Tree.Wizard.ViewModels;
 
+/// <summary>
+/// View model for the tree prop wizard page; binds wizard UI fields to the <see cref="TreePropWizardPage"/> model
+/// and wires the preview builder closure.
+/// </summary>
 public class TreePropWizardPageViewModel : LightWizardPageViewModel<TreePropWizardPage, TreePropVisualModel>, IPropWizardPageViewModel
 {
     public TreePropWizardPageViewModel(TreePropWizardPage wizardPage) : base(wizardPage)

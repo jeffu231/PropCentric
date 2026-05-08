@@ -7,6 +7,11 @@ namespace Props.Abstractions.PropVisualModels;
 /// </summary>
 public sealed class LightPointCloud : IVisualElement
 {
+    /// <summary>Gets the individually addressable light points in this cloud.</summary>
+    /// <value>A read-only list of <see cref="LightPoint"/> values. The default is an empty list.</value>
     public IReadOnlyList<LightPoint> Points { get; init; } = [];
+
+    /// <summary>Gets the rendered diameter of each point in screen pixels.</summary>
+    /// <value>A positive float. The default is <c>2</c>.</value>
     public float PointSize { get; init; } = 2f;
 }

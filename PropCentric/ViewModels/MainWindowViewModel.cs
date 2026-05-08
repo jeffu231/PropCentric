@@ -2,7 +2,9 @@
 
 namespace PropCentric.ViewModels;
 
-public class MainWindowViewModel:ViewModelBase
+/// <summary>
+/// View model for the application's main window.
+/// </summary>
+public class MainWindowViewModel : ViewModelBase
 {
-    
 }

@@ -4,6 +4,10 @@ using Props.Abstractions.Features;
 
 namespace Props.Registry;
 
+/// <summary>
+/// Resolves feature wizard pages and their companion data mappers for a given prop type
+/// using registrations discovered by <see cref="FeatureWizardPageScanner"/>.
+/// </summary>
 public class FeatureWizardPageResolver(
     IReadOnlyList<FeatureWizardPageDescriptor> registrations,
     IServiceProvider serviceProvider) : IFeatureWizardPageResolver
