@@ -104,18 +104,15 @@ namespace Props.Abstractions.Props
 
 		public ObservableCollection<AxisRotationModel> AxisRotations
 		{
-			get
-			{
-				return PropVisualModel.AxisRotations;
-			}
+			get;
 			set
 			{
-				if (value == PropVisualModel.AxisRotations)
+				if (value == field)
 				{
 					return;
 				}
 
-				PropVisualModel.AxisRotations = value;
+				field = value;
 				OnPropertyChanged(nameof(AxisRotations));
 			}
 		}

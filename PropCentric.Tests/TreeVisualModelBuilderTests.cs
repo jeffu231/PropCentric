@@ -55,32 +55,6 @@ public class TreeVisualModelBuilderTests
     }
 
     [Fact]
-    public void TreeVisualModelBuilder_Create_WithRotationInput_PersistsAxisRotationsOnReturnedModel()
-    {
-        var builder = new TreeVisualModelBuilder();
-        var rotations = TreeTestData.CreateRotations((Axis.XAxis, 15), (Axis.YAxis, 25), (Axis.ZAxis, 35));
-        var input = new TreeVisualInput(
-            Strings: 4,
-            NodesPerString: 5,
-            LightSize: 2,
-            DegreesCoverage: 360,
-            DegreeOffset: 0,
-            TopRadius: 10,
-            BottomRadius: 100,
-            AxisRotations: rotations);
-
-        var model = Assert.IsType<TreePropVisualModel>(builder.Create(input));
-
-        Assert.NotNull(model.AxisRotations);
-        Assert.Equal(rotations.Count, model.AxisRotations.Count);
-        for (int i = 0; i < rotations.Count; i++)
-        {
-            Assert.Equal(rotations[i].Axis, model.AxisRotations[i].Axis);
-            Assert.Equal(rotations[i].RotationAngle, model.AxisRotations[i].RotationAngle);
-        }
-    }
-
-    [Fact]
     public void TreeVisualModelBuilder_Create_WithRotationInput_TransformsPointPositions()
     {
         var builder = new TreeVisualModelBuilder();

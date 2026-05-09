@@ -216,7 +216,8 @@ public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPa
             }
 
             // Set the updated parameters
-            PropVisualModel.AxisRotations = AxisRotationViewModel.ConvertToModel(Rotations);           
+            //This should come from the viewer if additional rotations are required by the viewer.
+            //PropVisualModel.AxisRotations = AxisRotationViewModel.ConvertToModel(Rotations);           
         }
 
 		#endregion
@@ -225,7 +226,7 @@ public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPa
 
 		protected override async Task InitializeAsync()
         {
-            PropVisualModel.AxisRotations = AxisRotationViewModel.ConvertToModel(Rotations);
+           // PropVisualModel.AxisRotations = AxisRotationViewModel.ConvertToModel(Rotations);
             // Kick an initial build so the preview is populated when the wizard first opens,
             // not just on the first user edit. PreviewBuilder is set by derived ctors before
             // InitializeAsync runs, so this is safe.

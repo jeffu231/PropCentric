@@ -14,8 +14,5 @@ public abstract class PropVisualModel : IPropVisualModel
 
     /// <inheritdoc/>
     public IReadOnlyList<IVisualElement> Elements { get; init; } = [];
-
-    /// <inheritdoc/>
-    public ObservableCollection<AxisRotationModel> AxisRotations { get; set; }
     
 }
