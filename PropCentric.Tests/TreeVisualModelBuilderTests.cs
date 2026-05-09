@@ -1,7 +1,6 @@
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Props;
 using Props.Runtime.Tree;
-using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
 
 namespace PropCentric.Tests;
@@ -21,10 +20,6 @@ public class TreeVisualModelBuilderTests
             LightSize: 3,
             DegreesCoverage: 180,
             DegreeOffset: 0,
-            BaseHeight: 40,
-            TopHeight: 20,
-            TopWidth: 20,
-            StartLocation: StartLocation.BottomLeft,
             TopRadius: 10,
             BottomRadius: 100,
             AxisRotations: TreeTestData.CreateRotations((Axis.XAxis, 0), (Axis.YAxis, 0), (Axis.ZAxis, 0)));
@@ -48,10 +43,6 @@ public class TreeVisualModelBuilderTests
             LightSize: 2,
             DegreesCoverage: 360,
             DegreeOffset: 0,
-            BaseHeight: 40,
-            TopHeight: 20,
-            TopWidth: 20,
-            StartLocation: StartLocation.BottomLeft,
             TopRadius: 10,
             BottomRadius: 100,
             AxisRotations: TreeTestData.CreateRotations((Axis.XAxis, 0)));
@@ -74,10 +65,6 @@ public class TreeVisualModelBuilderTests
             LightSize: 2,
             DegreesCoverage: 360,
             DegreeOffset: 0,
-            BaseHeight: 40,
-            TopHeight: 20,
-            TopWidth: 20,
-            StartLocation: StartLocation.BottomLeft,
             TopRadius: 10,
             BottomRadius: 100,
             AxisRotations: rotations);
@@ -103,10 +90,6 @@ public class TreeVisualModelBuilderTests
             LightSize: 2,
             DegreesCoverage: 360,
             DegreeOffset: 0,
-            BaseHeight: 40,
-            TopHeight: 20,
-            TopWidth: 20,
-            StartLocation: StartLocation.BottomLeft,
             TopRadius: 10,
             BottomRadius: 100,
             AxisRotations: TreeTestData.CreateRotations((Axis.ZAxis, 0)));

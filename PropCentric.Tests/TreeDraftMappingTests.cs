@@ -108,10 +108,6 @@ public class TreeDraftMappingTests
         Assert.Equal(draft.LightSize, input.LightSize);
         Assert.Equal(draft.DegreesCoverage, input.DegreesCoverage);
         Assert.Equal(draft.DegreeOffset, input.DegreeOffset);
-        Assert.Equal(draft.BaseHeight, input.BaseHeight);
-        Assert.Equal(draft.TopHeight, input.TopHeight);
-        Assert.Equal(draft.TopWidth, input.TopWidth);
-        Assert.Equal(draft.StartLocation, input.StartLocation);
         Assert.Equal(draft.TopRadius, input.TopRadius);
         Assert.Equal(draft.BottomRadius, input.BottomRadius);
         Assert.Equal(draft.AxisRotations.Count, input.AxisRotations.Count);

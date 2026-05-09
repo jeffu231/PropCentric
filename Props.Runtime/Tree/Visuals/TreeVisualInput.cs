@@ -15,9 +15,6 @@ namespace Props.Runtime.Tree.Visuals;
 /// <param name="LightSize">The rendered diameter of each light node in pixels.</param>
 /// <param name="DegreesCoverage">The arc covered by strings, in degrees.</param>
 /// <param name="DegreeOffset">The rotational offset of string 1, in degrees.</param>
-/// <param name="BaseHeight">The visual height of the tree base as a percentage. For 2D only.</param>
-/// <param name="TopHeight">The visual height of the tree top as a percentage. For 2D only.</param>
-/// <param name="TopWidth">The visual width of the tree top as a percentage. For 2D only.</param>
 /// <param name="StartLocation">The corner from which element patching begins.</param>
 /// <param name="TopRadius">The radius at the top of the tree as a percentage of the maximum width.</param>
 /// <param name="BottomRadius">The radius at the base of the tree as a percentage of the maximum width.</param>
@@ -28,10 +25,6 @@ public sealed record TreeVisualInput(
     int LightSize,
     int DegreesCoverage,
     int DegreeOffset,
-    int BaseHeight,
-    int TopHeight,
-    int TopWidth,
-    StartLocation StartLocation,
     float TopRadius,
     float BottomRadius,
     IReadOnlyList<AxisRotationModel> AxisRotations
