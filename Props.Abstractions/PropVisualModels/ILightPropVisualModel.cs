@@ -9,6 +9,6 @@ public interface ILightPropVisualModel: IPropVisualModel
     /// when building its visual model. The viewer decides how to visually express it
     /// (colored marker, axis indicator, arrow, etc.). Null if the prop has no meaningful reference point.
     /// </summary>
-    Vector3? ReferencePoint { get; init; }
+    LightPoint? StartingLightPoint { get; init; }
     
 }

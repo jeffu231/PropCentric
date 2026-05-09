@@ -11,28 +11,37 @@ namespace Props.Runtime.Tree.Visuals;
 public sealed class TreeWizardPreviewCoordinator : IWizardPreviewCoordinator<TreePropDraft>
 {
     private readonly IVisualInputMapper<TreePropDraft, TreeVisualInput> _mapper;
-    private readonly IPropVisualModelFactory<TreeVisualInput> _factory;
+    private readonly IPropVisualModelBuilder<TreeVisualInput> _builder;
     private TreeVisualInput? _lastInput;
     private IPropVisualModel? _lastModel;
 
     /// <summary>Initializes a new instance of the <see cref="TreeWizardPreviewCoordinator"/> class.</summary>
     /// <param name="mapper">The mapper that projects a draft onto a <see cref="TreeVisualInput"/>.</param>
-    /// <param name="factory">The factory that produces a visual model from a <see cref="TreeVisualInput"/>.</param>
+    /// <param name="builder">The factory that produces a visual model from a <see cref="TreeVisualInput"/>.</param>
     public TreeWizardPreviewCoordinator(
         IVisualInputMapper<TreePropDraft, TreeVisualInput> mapper,
-        IPropVisualModelFactory<TreeVisualInput> factory)
+        IPropVisualModelBuilder<TreeVisualInput> builder)
     {
         _mapper = mapper;
-        _factory = factory;
+        _builder = builder;
     }
 
+    /// <summary>
+    /// Creates the Visual Model for a preview to use based on the draft input data.
+    /// </summary>
+    /// <param name="draft"></param>
+    /// <returns></returns>
     public IPropVisualModel BuildPreview(TreePropDraft draft)
     {
         var input = _mapper.Map(draft);
         if (input == _lastInput && _lastModel is not null)
+        {
+            //return the cached version of the model since there are no changes.
             return _lastModel;
+        }
+        
         _lastInput = input;
-        _lastModel = _factory.Create(input);
+        _lastModel = _builder.Create(input);
         return _lastModel;
     }
 }

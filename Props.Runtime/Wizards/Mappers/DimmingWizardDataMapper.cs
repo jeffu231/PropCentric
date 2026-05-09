@@ -15,7 +15,7 @@ public class DimmingWizardDataMapper(DimmingWizardPage page) : IFeatureWizardDat
     {
         if (prop is IHasDimming dimming)
         {
-            dimming.Brightness = Math.Clamp(page.Brightness, 0, 100) / 100.0;
+            dimming.Brightness = Math.Clamp(page.Brightness, 0, 100);
             dimming.Gamma = page.Gamma;
         }
         else
@@ -28,7 +28,7 @@ public class DimmingWizardDataMapper(DimmingWizardPage page) : IFeatureWizardDat
     {
         if (prop is IHasDimming dimming)
         {
-            page.Brightness = (int)Math.Round(Math.Clamp(dimming.Brightness, 0.0, 1.0) * 100);
+            page.Brightness = (int)dimming.Brightness;
             page.Gamma = dimming.Gamma;
         }
         else

@@ -9,7 +9,7 @@ namespace Props.Abstractions.Visuals;
 /// <typeparam name="TDraft">The draft type that provides the wizard's current field values.</typeparam>
 /// <remarks>
 /// Maps the draft to a <c>TVisualInput</c> record, compares it to the previously cached input
-/// using structural equality, and only invokes the <see cref="IPropVisualModelFactory{TVisualInput}"/>
+/// using structural equality, and only invokes the <see cref="IPropVisualModelBuilder{TVisualInput}"/>
 /// when the input has changed. This avoids expensive geometry recalculation on unrelated property changes.
 /// </remarks>
 public interface IWizardPreviewCoordinator<in TDraft>

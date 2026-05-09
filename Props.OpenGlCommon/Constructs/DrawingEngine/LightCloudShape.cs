@@ -34,7 +34,7 @@ public class LightCloudShape : IOpenGLLightBasedDrawable, IDisposable
             _pointsCache.Add(255f);
             _pointsCache.Add(255f);
             _pointsCache.Add(255f);
-            _pointsCache.Add(_cloud.PointSize);
+            _pointsCache.Add(point.PointSize);
         }
         return _pointsCache;
     }

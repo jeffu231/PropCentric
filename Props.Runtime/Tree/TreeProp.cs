@@ -17,16 +17,16 @@ namespace Props.Runtime.Tree;
 public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights
 {
     private readonly IVisualInputMapper<TreeProp, TreeVisualInput> _inputMapper;
-    private readonly IPropVisualModelFactory<TreeVisualInput> _factory;
+    private readonly IPropVisualModelBuilder<TreeVisualInput> _builder;
 
     #region Constructors
 
     public TreeProp(
         IVisualInputMapper<TreeProp, TreeVisualInput> inputMapper,
-        IPropVisualModelFactory<TreeVisualInput> factory) : base("Tree 1")
+        IPropVisualModelBuilder<TreeVisualInput> builder) : base("Tree 1")
     {
         _inputMapper = inputMapper;
-        _factory = factory;
+        _builder = builder;
 	    //Sensible defaults
 	    ZigZagOffset = 50;
 	    StartLocation = StartLocation.BottomLeft;
@@ -224,7 +224,7 @@ public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights
     protected override IPropVisualModel BuildVisualModel()
     {
         var input = _inputMapper.Map(this);
-        return _factory.Create(input);
+        return _builder.Create(input);
     }
 
     public override string GetSummary()

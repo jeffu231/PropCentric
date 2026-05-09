@@ -19,10 +19,9 @@ public class TreePropWizardPageViewModel : LightWizardPageViewModel<TreePropWiza
     {
         PreviewBuilder = () =>
         {
-            // Sync rotation state into the draft immediately before each build so the
+	        // Sync rotation state into the draft immediately before each build so the
             // coordinator always reflects the current rotation selections.
-            if (Rotations is not null)
-                wizardPage.Draft.AxisRotations = AxisRotationViewModel.ConvertToModel(Rotations);
+            wizardPage.Draft.AxisRotations = AxisRotationViewModel.ConvertToModel(Rotations);
 
             return wizardPage.Coordinator.BuildPreview(wizardPage.Draft);
         };

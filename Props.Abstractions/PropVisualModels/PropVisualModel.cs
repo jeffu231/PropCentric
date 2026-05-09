@@ -17,7 +17,5 @@ public abstract class PropVisualModel : IPropVisualModel
 
     /// <inheritdoc/>
     public ObservableCollection<AxisRotationModel> AxisRotations { get; set; }
-
-    /// <inheritdoc/>
-    public Vector3? ReferencePoint { get; init; }
+    
 }

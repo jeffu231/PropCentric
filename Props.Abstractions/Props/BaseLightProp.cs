@@ -135,6 +135,7 @@ namespace Props.Abstractions.Props
 
 		protected override void Prop_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
+			base.Prop_PropertyChanged(sender, e);
 			if (e.PropertyName != null)
 			{
 				switch (e.PropertyName)

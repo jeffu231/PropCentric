@@ -7,4 +7,5 @@
 public abstract class BaseLightPropVisualModel : PropVisualModel, ILightPropVisualModel
 {
     // TODO determine what additional members are needed over PropVisualModel for light props.
+    public LightPoint? StartingLightPoint { get; init; }
 }

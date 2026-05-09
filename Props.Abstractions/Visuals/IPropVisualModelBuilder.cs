@@ -14,7 +14,7 @@ namespace Props.Abstractions.Visuals;
 /// equivalent model. The <see cref="IWizardPreviewCoordinator{TDraft}"/> caches the last input
 /// and skips factory calls when the input has not changed.
 /// </remarks>
-public interface IPropVisualModelFactory<in TVisualInput>
+public interface IPropVisualModelBuilder<in TVisualInput>
 {
     /// <summary>Creates a visual model from the provided geometry input.</summary>
     /// <param name="input">The visual input record that drives geometry generation.</param>

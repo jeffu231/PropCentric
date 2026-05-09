@@ -83,6 +83,8 @@ public class TreePropSetup(
 
         var propGroup = new PropGroup();
         propGroup.Props.Add(treeProp);
+        //TODO check grouping page results to see if we need to create more of the same Prop
+        // The grouping wizard page is not here and beyond this POC
         return propGroup;
     }
 

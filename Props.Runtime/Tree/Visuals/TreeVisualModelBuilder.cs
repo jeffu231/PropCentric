@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Numerics;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Visuals;
@@ -9,25 +8,26 @@ namespace Props.Runtime.Tree.Visuals;
 /// Generates a <see cref="TreePropVisualModel"/> from a <see cref="TreeVisualInput"/> by
 /// computing the 3-D positions of all light points arranged in a conical tree shape.
 /// </summary>
-public sealed class TreeVisualModelFactory : IPropVisualModelFactory<TreeVisualInput>
+public sealed class TreeVisualModelBuilder : IPropVisualModelBuilder<TreeVisualInput>
 {
     public IPropVisualModel Create(TreeVisualInput input)
     {
         var points = GeneratePoints(input);
         var clouds = points
-            .Select(p => new LightPointCloud { Points = p, PointSize = input.LightSize })
+            .Select(p => new LightPointCloud { Points = p })
             .ToList();
-
+        ApplyRotations(clouds, input.AxisRotations);
         return new TreePropVisualModel
         {
-            ReferencePoint = points[0][0].Position,
-            Elements = clouds,
-            AxisRotations = new ObservableCollection<AxisRotationModel>(input.AxisRotations)
+            StartingLightPoint = points[0][0],
+            Elements = clouds
         };
     }
 
     private static IReadOnlyList<List<LightPoint>> GeneratePoints(TreeVisualInput input)
     {
+        //TODO Determine what to do if this is a 2D vs 3D model. The TopWidth, BaseHeight and TopHeight are used to
+        // simulate a 3D view in the current Vixen preview.
         const double maxWidth = 0.5;
         double topRadius    = input.TopRadius    / 100.0 * maxWidth;
         double bottomRadius = input.BottomRadius / 100.0 * maxWidth;
@@ -38,14 +38,14 @@ public sealed class TreeVisualModelFactory : IPropVisualModelFactory<TreeVisualI
         {
             double angle = (double)input.DegreesCoverage / input.Strings * i + input.DegreeOffset;
             points.Add(CreateStrand(input.NodesPerString, angle, bottomRadius, radiusDelta,
-                                    yStart: -0.5, yDelta: 1.0 / input.NodesPerString));
+                                    yStart: -0.5, yDelta: 1.0 / input.NodesPerString, input.LightSize));
         }
         return points;
     }
 
     private static List<LightPoint> CreateStrand(
         int count, double angle, double startRadius, double radiusDelta,
-        double yStart, double yDelta)
+        double yStart, double yDelta, float lightSize)
     {
         double radians = angle * Math.PI / 180.0;
         double y      = yStart;
@@ -59,11 +59,27 @@ public sealed class TreeVisualModelFactory : IPropVisualModelFactory<TreeVisualI
                 Position  = new Vector3((float)(Math.Cos(radians) * radius),
                                         (float)y,
                                         (float)(Math.Sin(radians) * radius)),
+                PointSize = lightSize,
                 ElementId = Guid.NewGuid()
             });
             radius -= radiusDelta;
             y      += yDelta;
         }
         return strand;
+    }
+    
+    /// <summary>
+    /// Apply rotation transforms to the model. 
+    /// </summary>
+    /// <param name="points"></param>
+    /// <param name="rotations"></param>
+    private void ApplyRotations(List<LightPointCloud> points, IReadOnlyList<AxisRotationModel> rotations)
+    {
+        //TODO Determine if this can be extracted to a base coordinator class and reused over
+        // many model types.
+        foreach (var rotation in rotations)
+        {
+            //TODO Transform the model geometry using the rotation model
+        }
     }
 }

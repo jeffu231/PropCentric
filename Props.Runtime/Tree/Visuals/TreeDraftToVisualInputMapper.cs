@@ -9,20 +9,17 @@ namespace Props.Runtime.Tree.Visuals;
 /// </summary>
 public sealed class TreeDraftToVisualInputMapper : IVisualInputMapper<TreePropDraft, TreeVisualInput>
 {
-    public TreeVisualInput Map(TreePropDraft d) => new(
-        d.Strings,
-        d.NodesPerString,
-        d.LightSize,
-        d.DegreesCoverage,
-        d.DegreeOffset,
-        d.BaseHeight,
-        d.TopHeight,
-        d.TopWidth,
-        d.StartLocation,
-        d.ZigZag,
-        d.ZigZagOffset,
-        d.TopRadius,
-        d.BottomRadius,
-        d.AxisRotations.ToList()
-    );
+    public TreeVisualInput Map(TreePropDraft prop) => new(
+        prop.Strings,
+        prop.NodesPerString,
+        prop.LightSize,
+        prop.DegreesCoverage,
+        prop.DegreeOffset,
+        prop.BaseHeight,
+        prop.TopHeight,
+        prop.TopWidth,
+        prop.StartLocation,
+        prop.TopRadius,
+        prop.BottomRadius,
+        prop.AxisRotations);
 }
