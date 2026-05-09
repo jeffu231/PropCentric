@@ -11,7 +11,7 @@ namespace Props.Runtime.Tree.Visuals;
 public sealed class TreeWizardPreviewCoordinator : IWizardPreviewCoordinator<TreePropDraft>
 {
     private readonly IVisualInputMapper<TreePropDraft, TreeVisualInput> _mapper;
-    private readonly IPropVisualModelBuilder<TreeVisualInput> _builder;
+    private readonly IPropVisualModelBuilder<TreeVisualInput, TreePropVisualModel> _builder;
     private TreeVisualInput? _lastInput;
     private IPropVisualModel? _lastModel;
 
@@ -20,7 +20,7 @@ public sealed class TreeWizardPreviewCoordinator : IWizardPreviewCoordinator<Tre
     /// <param name="builder">The factory that produces a visual model from a <see cref="TreeVisualInput"/>.</param>
     public TreeWizardPreviewCoordinator(
         IVisualInputMapper<TreePropDraft, TreeVisualInput> mapper,
-        IPropVisualModelBuilder<TreeVisualInput> builder)
+        IPropVisualModelBuilder<TreeVisualInput, TreePropVisualModel> builder)
     {
         _mapper = mapper;
         _builder = builder;

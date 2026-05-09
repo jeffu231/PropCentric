@@ -17,13 +17,13 @@ namespace Props.Runtime.Tree;
 public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights
 {
     private readonly IVisualInputMapper<TreeProp, TreeVisualInput> _inputMapper;
-    private readonly IPropVisualModelBuilder<TreeVisualInput> _builder;
+    private readonly IPropVisualModelBuilder<TreeVisualInput, TreePropVisualModel> _builder;
 
     #region Constructors
 
     public TreeProp(
         IVisualInputMapper<TreeProp, TreeVisualInput> inputMapper,
-        IPropVisualModelBuilder<TreeVisualInput> builder) : base("Tree 1")
+        IPropVisualModelBuilder<TreeVisualInput, TreePropVisualModel> builder) : base("Tree 1")
     {
         _inputMapper = inputMapper;
         _builder = builder;
@@ -221,10 +221,10 @@ public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights
 	    return Task.CompletedTask;
     }
 
-    protected override IPropVisualModel BuildVisualModel()
+    protected override Task<TreePropVisualModel> BuildVisualModelAsync()
     {
         var input = _inputMapper.Map(this);
-        return _builder.Create(input);
+        return Task.FromResult(_builder.Create(input));
     }
 
     public override string GetSummary()

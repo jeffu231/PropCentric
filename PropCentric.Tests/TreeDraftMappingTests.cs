@@ -115,7 +115,7 @@ public class TreeDraftMappingTests
         Assert.Equal(draft.TopRadius, input.TopRadius);
         Assert.Equal(draft.BottomRadius, input.BottomRadius);
         Assert.Equal(draft.AxisRotations.Count, input.AxisRotations.Count);
-        Assert.NotSame(draft.AxisRotations, input.AxisRotations);
+        Assert.Same(draft.AxisRotations, input.AxisRotations);
     }
 
     private static void AssertRotationsEqual(

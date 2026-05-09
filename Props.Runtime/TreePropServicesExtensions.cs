@@ -23,7 +23,7 @@ public static class TreePropServicesExtensions
     {
         services.AddTransient<IVisualInputMapper<TreeProp, TreeVisualInput>, TreePropToVisualInputMapper>();
         services.AddTransient<IVisualInputMapper<TreePropDraft, TreeVisualInput>, TreeDraftToVisualInputMapper>();
-        services.AddTransient<IPropVisualModelBuilder<TreeVisualInput>, TreeVisualModelBuilder>();
+        services.AddTransient<IPropVisualModelBuilder<TreeVisualInput, TreePropVisualModel>, TreeVisualModelBuilder>();
         services.AddTransient<IPropDraftMapper<TreePropDraft, TreeProp>, TreePropDraftMapper>();
         services.AddTransient<IWizardPreviewCoordinator<TreePropDraft>, TreeWizardPreviewCoordinator>();
         return services;

@@ -174,21 +174,11 @@ namespace Props.Abstractions.Props
 			set => SetProperty(ref field, value);
 		}
 		
-		private IPropVisualModel? _visualModel;
-
-		public IPropVisualModel VisualModel => _visualModel ??= BuildVisualModel();
-
 		public event EventHandler? VisualModelChanged;
 
-		protected abstract IPropVisualModel BuildVisualModel();
+		protected abstract Task<TModel> BuildVisualModelAsync();
 
-		protected void InvalidateVisualModel()
-		{
-			_visualModel = null;
-			VisualModelChanged?.Invoke(this, EventArgs.Empty);
-		}
-		
-        /// <summary>
+		/// <summary>
         /// Gets or sets the unique identifier of the root <see cref="ElementNode"/> 
         /// associated with this Prop.
         /// </summary>
@@ -260,8 +250,8 @@ namespace Props.Abstractions.Props
 
 		public abstract string GetSummary();
 
-		public virtual Task CommitAsync() => Task.CompletedTask;
-
+		public virtual async Task CommitAsync() => await BuildVisualModelAsync();
+		
 		public virtual void CleanUp()
 		{
 			RemovePropElementNode();

@@ -8,9 +8,9 @@ namespace Props.Runtime.Tree.Visuals;
 /// Generates a <see cref="TreePropVisualModel"/> from a <see cref="TreeVisualInput"/> by
 /// computing the 3-D positions of all light points arranged in a conical tree shape.
 /// </summary>
-public sealed class TreeVisualModelBuilder : IPropVisualModelBuilder<TreeVisualInput>
+public sealed class TreeVisualModelBuilder : IPropVisualModelBuilder<TreeVisualInput, TreePropVisualModel>
 {
-    public IPropVisualModel Create(TreeVisualInput input)
+    public TreePropVisualModel Create(TreeVisualInput input)
     {
         var points = GeneratePoints(input);
         var clouds = points

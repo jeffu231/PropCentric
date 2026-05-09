@@ -131,7 +131,13 @@ namespace Props.Abstractions.Props
 
 		#region Protected Methods
 
-		public override Task CommitAsync() => GenerateElementsAsync();
+		public override async Task CommitAsync()
+		{
+			var generateTask = GenerateElementsAsync();
+			var buildTask = BuildVisualModelAsync();
+			await Task.WhenAll(generateTask, buildTask);
+			PropVisualModel = buildTask.Result;
+		}
 
 		protected override void Prop_PropertyChanged(object? sender, PropertyChangedEventArgs e)
 		{
