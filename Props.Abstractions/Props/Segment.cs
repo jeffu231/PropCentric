@@ -1,21 +1,11 @@
-using System.Drawing;
+using System.Numerics;
 
 namespace Props.Abstractions.Props;
 
 /// <summary>
-/// Represents a single physical segment of a prop, defined by two endpoints and a light count.
+/// Represents a single immutable physical segment of a prop in normalized model space.
 /// </summary>
-public class Segment
-{
-    /// <summary>Gets or sets the starting endpoint of the segment in prop-space.</summary>
-    /// <value>The 2-D coordinate of the segment's start point.</value>
-    public Point Start { get; set; }
-
-    /// <summary>Gets or sets the ending endpoint of the segment in prop-space.</summary>
-    /// <value>The 2-D coordinate of the segment's end point.</value>
-    public Point End { get; set; }
-
-    /// <summary>Gets or sets the number of individually addressable light points along the segment.</summary>
-    /// <value>A non-negative integer representing the light count.</value>
-    public int PointCount { get; set; }
-}
+public sealed record Segment(
+    Vector2 Start,
+    Vector2 End,
+    int PointCount);

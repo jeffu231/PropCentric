@@ -12,7 +12,7 @@ public interface IHasSegments
     /// <value>A read-only list of <see cref="Segment"/> instances.</value>
     IReadOnlyList<Segment> Segments { get; }
 
-    /// <summary>Appends a segment to the prop's segment collection.</summary>
-    /// <param name="segment">The segment to add.</param>
-    void AddSegment(Segment segment);
+    /// <summary>Replaces the prop's ordered segment collection atomically.</summary>
+    /// <param name="segments">The segments that define the prop geometry.</param>
+    void ReplaceSegments(IReadOnlyList<Segment> segments);
 }

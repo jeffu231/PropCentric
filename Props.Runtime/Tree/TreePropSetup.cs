@@ -23,7 +23,7 @@ public class TreePropSetup(
     IPropDraftMapper<TreePropDraft, TreeProp> draftMapper,
     IWizardPreviewCoordinator<TreePropDraft> previewCoordinator) : IPropSetup
 {
-    public async Task<IProp> EditAsync(IProp existing)
+    public async Task<IProp> EditAsync(IProp existing, IPropSetupContext? context = null)
     {
         var treeProp = existing as TreeProp
             ?? throw new ArgumentException($"Expected {nameof(TreeProp)}", nameof(existing));
@@ -31,7 +31,7 @@ public class TreePropSetup(
         return treeProp;
     }
 
-    public Task<IPropGroup?> CreateAsync()
+    public Task<IPropGroup?> CreateAsync(IPropSetupContext? context = null)
     {
         return CreatePropGroup();
     }

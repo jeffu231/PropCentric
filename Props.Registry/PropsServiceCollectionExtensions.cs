@@ -70,6 +70,7 @@ public static class PropServiceCollectionExtensions
         services.AddSingleton<IPropCatalogProvider, PropCatalogProvider>();
         services.AddSingleton<IPropFactory, PropFactory>();
         services.AddSingleton<IPropSetupFactory, PropSetupFactory>();
+        services.TryAddSingleton<ISegmentCaptureNormalizer, SegmentCaptureNormalizer>();
         
         Console.WriteLine("Singletons added");
         
