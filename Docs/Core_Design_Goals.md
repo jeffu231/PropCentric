@@ -22,8 +22,8 @@ PropVisualModel in this POC is a direct mapping to the PropModel in the feature 
 * Props can be rotated around any axis to align with the users real prop as part of the core Prop. This will allow Props like a candy cane to be rotated 90 degress from the standard view.
 * Props have visual models that allow thier visual to be drawn in an OpenGL based viewer.
 * There are two main types of viewers. 
-  * A setup viewer that shows in some wizard pages to allow the user to see a sample of what the Prop will look like.
-  * A preview that allows the user to model a scene of all the Props in one view. This is will give the world view of the complete setup.
+  * A setup Prop viewer that shows in some wizard pages to allow the user to see a sample of what the Prop will look like.
+  * A preview setup/real time view that allows the user to model a scene of all the Props in one view. This is will give the world view of the complete setup.
 * An individual Prop creation flow will allow for the user to create a group of Props that are all the same except for the name. The grouping wizard and creation of clones is outside the scope of this POC.
 
 ## Key Design Considerations
@@ -97,6 +97,9 @@ For this POC, that will be assemblies starting with Props.
 * Pan and Zoom will be supported.
 * Reset to standard camera views will be supported to reset any pan and zoom operations to something normal.
 * The user can further rotate a Prop when placing in the world view. This is applied as a transform on the finished prop visual model.
+* The world view preview should subscribe and publish to a broadcast messaging system to listen for external events to respond to and be able to publish events about things occuring.
+(Example publish message to create prop of type or of type with parms). (Example listen for selections in other parts and colorized prop visuals as needed.) 
+Not part of POC at this time. Placeholder requirement.
 
 ## Core Logic and Library Requirements
 
