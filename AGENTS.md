@@ -198,3 +198,7 @@ Important current patterns:
 
 - `Docs/Core_Design_Goals.md` is the architecture intent document used for reviews.
 - `Docs/NamingConventions.md` is the naming source of truth.
+
+# ExecPlans
+
+When writing complex features or significant refactors, use an ExecPlan (as described in .agents/PLANS.md) from design to implementation.
