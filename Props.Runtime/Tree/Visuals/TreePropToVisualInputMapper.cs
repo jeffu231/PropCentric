@@ -14,7 +14,7 @@ public sealed class TreePropToVisualInputMapper : IVisualInputMapper<TreeProp, T
         prop.LightSize,
         prop.DegreesCoverage,
         prop.DegreeOffset,
-       prop.TopRadius,
+        prop.TopRadius,
         prop.BottomRadius,
-        prop.AxisRotations.ToList());
+        prop.AxisRotations);
 }
