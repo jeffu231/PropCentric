@@ -1,3 +1,4 @@
+using PropCentric.Tests.Common;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
 
@@ -18,7 +19,7 @@ public class TreeWizardPreviewCoordinatorTests
         {
             Strings = 8,
             NodesPerString = 10,
-            AxisRotations = TreeTestData.CreateRotations((Props.Abstractions.PropVisualModels.Axis.XAxis, 0))
+            AxisRotations = TestDataHelper.CreateRotations((Props.Abstractions.PropVisualModels.Axis.XAxis, 0))
         };
 
         var first = coordinator.BuildPreview(draft);
@@ -37,14 +38,14 @@ public class TreeWizardPreviewCoordinatorTests
         {
             Strings = 8,
             NodesPerString = 10,
-            AxisRotations = TreeTestData.CreateRotations((Props.Abstractions.PropVisualModels.Axis.XAxis, 0))
+            AxisRotations = TestDataHelper.CreateRotations((Props.Abstractions.PropVisualModels.Axis.XAxis, 0))
         };
         
         var draft2 = new TreePropDraft
         {
             Strings = 16,
             NodesPerString = 50,
-            AxisRotations = TreeTestData.CreateRotations((Props.Abstractions.PropVisualModels.Axis.XAxis, 0))
+            AxisRotations = TestDataHelper.CreateRotations((Props.Abstractions.PropVisualModels.Axis.XAxis, 0))
         };
 
         var first = coordinator.BuildPreview(draft);

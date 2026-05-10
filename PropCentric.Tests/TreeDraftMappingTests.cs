@@ -1,7 +1,6 @@
-using System.Collections.ObjectModel;
+using PropCentric.Tests.Common;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Props;
-using Props.Runtime.Tree;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
 
@@ -59,7 +58,7 @@ public class TreeDraftMappingTests
             ZigZagOffset = 12,
             TopRadius = 22,
             BottomRadius = 88,
-            AxisRotations = TreeTestData.CreateRotations((Axis.XAxis, 10), (Axis.YAxis, 20), (Axis.ZAxis, 30))
+            AxisRotations = TestDataHelper.CreateRotations((Axis.XAxis, 10), (Axis.YAxis, 20), (Axis.ZAxis, 30))
         };
 
         mapper.ApplyDraft(draft, prop);
@@ -98,7 +97,7 @@ public class TreeDraftMappingTests
             StartLocation = StartLocation.BottomRight,
             TopRadius = 9,
             BottomRadius = 70,
-            AxisRotations = TreeTestData.CreateRotations((Axis.XAxis, 5), (Axis.ZAxis, 15))
+            AxisRotations = TestDataHelper.CreateRotations((Axis.XAxis, 5), (Axis.ZAxis, 15))
         };
 
         TreeVisualInput input = mapper.Map(draft);

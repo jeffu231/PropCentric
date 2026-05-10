@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using PropCentric.Tests.Common;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Props;
 using Props.Runtime.Tree;
@@ -33,24 +34,11 @@ internal static class TreeTestData
             ZigZagOffset = 20,
             TopRadius = 12,
             BottomRadius = 90,
-            AxisRotations = CreateRotations((Axis.XAxis, 5), (Axis.YAxis, 10), (Axis.ZAxis, 15))
+            AxisRotations = TestDataHelper.CreateRotations((Axis.XAxis, 5), (Axis.YAxis, 10), (Axis.ZAxis, 15))
         };
 
         return prop;
     }
 
-    /// <summary>
-    /// Creates an ordered collection of axis rotations.
-    /// </summary>
-    /// <param name="rotations">The ordered axis and angle values to include.</param>
-    /// <returns>An ordered collection of <see cref="AxisRotationModel"/> values.</returns>
-    internal static ObservableCollection<AxisRotationModel> CreateRotations(params (Axis Axis, int Angle)[] rotations)
-    {
-        return new ObservableCollection<AxisRotationModel>(
-            rotations.Select(rotation => new AxisRotationModel
-            {
-                Axis = rotation.Axis,
-                RotationAngle = rotation.Angle
-            }));
-    }
+   
 }

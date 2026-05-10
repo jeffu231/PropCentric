@@ -1,3 +1,4 @@
+using PropCentric.Tests.Common;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Props;
 using Props.Runtime.Tree;
@@ -22,7 +23,7 @@ public class TreeVisualModelBuilderTests
             DegreeOffset: 0,
             TopRadius: 10,
             BottomRadius: 100,
-            AxisRotations: TreeTestData.CreateRotations((Axis.XAxis, 0), (Axis.YAxis, 0), (Axis.ZAxis, 0)));
+            AxisRotations: TestDataHelper.CreateRotations((Axis.XAxis, 0), (Axis.YAxis, 0), (Axis.ZAxis, 0)));
 
         var model = Assert.IsType<TreePropVisualModel>(builder.Create(input));
         var clouds = model.Elements.OfType<LightPointCloud>().ToList();
@@ -45,7 +46,7 @@ public class TreeVisualModelBuilderTests
             DegreeOffset: 0,
             TopRadius: 10,
             BottomRadius: 100,
-            AxisRotations: TreeTestData.CreateRotations((Axis.XAxis, 0)));
+            AxisRotations: TestDataHelper.CreateRotations((Axis.XAxis, 0)));
         var offsetInput = baseInput with { DegreeOffset = 90 };
 
         var baseModel = Assert.IsType<TreePropVisualModel>(builder.Create(baseInput));
@@ -66,10 +67,10 @@ public class TreeVisualModelBuilderTests
             DegreeOffset: 0,
             TopRadius: 10,
             BottomRadius: 100,
-            AxisRotations: TreeTestData.CreateRotations((Axis.ZAxis, 0)));
+            AxisRotations: TestDataHelper.CreateRotations((Axis.ZAxis, 0)));
         var rotatedInput = baseInput with
         {
-            AxisRotations = TreeTestData.CreateRotations((Axis.ZAxis, 90))
+            AxisRotations = TestDataHelper.CreateRotations((Axis.ZAxis, 90))
         };
 
         var baseModel = Assert.IsType<TreePropVisualModel>(builder.Create(baseInput));
