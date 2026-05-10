@@ -247,7 +247,10 @@ namespace Props.Abstractions.Props
 
 		public abstract string GetSummary();
 
-		public virtual async Task CommitAsync() => await BuildVisualModelAsync();
+		public virtual async Task CommitAsync()
+		{
+			PropVisualModel = await BuildVisualModelAsync();
+		} 
 		
 		public virtual void CleanUp()
 		{
