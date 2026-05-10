@@ -1,10 +1,9 @@
 using System.Windows;
 using System.Windows.Input;
-
 using OpenTK.Wpf;
-using Props.Runtime.Wizards.ViewModels;
+using Props.Runtime.Wizards.Core.ViewModels;
 
-namespace Props.Runtime.Wizards.Views
+namespace Props.Runtime.Wizards.Core.Views
 {
 	/// <summary>
 	/// Base class for a prop wizard page view.

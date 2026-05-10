@@ -1,6 +1,6 @@
 ﻿using Orc.Wizard;
 
-namespace Props.Runtime.Wizards
+namespace Props.Runtime.Wizards.Core
 {
 	/// <summary>
 	/// Configures a prop wizard.

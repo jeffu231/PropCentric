@@ -23,8 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Drawing\" />
-      <Folder Include="Model\" />
+      <Page Update="Wizards\Features\Dimming\Views\DimmingFeatureWizardPageView.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </Page>
     </ItemGroup>
 
 </Project>

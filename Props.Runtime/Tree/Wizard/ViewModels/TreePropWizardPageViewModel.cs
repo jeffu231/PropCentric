@@ -5,7 +5,7 @@ using Props.Abstractions.Props;
 using Props.Abstractions.PropVisualModels;
 using Props.Runtime.Tree.Wizard.Pages;
 using Props.Runtime.ViewModels;
-using Props.Runtime.Wizards.ViewModels;
+using Props.Runtime.Wizards.Core.ViewModels;
 
 namespace Props.Runtime.Tree.Wizard.ViewModels;
 

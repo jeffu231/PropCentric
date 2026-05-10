@@ -2,7 +2,7 @@
 using Catel.Services;
 using Orc.Wizard;
 
-namespace Props.Runtime.Wizards
+namespace Props.Runtime.Wizards.Core
 {
 	/// <summary>
 	/// Orc Wizard navigation controller that injects Vixen button styles into the Orc Wizard.

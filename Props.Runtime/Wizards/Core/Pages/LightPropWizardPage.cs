@@ -1,6 +1,6 @@
 ﻿using Catel.Data;
 
-namespace Props.Runtime.Wizards.Pages
+namespace Props.Runtime.Wizards.Core.Pages
 {
 	/// <summary>
 	/// Maintains base Light Prop Wizard page data.

@@ -1,7 +1,7 @@
 using Catel.Data;
 using Orc.Wizard;
 
-namespace Props.Runtime.Wizards.Pages
+namespace Props.Runtime.Wizards.Core.Pages
 {
 	public abstract class PropWizardPageBase : WizardPageBase, IPropWizardPageBase
 	{

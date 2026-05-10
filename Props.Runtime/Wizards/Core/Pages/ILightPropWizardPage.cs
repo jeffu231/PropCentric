@@ -1,4 +1,4 @@
-﻿namespace Props.Runtime.Wizards.Pages
+﻿namespace Props.Runtime.Wizards.Core.Pages
 {
 	/// <summary>
 	/// Maintains light prop wizard page data.

@@ -3,7 +3,7 @@ using Catel.MVVM;
 using Orc.Wizard;
 using Props.Abstractions.PropVisualModels;
 
-namespace Props.Runtime.Wizards.ViewModels;
+namespace Props.Runtime.Wizards.Core.ViewModels;
 
 public class PropBaseWizardPageViewModel<TWizardPage, TPropModel> : GraphicsWizardPageViewModelBase<TWizardPage, TPropModel>
     where TWizardPage : class, IWizardPage

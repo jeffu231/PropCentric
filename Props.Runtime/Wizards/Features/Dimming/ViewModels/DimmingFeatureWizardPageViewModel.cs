@@ -1,18 +1,18 @@
 ﻿using Catel.Data;
 using Catel.MVVM;
 using Orc.Wizard;
-using Props.Runtime.Wizards.Pages;
+using Props.Runtime.Wizards.Features.Dimming.Pages;
 
-namespace Props.Runtime.Wizards.ViewModels
+namespace Props.Runtime.Wizards.Features.Dimming.ViewModels
 {
 	/// <summary>
-	/// View model for the <see cref="DimmingWizardPage"/> that exposes brightness and gamma for data binding.
+	/// View model for the <see cref="DimmingFeatureWizardPage"/> that exposes brightness and gamma for data binding.
 	/// </summary>
-	public class DimmingWizardPageViewModel : WizardPageViewModelBase<DimmingWizardPage>
+	public class DimmingFeatureWizardPageViewModel : WizardPageViewModelBase<DimmingFeatureWizardPage>
 	{
-		/// <summary>Initializes a new instance of the <see cref="DimmingWizardPageViewModel"/> class.</summary>
-		/// <param name="wizardPage">The dimming wizard page that backs this view model.</param>
-		public DimmingWizardPageViewModel(DimmingWizardPage wizardPage) : base(wizardPage)
+		/// <summary>Initializes a new instance of the <see cref="DimmingFeatureWizardPageViewModel"/> class.</summary>
+		/// <param name="featureWizardPage">The dimming wizard page that backs this view model.</param>
+		public DimmingFeatureWizardPageViewModel(DimmingFeatureWizardPage featureWizardPage) : base(featureWizardPage)
 		{
 		}
 

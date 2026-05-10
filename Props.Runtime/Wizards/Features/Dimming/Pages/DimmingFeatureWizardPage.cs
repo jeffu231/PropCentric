@@ -1,18 +1,18 @@
 ﻿using Catel.Data;
 using Orc.Wizard;
 using Props.Abstractions.Features;
-using Props.Runtime.Wizards.Mappers;
+using Props.Runtime.Wizards.Features.Dimming.Mappers;
 
-namespace Props.Runtime.Wizards.Pages;
+namespace Props.Runtime.Wizards.Features.Dimming.Pages;
 
 /// <summary>
 /// Wizard page that captures brightness and gamma settings for props that implement <see cref="IHasDimming"/>.
 /// </summary>
-[FeatureWizardPage(typeof(IHasDimming), mapperType: typeof(DimmingWizardDataMapper), priority: 100)]
-public class DimmingWizardPage : WizardPageBase
+[FeatureWizardPage(typeof(IHasDimming), mapperType: typeof(DimmingFeatureWizardDataMapper), priority: 100)]
+public class DimmingFeatureWizardPage : WizardPageBase
 {
     #region Constructors
-    public DimmingWizardPage()
+    public DimmingFeatureWizardPage()
     {
         // Set with some default parameters
         Title = "Brightness Level";

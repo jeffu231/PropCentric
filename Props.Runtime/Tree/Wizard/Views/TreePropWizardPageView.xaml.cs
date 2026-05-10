@@ -1,4 +1,4 @@
-﻿using Props.Runtime.Wizards.Views;
+﻿using Props.Runtime.Wizards.Core.Views;
 
 namespace Props.Runtime.Tree.Wizard.Views
 {

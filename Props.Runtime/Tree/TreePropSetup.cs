@@ -10,6 +10,7 @@ using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Wizard;
 using Props.Runtime.Tree.Wizard.Pages;
 using Props.Runtime.Wizards;
+using Props.Runtime.Wizards.Core;
 
 namespace Props.Runtime.Tree;
 

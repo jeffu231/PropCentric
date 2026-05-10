@@ -76,13 +76,61 @@ IPropCatalogProvider.GetPropCatalog()
 IPropCatalogProvider.GetPropCatalogByFeature(PropFeatureFlags flags)
 ```
 
-## Feature Wizard Page Pattern
+## Feature Wizard Pattern
+
+Feature wizard components must include `Feature` in the type name to distinguish them from prop-specific wizard flow types.
+
+### Feature Wizard Folder Structure
+
+Within `Props.Runtime`, organize reusable wizard infrastructure under `Wizards/Core` and feature-specific wizard components under `Wizards/Features/{Feature}`.
+
+Pattern:
+
+```text
+Wizards/
+  Core/
+    Pages/
+    ViewModels/
+    Views/
+
+  Features/
+    {Feature}/
+      Mappers/
+      Pages/
+      ViewModels/
+      Views/
+```
+
+### Feature Wizard Namespace Structure
+
+Namespaces should match folders exactly.
+
+Core namespaces:
+
+```
+Props.Runtime.Wizards.Core
+Props.Runtime.Wizards.Core.Pages
+Props.Runtime.Wizards.Core.ViewModels
+Props.Runtime.Wizards.Core.Views
+```
+
+Feature namespaces:
+
+```
+Props.Runtime.Wizards.Features.{Feature}.Mappers
+Props.Runtime.Wizards.Features.{Feature}.Pages
+Props.Runtime.Wizards.Features.{Feature}.ViewModels
+Props.Runtime.Wizards.Features.{Feature}.Views
+```
+
+### Feature Wizard Type Naming
 
 | Type | Naming |
 |---|---|
-| Wizard page | `{Feature}WizardPage` (e.g. `DimmingWizardPage`) |
-| Data mapper | `{Feature}WizardDataMapper` (e.g. `DimmingWizardDataMapper`) |
-| View model | `{Feature}WizardPageViewModel` (e.g. `DimmingWizardPageViewModel`) |
+| Wizard page | `{Feature}FeatureWizardPage` (e.g. `DimmingFeatureWizardPage`) |
+| Data mapper | `{Feature}FeatureWizardDataMapper` (e.g. `DimmingFeatureWizardDataMapper`) |
+| View model | `{Feature}FeatureWizardPageViewModel` (e.g. `DimmingFeatureWizardPageViewModel`) |
+| View | `{Feature}FeatureWizardPageView` (e.g. `DimmingFeatureWizardPageView`) |
 
 ## Prop Pipeline Pattern
 
@@ -100,6 +148,7 @@ For prop-specific setup, mapping, and rendering types, use the prop name as the 
 | Visual model | `{Prop}PropVisualModel` |
 | Visual model builder | `{Prop}VisualModelBuilder` |
 | Preview coordinator | `{Prop}WizardPreviewCoordinator` |
+| Prop wizard flow | `{Prop}PropWizard` |
 | Core prop wizard page | `{Prop}PropWizardPage` |
 | Core prop wizard page view model | `{Prop}PropWizardPageViewModel` |
 
@@ -116,6 +165,7 @@ TreeDraftToVisualInputMapper
 TreePropVisualModel
 TreeVisualModelBuilder
 TreeWizardPreviewCoordinator
+TreePropWizard
 TreePropWizardPage
 TreePropWizardPageViewModel
 ```

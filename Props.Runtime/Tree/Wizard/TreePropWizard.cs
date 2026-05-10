@@ -5,6 +5,7 @@ using Catel.Services;
 using Orc.Wizard;
 using Props.Runtime.Tree.Wizard.Pages;
 using Props.Runtime.Wizards;
+using Props.Runtime.Wizards.Core;
 
 namespace Props.Runtime.Tree.Wizard;
 

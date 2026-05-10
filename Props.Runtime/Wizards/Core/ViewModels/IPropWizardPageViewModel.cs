@@ -1,6 +1,6 @@
 ﻿using Props.OpenGlCommon;
 
-namespace Props.Runtime.Wizards.ViewModels;
+namespace Props.Runtime.Wizards.Core.ViewModels;
 
 /// <summary>
 /// Exposes the OpenGL drawing engine state for wizard page view models that render a live 3-D preview.

@@ -1,7 +1,7 @@
 ﻿using Catel.IoC;
 using Orc.Wizard;
 
-namespace Props.Runtime.Wizards
+namespace Props.Runtime.Wizards.Core
 {
 	/// <summary>
 	/// Base class for prop wizard.

@@ -1,4 +1,4 @@
-namespace Props.Runtime.Wizards.Pages
+namespace Props.Runtime.Wizards.Core.Pages
 {
 	public interface IPropWizardPageBase
 	{

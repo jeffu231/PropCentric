@@ -5,9 +5,9 @@ using Props.Registry;
 using Props.Runtime.Tree;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
-using Props.Runtime.Wizards.Mappers;
-using Props.Runtime.Wizards.Pages;
 using Microsoft.Extensions.DependencyInjection;
+using Props.Runtime.Wizards.Features.Dimming.Mappers;
+using Props.Runtime.Wizards.Features.Dimming.Pages;
 
 namespace PropCentric.Tests;
 
@@ -43,11 +43,11 @@ public class PropDiscoveryTests
     public void FeatureWizardPageScanner_ScanRuntimeAssembly_FindsDimmingWizardRegistration()
     {
         IReadOnlyList<FeatureWizardPageDescriptor> registrations =
-            FeatureWizardPageScanner.Scan([typeof(DimmingWizardPage).Assembly]);
+            FeatureWizardPageScanner.Scan([typeof(DimmingFeatureWizardPage).Assembly]);
 
-        var registration = Assert.Single(registrations, r => r.PageType == typeof(DimmingWizardPage));
+        var registration = Assert.Single(registrations, r => r.PageType == typeof(DimmingFeatureWizardPage));
         Assert.Equal(typeof(IHasDimming), registration.FeatureInterface);
-        Assert.Equal(typeof(DimmingWizardDataMapper), registration.MapperType);
+        Assert.Equal(typeof(DimmingFeatureWizardDataMapper), registration.MapperType);
         Assert.Equal(100, registration.Priority);
     }
 

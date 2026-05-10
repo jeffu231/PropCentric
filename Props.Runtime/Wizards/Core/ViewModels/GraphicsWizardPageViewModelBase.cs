@@ -8,7 +8,7 @@ using Props.OpenGlCommon;
 using Props.Runtime.Utilities;
 using Props.Runtime.ViewModels;
 
-namespace Props.Runtime.Wizards.ViewModels;
+namespace Props.Runtime.Wizards.Core.ViewModels;
 
 public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPageViewModelBase<TWizardPage>, IPropWizardPageViewModel
         where TWizardPage : class, IWizardPage

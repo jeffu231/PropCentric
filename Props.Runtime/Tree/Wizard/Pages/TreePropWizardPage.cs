@@ -3,7 +3,7 @@ using Orc.Wizard;
 using Props.Abstractions.Props;
 using Props.Abstractions.Visuals;
 using Props.Runtime.Tree.Setup;
-using Props.Runtime.Wizards.Pages;
+using Props.Runtime.Wizards.Core.Pages;
 
 namespace Props.Runtime.Tree.Wizard.Pages
 {

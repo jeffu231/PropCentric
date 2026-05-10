@@ -1,15 +1,15 @@
 using Props.Abstractions.Features;
 using Props.Abstractions.Props;
-using Props.Runtime.Wizards.Pages;
+using Props.Runtime.Wizards.Features.Dimming.Pages;
 
-namespace Props.Runtime.Wizards.Mappers;
+namespace Props.Runtime.Wizards.Features.Dimming.Mappers;
 
 /// <summary>
-/// Transfers brightness and gamma values between a <see cref="DimmingWizardPage"/> and an
+/// Transfers brightness and gamma values between a <see cref="DimmingFeatureWizardPage"/> and an
 /// <see cref="IHasDimming"/> prop, converting between the page's integer percentage and the
 /// prop's normalized double representation.
 /// </summary>
-public class DimmingWizardDataMapper(DimmingWizardPage page) : IFeatureWizardDataMapper
+public class DimmingFeatureWizardDataMapper(DimmingFeatureWizardPage page) : IFeatureWizardDataMapper
 {
     public void ApplyTo(IProp prop)
     {
