@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository. Keep shared guidance in `AGENTS.md` and `CLAUDE.md` aligned unless one file needs tool-specific wording.
+This file provides guidance to coding agents working with code in this repository. Keep shared guidance in `AGENTS.md` and `CLAUDE.md` aligned unless one file needs tool-specific wording.
 
 ## Build & Run Commands
 

@@ -43,6 +43,23 @@ CreateFor*(target)                         — create for a specific target (res
 
 Do not include the noun the factory produces in its own method names (e.g. avoid `CreateSetup` on `IPropSetupFactory`).
 
+### Builder
+Builds a derived model from input data. Use `Builder` when the type owns geometry or composition logic rather than simple instance construction.
+
+Method naming:
+
+```
+Create(input)        — build a derived model from a transfer input
+Apply*(target, ...)  — apply secondary state or transforms to an existing target (reserved for future use)
+```
+
+Examples:
+
+```
+TreeVisualModelBuilder
+IPropVisualModelBuilder<TVisualInput, TVisualModel>
+```
+
 ### Resolver
 Maps an input type to resolved instances. Method naming uses `Get*For`:
 
@@ -66,6 +83,95 @@ IPropCatalogProvider.GetPropCatalogByFeature(PropFeatureFlags flags)
 | Wizard page | `{Feature}WizardPage` (e.g. `DimmingWizardPage`) |
 | Data mapper | `{Feature}WizardDataMapper` (e.g. `DimmingWizardDataMapper`) |
 | View model | `{Feature}WizardPageViewModel` (e.g. `DimmingWizardPageViewModel`) |
+
+## Prop Pipeline Pattern
+
+For prop-specific setup, mapping, and rendering types, use the prop name as the prefix and the pipeline role as the suffix.
+
+| Type | Naming |
+|---|---|
+| Prop type | `{Prop}Prop` |
+| Setup wrapper | `{Prop}PropSetup` |
+| Draft model | `{Prop}PropDraft` |
+| Draft mapper | `{Prop}PropDraftMapper` |
+| Visual input record | `{Prop}VisualInput` |
+| Prop -> visual input mapper | `{Prop}PropToVisualInputMapper` |
+| Draft -> visual input mapper | `{Prop}DraftToVisualInputMapper` |
+| Visual model | `{Prop}PropVisualModel` |
+| Visual model builder | `{Prop}VisualModelBuilder` |
+| Preview coordinator | `{Prop}WizardPreviewCoordinator` |
+| Core prop wizard page | `{Prop}PropWizardPage` |
+| Core prop wizard page view model | `{Prop}PropWizardPageViewModel` |
+
+Examples:
+
+```
+TreeProp
+TreePropSetup
+TreePropDraft
+TreePropDraftMapper
+TreeVisualInput
+TreePropToVisualInputMapper
+TreeDraftToVisualInputMapper
+TreePropVisualModel
+TreeVisualModelBuilder
+TreeWizardPreviewCoordinator
+TreePropWizardPage
+TreePropWizardPageViewModel
+```
+
+## Mapper Naming
+
+Use `Mapper` for translation-only types that project state from one shape into another. Name the type from source to destination.
+
+Pattern:
+
+```
+{Source}To{Destination}Mapper
+```
+
+Examples:
+
+```
+TreePropToVisualInputMapper
+TreeDraftToVisualInputMapper
+```
+
+Use `{Prop}PropDraftMapper` specifically for the paired draft/prop copier role because it represents a bidirectional setup contract rather than a one-way projection.
+
+## Draft Naming
+
+Use `Draft` for wizard-owned temporary state that exists during create/edit flows.
+
+Pattern:
+
+```
+{Prop}PropDraft
+IPropDraft
+IPropDraftMapper<TDraft, TProp>
+```
+
+`Draft` should imply:
+
+- temporary setup/edit state
+- not the live prop
+- safe to discard if the wizard is cancelled
+
+## Visual Input Naming
+
+Use `VisualInput` for transfer objects that carry only the subset of data required to build a visual model.
+
+Pattern:
+
+```
+{Prop}VisualInput
+```
+
+`VisualInput` should imply:
+
+- rendering-focused transfer state
+- not the full prop state
+- suitable for both runtime prop rendering and wizard preview rendering
 
 ## Base Classes and Interfaces
 
