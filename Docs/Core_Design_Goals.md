@@ -33,8 +33,12 @@ PropVisualModel in this POC is a direct mapping to the PropModel in the feature 
 * Props will own all their state / configuration data.
 * Props should be able to declare features by implementing standard interfaces for the features they provide.
 * Props should have some base classes that can provide core implmentations for things like light based props or fixture based props.
-* The Prop Setup wrapper will be responsible for orchestrating the create and edit of a Prop. This will accept / return an IProp interface for edit and return a PropGroup for create.
+* The Prop Setup wrapper will be responsible for orchestrating the create and edit of a Prop. This will accept / return an IProp interface for edit
+and return a PropGroup for create.
 * The Prop Setup wrapper will map the Prop specific data from the Prop Wizard page into the Prop and orchestrate the Feature Data Mappers.
+* Props may contain configuration data that is collected in setup but does not directly drive the Visual Model.
+Some fields affect rendering, while others support behaviors such as patching, addressing, grouping, or other runtime features.
+Only the subset required for drawing should be mapped into the Visual Model input transfer object.
 
 ### Features
 
@@ -44,7 +48,8 @@ PropVisualModel in this POC is a direct mapping to the PropModel in the feature 
 ### Discovery
  
 * The discovery mechanism should infer the features a Prop has from the feature interfaces and build a Feature Flag set for that Prop Type the registry can provide.
-* Prop types should be discoverable and itemized in a registry. Avoid looking through assemblies that are not part of this solution. For this POC, that will be assemblies starting with Props.
+* Prop types should be discoverable and itemized in a registry. Avoid looking through assemblies that are not part of this solution.
+For this POC, that will be assemblies starting with Props.
 * Features should be discoverable and itemized in a registry.
 * Features that a Prop provides will be inferred during discovery and be available via a registry.
 
