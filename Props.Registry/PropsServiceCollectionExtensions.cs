@@ -1,8 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Props.Abstractions;
 using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.Setup;
+using Props.Abstractions.Visuals;
+using System.Reflection;
 
 namespace Props.Registry;
 
@@ -12,6 +15,14 @@ namespace Props.Registry;
 /// </summary>
 public static class PropServiceCollectionExtensions
 {
+    private static readonly Type[] SupportedServiceContracts =
+    [
+        typeof(IVisualInputMapper<,>),
+        typeof(IPropVisualModelBuilder<,>),
+        typeof(IPropDraftMapper<,>),
+        typeof(IWizardPreviewCoordinator<>)
+    ];
+
     /// <summary>
     /// Scans the plugin directory, discovers all prop and feature wizard page types, and registers
     /// the prop system services into the DI container.
@@ -71,7 +82,48 @@ public static class PropServiceCollectionExtensions
 
         foreach (var reg in featurePageRegistrations)
             services.AddTransient(reg.PageType);
+
+        RegisterSupportServices(services, interestedAssemblies);
         Console.WriteLine("Completed Prop System Setup");
         return services;
+    }
+
+    private static void RegisterSupportServices(IServiceCollection services, IEnumerable<Assembly> assemblies)
+    {
+        foreach (var assembly in assemblies)
+        {
+            foreach (var implementationType in SafeGetTypes(assembly).Where(IsConcrete))
+            {
+                foreach (var serviceType in implementationType.GetInterfaces().Where(IsSupportedServiceContract))
+                {
+                    services.TryAddTransient(serviceType, implementationType);
+                }
+            }
+        }
+    }
+
+    private static IEnumerable<Type> SafeGetTypes(Assembly assembly)
+    {
+        try
+        {
+            return assembly.GetTypes();
+        }
+        catch (ReflectionTypeLoadException ex)
+        {
+            return ex.Types.Where(t => t is not null)!;
+        }
+    }
+
+    private static bool IsConcrete(Type type) => type is { IsAbstract: false, IsInterface: false };
+
+    private static bool IsSupportedServiceContract(Type serviceType)
+    {
+        if (!serviceType.IsGenericType)
+        {
+            return false;
+        }
+
+        var genericTypeDefinition = serviceType.GetGenericTypeDefinition();
+        return SupportedServiceContracts.Contains(genericTypeDefinition);
     }
 }

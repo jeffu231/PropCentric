@@ -79,6 +79,28 @@ public sealed class TreeVisualModelBuilder : IPropVisualModelBuilder<TreeVisualI
         // many model types.
         foreach (var rotation in rotations)
         {
+            var axis = Vector3.UnitX;
+            switch (rotation.Axis)
+            {
+                case Axis.YAxis:
+                    axis = Vector3.UnitY;
+                    break;
+                case Axis.ZAxis:
+                    axis = Vector3.UnitZ;
+                    break;
+            }
+            
+            foreach (var pointCloud in points)
+            {
+                foreach (var point in pointCloud.Points)
+                {
+                    // Create a rotation
+                    // Note: Quaternions often use radians (degrees * PI / 180)
+                    Quaternion q = Quaternion.CreateFromAxisAngle(axis, (float)(rotation.RotationAngle * Math.PI / 180f));
+                    Vector3 rotatedVector = Vector3.Transform(point.Position, q);
+                    
+                }
+            }
             //TODO Transform the model geometry using the rotation model
         }
     }

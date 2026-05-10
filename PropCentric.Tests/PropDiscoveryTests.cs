@@ -1,8 +1,13 @@
 using Props.Abstractions.Features;
+using Props.Abstractions.Setup;
+using Props.Abstractions.Visuals;
 using Props.Registry;
 using Props.Runtime.Tree;
+using Props.Runtime.Tree.Setup;
+using Props.Runtime.Tree.Visuals;
 using Props.Runtime.Wizards.Mappers;
 using Props.Runtime.Wizards.Pages;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace PropCentric.Tests;
 
@@ -44,5 +49,25 @@ public class PropDiscoveryTests
         Assert.Equal(typeof(IHasDimming), registration.FeatureInterface);
         Assert.Equal(typeof(DimmingWizardDataMapper), registration.MapperType);
         Assert.Equal(100, registration.Priority);
+    }
+
+    [Fact]
+    public void AddPropSystem_RegistersDiscoveredSupportServicesWithoutManualTreeBootstrap()
+    {
+        var services = new ServiceCollection();
+        var pluginDirectory = Path.GetDirectoryName(typeof(TreeProp).Assembly.Location);
+
+        Assert.NotNull(pluginDirectory);
+
+        services.AddPropSystem(pluginDirectory!);
+        using var provider = services.BuildServiceProvider();
+
+        Assert.NotNull(provider.GetService<IVisualInputMapper<TreeProp, TreeVisualInput>>());
+        Assert.NotNull(provider.GetService<IVisualInputMapper<TreePropDraft, TreeVisualInput>>());
+        Assert.NotNull(provider.GetService<IPropVisualModelBuilder<TreeVisualInput, TreePropVisualModel>>());
+        Assert.NotNull(provider.GetService<IPropDraftMapper<TreePropDraft, TreeProp>>());
+        Assert.NotNull(provider.GetService<IWizardPreviewCoordinator<TreePropDraft>>());
+        Assert.NotNull(provider.GetService<TreeProp>());
+        Assert.NotNull(provider.GetService<TreePropSetup>());
     }
 }
