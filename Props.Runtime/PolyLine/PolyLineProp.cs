@@ -12,7 +12,7 @@ namespace Props.Runtime.PolyLine;
 /// </summary>
 /// <param name="inputMapper"></param>
 /// <param name="builder"></param>
-[PropDescriptor("9C4E33A3-C6F4-443F-8B31-610FE3F50805", "PolyLine", typeof(PolyLineSetup))]
+[PropDescriptor("9C4E33A3-C6F4-443F-8B31-610FE3F50805", "PolyLine", typeof(PolyLinePropSetup))]
 public class PolyLineProp(
     IVisualInputMapper<PolyLineProp, PolyLineVisualInput> inputMapper,
     IPropVisualModelBuilder<PolyLineVisualInput, PolyLinePropVisualModel> builder)

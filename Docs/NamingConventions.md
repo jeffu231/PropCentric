@@ -168,6 +168,20 @@ TreeWizardPreviewCoordinator
 TreePropWizard
 TreePropWizardPage
 TreePropWizardPageViewModel
+
+PolyLineProp
+PolyLinePropSetup
+PolyLinePropDraft
+PolyLinePropDraftMapper
+PolyLineVisualInput
+PolyLinePropToVisualInputMapper
+PolyLineDraftToVisualInputMapper
+PolyLinePropVisualModel
+PolyLineVisualModelBuilder
+PolyLineWizardPreviewCoordinator
+PolyLinePropWizard
+PolyLinePropWizardPage
+PolyLinePropWizardPageViewModel
 ```
 
 ## Mapper Naming

@@ -16,13 +16,44 @@ namespace Props.Runtime.PolyLine;
 /// <summary>
 /// Setup wrapper around the polyline prop wizard.
 /// </summary>
-public sealed class PolyLineSetup(
-    IFeatureWizardPageResolver featurePageResolver,
-    IPropFactory propFactory,
-    IPropDraftMapper<PolyLinePropDraft, PolyLineProp> draftMapper,
-    IWizardPreviewCoordinator<PolyLinePropDraft> previewCoordinator,
-    ISegmentCaptureNormalizer segmentCaptureNormalizer) : IPropSetup
+public sealed class PolyLinePropSetup : IPropSetup
 {
+    private readonly IFeatureWizardPageResolver _featurePageResolver;
+    private readonly IPropFactory _propFactory;
+    private readonly IPropDraftMapper<PolyLinePropDraft, PolyLineProp> _draftMapper;
+    private readonly IWizardPreviewCoordinator<PolyLinePropDraft> _previewCoordinator;
+    private readonly ISegmentCaptureNormalizer _segmentCaptureNormalizer;
+    private readonly Func<PolyLinePropDraft, IReadOnlyList<IWizardPage>, PolyLinePropWizard> _wizardFactory;
+    private readonly Func<PolyLinePropWizard, Task<bool?>> _wizardPresenter;
+
+    public PolyLinePropSetup(
+        IFeatureWizardPageResolver featurePageResolver,
+        IPropFactory propFactory,
+        IPropDraftMapper<PolyLinePropDraft, PolyLineProp> draftMapper,
+        IWizardPreviewCoordinator<PolyLinePropDraft> previewCoordinator,
+        ISegmentCaptureNormalizer segmentCaptureNormalizer)
+        : this(featurePageResolver, propFactory, draftMapper, previewCoordinator, segmentCaptureNormalizer, null, null)
+    {
+    }
+
+    public PolyLinePropSetup(
+        IFeatureWizardPageResolver featurePageResolver,
+        IPropFactory propFactory,
+        IPropDraftMapper<PolyLinePropDraft, PolyLineProp> draftMapper,
+        IWizardPreviewCoordinator<PolyLinePropDraft> previewCoordinator,
+        ISegmentCaptureNormalizer segmentCaptureNormalizer,
+        Func<PolyLinePropDraft, IReadOnlyList<IWizardPage>, PolyLinePropWizard>? wizardFactory,
+        Func<PolyLinePropWizard, Task<bool?>>? wizardPresenter)
+    {
+        _featurePageResolver = featurePageResolver;
+        _propFactory = propFactory;
+        _draftMapper = draftMapper;
+        _previewCoordinator = previewCoordinator;
+        _segmentCaptureNormalizer = segmentCaptureNormalizer;
+        _wizardFactory = wizardFactory ?? CreateWizard;
+        _wizardPresenter = wizardPresenter ?? ShowWizard;
+    }
+
     public Task<IPropGroup?> CreateAsync(IPropSetupContext? context = null)
     {
         return CreatePropGroup(context);
@@ -39,19 +70,19 @@ public sealed class PolyLineSetup(
 
     private async Task<IPropGroup?> CreatePropGroup(IPropSetupContext? context)
     {
-        var polyLineProp = propFactory.Create<PolyLineProp>();
+        var polyLineProp = _propFactory.Create<PolyLineProp>();
         ApplyCapturedSegmentsIfPresent(polyLineProp, context);
 
         var draft = new PolyLinePropDraft();
-        draftMapper.PopulateDraft(draft, polyLineProp);
+        _draftMapper.PopulateDraft(draft, polyLineProp);
 
-        var featurePages = featurePageResolver.GetPagesFor(typeof(PolyLineProp));
-        var featureMappers = featurePageResolver.GetMappersFor(featurePages);
-        var wizard = CreateWizard(draft, featurePages);
+        var featurePages = _featurePageResolver.GetPagesFor(typeof(PolyLineProp));
+        var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
+        var wizard = _wizardFactory(draft, featurePages);
 
         PopulateWizardFromDraft(draft, wizard, polyLineProp, featureMappers);
 
-        var result = await ShowWizard(wizard);
+        var result = await _wizardPresenter(wizard);
         if (result == true)
         {
             return await BuildPropGroupAsync(polyLineProp, draft, featureMappers);
@@ -65,18 +96,18 @@ public sealed class PolyLineSetup(
         ApplyCapturedSegmentsIfPresent(polyLineProp, context);
 
         var draft = new PolyLinePropDraft();
-        draftMapper.PopulateDraft(draft, polyLineProp);
+        _draftMapper.PopulateDraft(draft, polyLineProp);
 
-        var featurePages = featurePageResolver.GetPagesFor(typeof(PolyLineProp));
-        var featureMappers = featurePageResolver.GetMappersFor(featurePages);
-        var wizard = CreateWizard(draft, featurePages);
+        var featurePages = _featurePageResolver.GetPagesFor(typeof(PolyLineProp));
+        var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
+        var wizard = _wizardFactory(draft, featurePages);
 
         PopulateWizardFromDraft(draft, wizard, polyLineProp, featureMappers);
 
-        var result = await ShowWizard(wizard);
+        var result = await _wizardPresenter(wizard);
         if (result == true)
         {
-            draftMapper.ApplyDraft(draft, polyLineProp);
+            _draftMapper.ApplyDraft(draft, polyLineProp);
             foreach (var mapper in featureMappers)
             {
                 mapper.ApplyTo(polyLineProp);
@@ -91,7 +122,7 @@ public sealed class PolyLineSetup(
         PolyLinePropDraft draft,
         IReadOnlyList<IFeatureWizardDataMapper> mappers)
     {
-        draftMapper.ApplyDraft(draft, polyLineProp);
+        _draftMapper.ApplyDraft(draft, polyLineProp);
         foreach (var mapper in mappers)
         {
             mapper.ApplyTo(polyLineProp);
@@ -132,7 +163,7 @@ public sealed class PolyLineSetup(
 
         baseColorService.SetBaseColorScheme("Dark");
 
-        var polyLinePage = new PolyLinePropWizardPage(draft, previewCoordinator);
+        var polyLinePage = new PolyLinePropWizardPage(draft, _previewCoordinator);
         var wizard = new PolyLinePropWizard(typeFactory, polyLinePage);
 
         foreach (var page in featurePages)
@@ -165,7 +196,7 @@ public sealed class PolyLineSetup(
             case null:
                 return;
             case SegmentCaptureSetupContext segmentCaptureContext:
-                polyLineProp.ReplaceSegments(segmentCaptureNormalizer.Normalize(segmentCaptureContext));
+                polyLineProp.ReplaceSegments(_segmentCaptureNormalizer.Normalize(segmentCaptureContext));
                 return;
             default:
                 throw new ArgumentException(

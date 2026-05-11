@@ -64,7 +64,7 @@ public class PropDiscoveryTests
 
         var descriptor = Assert.Single(descriptors, d => d.PropType == typeof(PolyLineProp));
         Assert.Equal("PolyLine", descriptor.Name);
-        Assert.Equal(typeof(PolyLineSetup), descriptor.SetupType);
+        Assert.Equal(typeof(PolyLinePropSetup), descriptor.SetupType);
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public class PropDiscoveryTests
         var registration = Assert.Single(registrations, r => r.PageType == typeof(SegmentsFeatureWizardPage));
         Assert.Equal(typeof(IHasSegments), registration.FeatureInterface);
         Assert.Equal(typeof(SegmentsFeatureWizardDataMapper), registration.MapperType);
-        Assert.Equal(50, registration.Priority);
+        Assert.Equal(150, registration.Priority);
     }
 
     [Fact]
@@ -129,7 +129,7 @@ public class PropDiscoveryTests
         Assert.NotNull(provider.GetService<IPropDraftMapper<PolyLinePropDraft, PolyLineProp>>());
         Assert.NotNull(provider.GetService<IWizardPreviewCoordinator<PolyLinePropDraft>>());
         Assert.NotNull(provider.GetService<PolyLineProp>());
-        Assert.NotNull(provider.GetService<PolyLineSetup>());
+        Assert.NotNull(provider.GetService<PolyLinePropSetup>());
         Assert.NotNull(provider.GetService<SegmentsFeatureWizardPage>());
     }
 }

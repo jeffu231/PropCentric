@@ -23,8 +23,8 @@ The solution is split into a few main layers.
 Defines the core contracts and shared base types:
 
 - `IProp`, `BaseProp<TModel>`, `BaseLightProp<TModel>`
-- feature interfaces such as `IHasLights`, `IHasDimming`
-- setup contracts such as `IPropSetup`, `IPropDraftMapper<,>`
+- feature interfaces such as `IHasLights`, `IHasDimming`, and `IHasSegments`
+- setup contracts such as `IPropSetup`, `IPropSetupContext`, `IPropDraftMapper<,>`, and `ISegmentCaptureNormalizer`
 - visual contracts such as `IVisualInputMapper<,>`, `IPropVisualModelBuilder<,>`, `IWizardPreviewCoordinator<>`
 - visual element types such as `LightPoint`, `LightPointCloud`, and `IPropVisualModel`
 
@@ -46,7 +46,7 @@ This is the plugin/discovery backbone of the POC.
 
 Contains concrete prop implementations and their pipelines.
 
-For the current POC, the main example is `TreeProp` and its related setup, mapping, and visual-model code.
+For the current POC, the main examples are `TreeProp` and `PolyLineProp`, each with its own setup, mapping, preview, and visual-model pipeline.
 
 ### `Props.OpenGlCommon`
 
@@ -113,9 +113,10 @@ A prop becomes discoverable when:
 3. it is decorated with `PropDescriptorAttribute`
 4. the attribute points to a valid `IPropSetup` implementation
 
-Example:
+Examples:
 
 - [TreeProp.cs](C:/Dev/PropCentric/Props.Runtime/Tree/TreeProp.cs)
+- [PolyLineProp.cs](C:/Dev/PropCentric/Props.Runtime/PolyLine/PolyLineProp.cs)
 
 The descriptor provides:
 
@@ -145,15 +146,17 @@ This is important because it keeps feature support declarative and type-driven.
 
 Each prop has a setup wrapper that orchestrates create and edit operations.
 
-Example:
+Examples:
 
 - [TreePropSetup.cs](C:/Dev/PropCentric/Props.Runtime/Tree/TreePropSetup.cs)
+- [PolyLinePropSetup.cs](C:/Dev/PropCentric/Props.Runtime/PolyLine/PolyLinePropSetup.cs)
 
 ### Responsibilities of the setup wrapper
 
 The setup wrapper:
 
 - creates or accepts a prop instance
+- can accept optional external setup input through `IPropSetupContext`
 - creates a wizard draft model
 - populates the draft from the prop for edit flows
 - resolves feature wizard pages for the prop type
@@ -175,6 +178,8 @@ That gives the system:
 - a consistent mapping pipeline
 - better testability
 
+For `PolyLineProp`, setup can also normalize captured world-space geometry before the wizard opens. The prop persists only normalized model-space `Segment` values, while the capture transform remains external setup data.
+
 ## 4. Wizard and Feature Page Composition
 
 There are two categories of wizard pages:
@@ -190,11 +195,15 @@ For the tree example:
 
 - [TreePropWizardPage.cs](C:/Dev/PropCentric/Props.Runtime/Tree/Wizard/Pages/TreePropWizardPage.cs)
 
+For the polyline example:
+
+- [PolyLinePropWizardPage.cs](C:/Dev/PropCentric/Props.Runtime/PolyLine/Wizard/Pages/PolyLinePropWizardPage.cs)
+
 ### Feature-specific pages
 
 These are discovered independently and inserted based on prop feature support.
 
-For example, `DimmingWizardPage` is discovered through:
+For example, `DimmingFeatureWizardPage` is discovered through:
 
 - `FeatureWizardPageAttribute`
 
@@ -209,9 +218,10 @@ Relevant files:
 
 Each feature page can have a companion mapper that moves data between the page and the prop's feature interface.
 
-Example:
+Examples:
 
-- [DimmingWizardDataMapper.cs](C:/Dev/PropCentric/Props.Runtime/Wizards/Mappers/DimmingWizardDataMapper.cs)
+- [DimmingFeatureWizardDataMapper.cs](C:/Dev/PropCentric/Props.Runtime/Wizards/Features/Dimming/Mappers/DimmingFeatureWizardDataMapper.cs)
+- [SegmentsFeatureWizardDataMapper.cs](C:/Dev/PropCentric/Props.Runtime/Wizards/Features/Segments/Mappers/SegmentsFeatureWizardDataMapper.cs)
 
 This keeps page logic independent from concrete prop implementations.
 
@@ -222,6 +232,7 @@ Each prop setup flow uses an explicit draft type.
 For the tree example:
 
 - [TreePropDraft.cs](C:/Dev/PropCentric/Props.Runtime/Tree/Setup/TreePropDraft.cs)
+- [PolyLinePropDraft.cs](C:/Dev/PropCentric/Props.Runtime/PolyLine/Setup/PolyLinePropDraft.cs)
 
 The draft holds wizard-owned values during setup/edit.
 
@@ -230,6 +241,7 @@ The draft holds wizard-owned values during setup/edit.
 Each prop also has a draft mapper:
 
 - [TreePropDraftMapper.cs](C:/Dev/PropCentric/Props.Runtime/Tree/Setup/TreePropDraftMapper.cs)
+- [PolyLinePropDraftMapper.cs](C:/Dev/PropCentric/Props.Runtime/PolyLine/Setup/PolyLinePropDraftMapper.cs)
 
 The mapper is responsible for:
 
@@ -249,6 +261,7 @@ Each prop has a mapper that projects prop state into a visual input record.
 Example:
 
 - [TreePropToVisualInputMapper.cs](C:/Dev/PropCentric/Props.Runtime/Tree/Visuals/TreePropToVisualInputMapper.cs)
+- [PolyLinePropToVisualInputMapper.cs](C:/Dev/PropCentric/Props.Runtime/PolyLine/Visuals/PolyLinePropToVisualInputMapper.cs)
 
 ### Draft -> visual input mapper
 
@@ -257,6 +270,7 @@ Each wizard preview flow has a mapper that projects draft state into the same vi
 Example:
 
 - [TreeDraftToVisualInputMapper.cs](C:/Dev/PropCentric/Props.Runtime/Tree/Visuals/TreeDraftToVisualInputMapper.cs)
+- [PolyLineDraftToVisualInputMapper.cs](C:/Dev/PropCentric/Props.Runtime/PolyLine/Visuals/PolyLineDraftToVisualInputMapper.cs)
 
 ### Visual input record
 
@@ -265,6 +279,7 @@ The visual input record contains only the subset of state needed to generate the
 Example:
 
 - [TreeVisualInput.cs](C:/Dev/PropCentric/Props.Runtime/Tree/Visuals/TreeVisualInput.cs)
+- [PolyLineVisualInput.cs](C:/Dev/PropCentric/Props.Runtime/PolyLine/Visuals/PolyLineVisualInput.cs)
 
 Important design point:
 
@@ -279,8 +294,10 @@ The builder consumes the visual input and produces the visual model.
 Example:
 
 - [TreeVisualModelBuilder.cs](C:/Dev/PropCentric/Props.Runtime/Tree/Visuals/TreeVisualModelBuilder.cs)
+- [PolyLineVisualModelBuilder.cs](C:/Dev/PropCentric/Props.Runtime/PolyLine/Visuals/PolyLineVisualModelBuilder.cs)
 
 This is the single place where tree geometry is defined.
+For `PolyLineProp`, the builder creates one `LightSegment` per logical segment and deduplicates shared-corner lights between adjacent segments.
 
 ## 7. Preview Flow
 
@@ -297,6 +314,7 @@ The preview coordinator:
 Example:
 
 - [TreeWizardPreviewCoordinator.cs](C:/Dev/PropCentric/Props.Runtime/Tree/Visuals/TreeWizardPreviewCoordinator.cs)
+- [PolyLineWizardPreviewCoordinator.cs](C:/Dev/PropCentric/Props.Runtime/PolyLine/Visuals/PolyLineWizardPreviewCoordinator.cs)
 
 This gives a dedicated place for preview-specific concerns without changing the prop model directly.
 
@@ -441,6 +459,16 @@ That means adding a new prop should not require a dedicated manual DI extension 
 - [ ] Create the wizard preview coordinator
 - [ ] Create the prop-specific wizard page(s)
 - [ ] Add tests for discovery, mapping, and visual generation
+
+## Segmentable Prop Notes
+
+The implemented segmentable-prop slice establishes these rules:
+
+- props persist normalized model-space segment geometry
+- world-space capture transforms remain external setup data
+- `PolyLineProp` is open-only in this first slice
+- segment feature pages edit `PointCount`, not capture geometry
+- continuity is validated during normalization before rendering
 
 ## Why This Pattern Matters
 

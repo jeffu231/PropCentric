@@ -8,7 +8,7 @@ on whether the Prop supports the feature. Configuration from each feature wizard
 
 ## Requirements
 
-* Each feature can optionally have a setup wizard page that collects information from the user based on the feature interface. DimmingWizardPage in the project Props.Runtime is an example of a wizard for the Dimming feature.
+* Each feature can optionally have a setup wizard page that collects information from the user based on the feature interface. `DimmingFeatureWizardPage` in `Props.Runtime` is an example of a wizard for the dimming feature.
 * Feature setup pages should be discoverable by some means based on the feature or interface definition. There should be a clear pattern for adding the Wizard and associating it to the Feature. It should be decaritive and not rely on some naming pattern.
 * A Feature that did not initially have a Wizard can have a Wizard added in the future by a simple pattern.
 * Each Feature wizard should have a priority that will be used to determine the order they are added to the Prop setup page flow. Features with a higher priority will be added first.

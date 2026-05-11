@@ -39,7 +39,7 @@ public class PolyLineVisualInputMappingTests
             AxisRotations = TestDataHelper.CreateRotations((Axis.XAxis, 15), (Axis.ZAxis, 30))
         };
 
-        var mapper = new PolyLinePropDraftToVisualInputMapper();
+        var mapper = new PolyLineDraftToVisualInputMapper();
 
         var input = mapper.Map(draft);
 

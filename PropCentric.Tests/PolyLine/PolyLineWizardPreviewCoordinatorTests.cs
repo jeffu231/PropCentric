@@ -17,7 +17,7 @@ public class PolyLineWizardPreviewCoordinatorTests
     public void BuildPreview_UnchangedInput_ReusesCachedModel()
     {
         var builder = new CountingBuilder();
-        var coordinator = new PolyLineWizardPreviewCoordinator(new PolyLinePropDraftToVisualInputMapper(), builder);
+        var coordinator = new PolyLineWizardPreviewCoordinator(new PolyLineDraftToVisualInputMapper(), builder);
         var draft = CreateDraft();
 
         var first = coordinator.BuildPreview(draft);
@@ -31,7 +31,7 @@ public class PolyLineWizardPreviewCoordinatorTests
     public void BuildPreview_ChangedSegmentPointCount_RebuildsModel()
     {
         var builder = new CountingBuilder();
-        var coordinator = new PolyLineWizardPreviewCoordinator(new PolyLinePropDraftToVisualInputMapper(), builder);
+        var coordinator = new PolyLineWizardPreviewCoordinator(new PolyLineDraftToVisualInputMapper(), builder);
         var draft = CreateDraft();
 
         var first = coordinator.BuildPreview(draft);

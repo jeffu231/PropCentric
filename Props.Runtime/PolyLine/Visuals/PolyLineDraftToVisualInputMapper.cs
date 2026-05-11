@@ -7,7 +7,7 @@ namespace Props.Runtime.PolyLine.Visuals;
 /// <summary>
 /// Projects a <see cref="PolyLinePropDraft"/> onto a <see cref="PolyLineVisualInput"/> record for wizard previews.
 /// </summary>
-public sealed class PolyLinePropDraftToVisualInputMapper : IVisualInputMapper<PolyLinePropDraft, PolyLineVisualInput>
+public sealed class PolyLineDraftToVisualInputMapper : IVisualInputMapper<PolyLinePropDraft, PolyLineVisualInput>
 {
     public PolyLineVisualInput Map(PolyLinePropDraft source) => new(
         source.Segments
