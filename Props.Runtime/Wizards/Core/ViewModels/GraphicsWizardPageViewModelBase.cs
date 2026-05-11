@@ -93,6 +93,14 @@ public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelB
         TriggerPreviewRebuild();
     }
 
+    /// <summary>
+    /// Schedules a preview rebuild using the debounced refresh path.
+    /// </summary>
+    protected void SchedulePreviewRebuild()
+    {
+        _previewDebouncer.Invoke(TriggerPreviewRebuild);
+    }
+
     private void AttachRotationHandlers(ObservableCollection<AxisRotationViewModel>? rotationCollection)
     {
         if (rotationCollection is null)

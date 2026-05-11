@@ -1,7 +1,8 @@
+using PropCentric.Tests.Common;
+using Props.Abstractions.Features;
+using Props.Abstractions.PropVisualModels;
 using Props.Runtime.PolyLine.Setup;
 using Props.Runtime.PolyLine.Visuals;
-using PropCentric.Tests.Common;
-using Props.Abstractions.PropVisualModels;
 
 namespace PropCentric.Tests.PolyLine;
 
@@ -30,7 +31,7 @@ public class PolyLineVisualInputMappingTests
         {
             LightSize = 4,
             Segments = new(
-                PolyLineTestData.CreateSegments().Select(segment => new SegmentDraftItem
+                PolyLineTestData.CreateSegments().Select(segment => new SegmentDraftState
                 {
                     Start = segment.Start,
                     End = segment.End,

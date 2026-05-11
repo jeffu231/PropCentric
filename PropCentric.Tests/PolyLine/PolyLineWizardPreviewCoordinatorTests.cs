@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Numerics;
 using PropCentric.Tests.Common;
+using Props.Abstractions.Features;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Visuals;
 using Props.Runtime.PolyLine.Setup;
@@ -48,8 +49,8 @@ public class PolyLineWizardPreviewCoordinatorTests
         {
             Name = "Preview PolyLine",
             LightSize = 2,
-            Segments = new ObservableCollection<SegmentDraftItem>(
-                PolyLineTestData.CreateSegments().Select(segment => new SegmentDraftItem
+            Segments = new ObservableCollection<SegmentDraftState>(
+                PolyLineTestData.CreateSegments().Select(segment => new SegmentDraftState
                 {
                     Start = segment.Start,
                     End = segment.End,

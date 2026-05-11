@@ -1,5 +1,6 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using PropCentric.Tests.Common;
+using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.PropVisualModels;
 using Props.Runtime.PolyLine.Setup;
@@ -19,23 +20,23 @@ public class PolyLineDraftMappingTests
 
         Assert.Equal(prop.Name, draft.Name);
         Assert.Equal(prop.LightSize, draft.LightSize);
-       
+
         AssertSegmentsEqual(draft.Segments, prop.Segments);
         AssertRotationsEqual(prop.AxisRotations, draft.AxisRotations);
     }
-    
+
     [Fact]
     public void PolyLinePropDraftMapper_ApplyDraft_CopiesConfiguredFieldsBackToProp()
     {
         var prop = PolyLineTestData.CreateTreeProp();
         var mapper = new PolyLinePropDraftMapper();
         var segments = PolyLineTestData.CreateSegments().Select(x =>
-            new SegmentDraftItem { Start = x.Start, End = x.End, PointCount = x.PointCount });
+            new SegmentDraftState { Start = x.Start, End = x.End, PointCount = x.PointCount });
         var draft = new PolyLinePropDraft
         {
             Name = "PolyLine Draft",
             LightSize = 3,
-            Segments = new ObservableCollection<SegmentDraftItem>(segments),
+            Segments = new ObservableCollection<SegmentDraftState>(segments),
             AxisRotations = TestDataHelper.CreateRotations((Axis.XAxis, 10), (Axis.YAxis, 20), (Axis.ZAxis, 30))
         };
 
@@ -46,7 +47,7 @@ public class PolyLineDraftMappingTests
         AssertSegmentsEqual(draft.Segments, prop.Segments);
         AssertRotationsEqual(draft.AxisRotations, prop.AxisRotations);
     }
-    
+
     private static void AssertRotationsEqual(
         IReadOnlyList<AxisRotationModel> expected,
         IReadOnlyList<AxisRotationModel> actual)
@@ -60,7 +61,7 @@ public class PolyLineDraftMappingTests
         }
     }
 
-    private static void AssertSegmentsEqual(IReadOnlyList<SegmentDraftItem>  expected, IReadOnlyList<Segment> actual)
+    private static void AssertSegmentsEqual(IReadOnlyList<SegmentDraftState> expected, IReadOnlyList<Segment> actual)
     {
         Assert.Equal(expected.Count, actual.Count);
         for (int i = 0; i < expected.Count; i++)

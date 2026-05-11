@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using Catel.Data;
 using Catel.MVVM;
-using Orc.Wizard;
+using Props.Runtime.Wizards.Core.ViewModels;
 using Props.Runtime.Wizards.Features.Segments.Pages;
 
 namespace Props.Runtime.Wizards.Features.Segments.ViewModels;
@@ -9,10 +11,14 @@ namespace Props.Runtime.Wizards.Features.Segments.ViewModels;
 /// <summary>
 /// View model for the <see cref="SegmentsFeatureWizardPage"/>.
 /// </summary>
-public sealed class SegmentsFeatureWizardPageViewModel : WizardPageViewModelBase<SegmentsFeatureWizardPage>
+public sealed class SegmentsFeatureWizardPageViewModel : GraphicsWizardPageViewModelBase<SegmentsFeatureWizardPage>
 {
     public SegmentsFeatureWizardPageViewModel(SegmentsFeatureWizardPage featureWizardPage) : base(featureWizardPage)
     {
+        PreviewBuilder = () => featureWizardPage.PreviewSession?.BuildPreview()
+            ?? throw new InvalidOperationException("Segments preview session has not been initialized.");
+
+        HookSegmentHandlers(featureWizardPage.Segments);
     }
 
     [ViewModelToModel]
@@ -51,6 +57,48 @@ public sealed class SegmentsFeatureWizardPageViewModel : WizardPageViewModelBase
                     nameof(Segments),
                     $"Segment {index + 1} point count must be greater than zero."));
             }
+        }
+    }
+
+    private void HookSegmentHandlers(ObservableCollection<SegmentFeatureWizardItem> segments)
+    {
+        segments.CollectionChanged -= OnSegmentsCollectionChanged;
+        segments.CollectionChanged += OnSegmentsCollectionChanged;
+
+        foreach (var segment in segments)
+        {
+            segment.PropertyChanged -= OnSegmentPropertyChanged;
+            segment.PropertyChanged += OnSegmentPropertyChanged;
+        }
+    }
+
+    private void OnSegmentsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.OldItems is not null)
+        {
+            foreach (SegmentFeatureWizardItem oldItem in e.OldItems)
+            {
+                oldItem.PropertyChanged -= OnSegmentPropertyChanged;
+            }
+        }
+
+        if (e.NewItems is not null)
+        {
+            foreach (SegmentFeatureWizardItem newItem in e.NewItems)
+            {
+                newItem.PropertyChanged -= OnSegmentPropertyChanged;
+                newItem.PropertyChanged += OnSegmentPropertyChanged;
+            }
+        }
+
+        SchedulePreviewRebuild();
+    }
+
+    private void OnSegmentPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(SegmentFeatureWizardItem.PointCount))
+        {
+            SchedulePreviewRebuild();
         }
     }
 }

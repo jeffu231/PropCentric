@@ -1,5 +1,6 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Setup;
@@ -13,9 +14,9 @@ public class PolyLinePropDraftMapper : IPropDraftMapper<PolyLinePropDraft, PolyL
         draft.Name = prop.Name;
         draft.LightSize = prop.LightSize;
         draft.AxisRotations = new ObservableCollection<AxisRotationModel>(prop.AxisRotations);
-        draft.Segments = new ObservableCollection<SegmentDraftItem>(
-            prop.Segments.Select(x => 
-                new SegmentDraftItem(){Start = x.Start, End = x.End, PointCount = x.PointCount}));
+        draft.Segments = new ObservableCollection<SegmentDraftState>(
+            prop.Segments.Select(x =>
+                new SegmentDraftState { Start = x.Start, End = x.End, PointCount = x.PointCount }));
     }
 
     public void ApplyDraft(PolyLinePropDraft draft, PolyLineProp prop)
@@ -23,7 +24,7 @@ public class PolyLinePropDraftMapper : IPropDraftMapper<PolyLinePropDraft, PolyL
         prop.Name = draft.Name;
         prop.LightSize = draft.LightSize;
         prop.AxisRotations = new ObservableCollection<AxisRotationModel>(draft.AxisRotations);
-        prop.ReplaceSegments(draft.Segments.Select(x => 
+        prop.ReplaceSegments(draft.Segments.Select(x =>
             new Segment(x.Start, x.End, x.PointCount)).ToImmutableList());
     }
 }

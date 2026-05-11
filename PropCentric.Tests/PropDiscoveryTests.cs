@@ -1,17 +1,16 @@
+using Microsoft.Extensions.DependencyInjection;
 using Props.Abstractions.Features;
 using Props.Abstractions.Setup;
 using Props.Abstractions.Visuals;
 using Props.Registry;
-using Props.Runtime.Tree;
-using Props.Runtime.Tree.Setup;
-using Props.Runtime.Tree.Visuals;
-using Microsoft.Extensions.DependencyInjection;
 using Props.Runtime.PolyLine;
 using Props.Runtime.PolyLine.Setup;
 using Props.Runtime.PolyLine.Visuals;
+using Props.Runtime.Tree;
+using Props.Runtime.Tree.Setup;
+using Props.Runtime.Tree.Visuals;
 using Props.Runtime.Wizards.Features.Dimming.Mappers;
 using Props.Runtime.Wizards.Features.Dimming.Pages;
-using Props.Runtime.Wizards.Features.Segments.Mappers;
 using Props.Runtime.Wizards.Features.Segments.Pages;
 
 namespace PropCentric.Tests;
@@ -87,7 +86,7 @@ public class PropDiscoveryTests
 
         var registration = Assert.Single(registrations, r => r.PageType == typeof(SegmentsFeatureWizardPage));
         Assert.Equal(typeof(IHasSegments), registration.FeatureInterface);
-        Assert.Equal(typeof(SegmentsFeatureWizardDataMapper), registration.MapperType);
+        Assert.Null(registration.MapperType);
         Assert.Equal(150, registration.Priority);
     }
 

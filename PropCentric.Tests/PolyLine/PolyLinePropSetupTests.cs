@@ -12,7 +12,6 @@ using Props.Runtime.PolyLine.Setup;
 using Props.Runtime.PolyLine.Visuals;
 using Props.Runtime.PolyLine.Wizard;
 using Props.Runtime.PolyLine.Wizard.Pages;
-using Props.Runtime.Wizards.Features.Segments.Mappers;
 using Props.Runtime.Wizards.Features.Segments.Pages;
 
 namespace PropCentric.Tests.PolyLine;
@@ -57,17 +56,17 @@ public class PolyLinePropSetupTests : IDisposable
     }
 
     [Fact]
-    public async Task EditAsync_WithoutContext_SeedsFeaturePageFromPropState()
+    public async Task EditAsync_WithoutContext_SeedsFeaturePageFromDraftState()
     {
         await RunInStaAsync(async () =>
         {
             var page = new SegmentsFeatureWizardPage();
-            var mapper = new SegmentsFeatureWizardDataMapper(page);
             var wizardService = new TestWizardService(wizard =>
             {
                 var segmentsPage = Assert.IsType<SegmentsFeatureWizardPage>(wizard.Pages.Single(p => p is SegmentsFeatureWizardPage));
                 Assert.Equal(2, segmentsPage.Segments.Count);
                 Assert.Equal(80, segmentsPage.TotalPoints);
+                Assert.NotNull(segmentsPage.PreviewSession);
 
                 segmentsPage.Segments[0].PointCount = 12;
                 segmentsPage.Segments[1].PointCount = 34;
@@ -76,7 +75,7 @@ public class PolyLinePropSetupTests : IDisposable
 
             var setup = CreateSetup(
                 wizardService,
-                new TestFeatureWizardPageResolver([page], [mapper]));
+                new TestFeatureWizardPageResolver([page], []));
             var prop = PolyLineTestData.CreateTreeProp();
 
             await setup.EditAsync(prop);
@@ -101,7 +100,6 @@ public class PolyLinePropSetupTests : IDisposable
                 new WorldToModelTransform(new(0f, 0f), new(40f, 40f)));
 
             var page = new SegmentsFeatureWizardPage();
-            var mapper = new SegmentsFeatureWizardDataMapper(page);
             var wizardService = new TestWizardService(wizard =>
             {
                 var segmentsPage = Assert.IsType<SegmentsFeatureWizardPage>(wizard.Pages.Single(p => p is SegmentsFeatureWizardPage));
@@ -117,7 +115,7 @@ public class PolyLinePropSetupTests : IDisposable
 
             var setup = CreateSetup(
                 wizardService,
-                new TestFeatureWizardPageResolver([page], [mapper]));
+                new TestFeatureWizardPageResolver([page], []));
             var prop = PolyLineTestData.CreateTreeProp();
 
             await setup.EditAsync(prop, recaptureContext);

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Numerics;
+using Props.Abstractions.Features;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Visuals;
 using Props.Runtime.PolyLine.Setup;
@@ -22,7 +23,7 @@ public class WizardPreviewSessionTests
             LightSize = 3,
             Segments =
             [
-                new SegmentDraftItem
+                new SegmentDraftState
                 {
                     Start = new Vector2(0f, 0f),
                     End = new Vector2(1f, 0f),
