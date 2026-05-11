@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Catel.Data;
 using Catel.MVVM;
@@ -10,243 +10,179 @@ using Props.Runtime.ViewModels;
 
 namespace Props.Runtime.Wizards.Core.ViewModels;
 
-public class GraphicsWizardPageViewModelBase<TWizardPage, TPropModel> : WizardPageViewModelBase<TWizardPage>, IPropWizardPageViewModel
-        where TWizardPage : class, IWizardPage
-        where TPropModel : class, IPropVisualModel, new()
+public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelBase<TWizardPage>, IPropWizardPageViewModel
+    where TWizardPage : class, IWizardPage
+{
+    private readonly Debouncer _previewDebouncer = new(TimeSpan.FromMilliseconds(150));
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="wizardPage">Wizard page model</param>
+    protected GraphicsWizardPageViewModelBase(TWizardPage wizardPage) : base(wizardPage)
     {
-        private readonly Debouncer _previewDebouncer = new(TimeSpan.FromMilliseconds(150));
+        DrawingEngine = new OpenGLPropDrawingEngine();
+        DrawingEngine.SetModels([]);
 
-        #region Constructor
+        AttachRotationHandlers(Rotations);
 
-		/// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="wizardPage">Wizard page model</param>
-        protected GraphicsWizardPageViewModelBase(TWizardPage wizardPage) : base(wizardPage)
+        PropertyChanged += (_, _) => _previewDebouncer.Invoke(TriggerPreviewRebuild);
+    }
+
+    /// <summary>
+    /// Holds the most recently built preview model for the current wizard page.
+    /// </summary>
+    protected IPropVisualModel? CurrentPreviewModel
+    {
+        get => GetValue<IPropVisualModel?>(CurrentPreviewModelProperty);
+        set => SetValue(CurrentPreviewModelProperty, value);
+    }
+
+    private static readonly IPropertyData CurrentPreviewModelProperty =
+        RegisterProperty<IPropVisualModel?>(nameof(CurrentPreviewModel));
+
+    /// <summary>
+    /// Set by a concrete ViewModel to supply a fresh <see cref="IPropVisualModel"/> on each preview rebuild.
+    /// The closure should read the current draft state at call time.
+    /// </summary>
+    protected Func<IPropVisualModel>? PreviewBuilder { get; set; }
+
+    /// <summary>
+    /// Collection of rotations to support rotating the props around the x,y, and z axis.
+    /// </summary>
+    [ViewModelToModel]
+    public ObservableCollection<AxisRotationViewModel> Rotations
+    {
+        get => GetValue<ObservableCollection<AxisRotationViewModel>>(RotationsProperty);
+        set
         {
-            PropVisualModel = new TPropModel();
-
-			DrawingEngine = new OpenGLPropDrawingEngine();
-			DrawingEngine.SetModels([PropVisualModel]);
-
-			AttachRotationHandlers(Rotations);
-
-            PropertyChanged += (_, _) => _previewDebouncer.Invoke(TriggerPreviewRebuild);
-        }
-
-        #endregion
-
-        #region Protected Properties
-
-		protected TPropModel PropVisualModel
-        {
-            get { return GetValue<TPropModel>(PropModelProperty); }
-            set { SetValue(PropModelProperty, value); }
-        }
-        private static readonly IPropertyData PropModelProperty = RegisterProperty<TPropModel>(nameof(PropVisualModel));
-
-        /// <summary>
-        /// Set by a concrete ViewModel to supply a fresh IPropVisualModel on each preview rebuild.
-        /// The closure should read the current draft state at call time.
-        /// </summary>
-        protected Func<IPropVisualModel>? PreviewBuilder { get; set; }
-
-		#endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// Collection of rotations to support rotating the props around the x,y, and z axis.
-        /// </summary>
-        [ViewModelToModel]
-        public ObservableCollection<AxisRotationViewModel> Rotations
-        {
-            get { return GetValue<ObservableCollection<AxisRotationViewModel>>(RotationsProperty); }
-            set
+            var currentRotations = GetValue<ObservableCollection<AxisRotationViewModel>>(RotationsProperty);
+            if (!ReferenceEquals(currentRotations, value))
             {
-				// If the current and new collection are the same reference, do nothing. Otherwise, detach handlers from the current collection,
-				// set the new collection, and attach handlers to the new collection.
-				var _currentRotations = GetValue<ObservableCollection<AxisRotationViewModel>>(RotationsProperty);
-	            if (!ReferenceEquals(_currentRotations, value))
-	            {
-		            DetachRotationHandlers(_currentRotations);
-		            SetValue(RotationsProperty, value);
-		            AttachRotationHandlers(value);
-	            }
-
-	            var _rotations = GetValue<ObservableCollection<AxisRotationViewModel>>(RotationsProperty);
-	            if (_rotations != null)
-	            {
-		            for (int index = 0; index < _rotations.Count; index++)
-		            {
-			            _rotations[index].RotationAngleDefault = _rotations[index].RotationAngle;
-		            }
-	            }
+                DetachRotationHandlers(currentRotations);
+                SetValue(RotationsProperty, value);
+                AttachRotationHandlers(value);
             }
-        }
-		
-		private static readonly IPropertyData RotationsProperty = RegisterProperty<ObservableCollection<AxisRotationViewModel>>(nameof(Rotations));
 
-		/// <summary>
-		/// OpenGL prop drawing engine.
-		/// </summary>
-		public OpenGLPropDrawingEngine DrawingEngine { get; }
-
-		/// <inheritdoc />
-		public bool IsDrawingEngineInitialized => DrawingEngine.IsInitialized;
-
-		#endregion
-
-		#region Private Methods
-
-		/// <summary>
-		/// Add Rotation Handlers to the collection and each item in the collection. This ensures that when a rotation is changed, 
-		/// the prop nodes will update accordingly. It also ensures that when the collection changes (e.g. a new rotation is added), 
-		/// the new item will have handlers attached.
-		/// </summary>
-		/// <param name="rotationCollection">Specifies the collection of rotation view models to attach handlers.</param>
-		private void AttachRotationHandlers(ObservableCollection<AxisRotationViewModel>? rotationCollection)
-		{
-			if (rotationCollection == null)
-			{
-				return;
-			}
-
-			// Ensure collection changed handler is attached only once
-			rotationCollection.CollectionChanged -= OnRotationsCollectionChanged;
-			rotationCollection.CollectionChanged += OnRotationsCollectionChanged;
-
-			foreach (var rotation in rotationCollection)
-			{
-				// Ensure rotation changed handler is attached only once
-				rotation.RotationChanged -= OnRotationChanged;
-				rotation.RotationChanged += OnRotationChanged;
-			}
-		}
-
-		/// <summary>
-		/// Detaches event handlers related to rotation changes from the specified collection and its items.
-		/// </summary>
-		/// <param name="rotationCollection">Specifies the collection of rotation view models from which to remove event handlers.</param>
-		private void DetachRotationHandlers(ObservableCollection<AxisRotationViewModel>? rotationCollection)
-		{
-			if (rotationCollection == null)
-			{
-				return;
-			}
-
-			rotationCollection.CollectionChanged -= OnRotationsCollectionChanged;
-
-			foreach (var rotation in rotationCollection)
-			{
-				rotation.RotationChanged -= OnRotationChanged;
-			}
-		}
-
-		/// <summary>
-		/// Event handler for when a collection of rotation view models changed.
-		/// </summary>
-		/// <param name="sender">Event sender</param>
-		/// <param name="e">Event arguments</param>
-		private void OnRotationsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-		{
-			if (e == null)
-			{
-				return;
-			}
-
-			if (e.OldItems != null)
-			{
-				foreach (AxisRotationViewModel oldItem in e.OldItems)
-				{
-					oldItem.RotationChanged -= OnRotationChanged;
-				}
-			}
-
-			if (e.NewItems != null)
-			{
-				foreach (AxisRotationViewModel newItem in e.NewItems)
-				{
-					// Ensure rotation changed handler is attached only once
-					newItem.RotationChanged -= OnRotationChanged;
-					newItem.RotationChanged += OnRotationChanged;
-				}
-			}
-
-			if (e.Action == NotifyCollectionChangedAction.Reset && sender is ObservableCollection<AxisRotationViewModel> rotationCollection)
-			{
-				// Reattach for the new state of the collection
-				DetachRotationHandlers(rotationCollection);
-				AttachRotationHandlers(rotationCollection);
-			}
-		}
-
-		/// <summary>
-		/// Event handler for when a prop rotation changed.
-		/// </summary>
-		/// <param name="sender">Event sender</param>
-		/// <param name="e">Event arguments</param>
-		private void OnRotationChanged(object? sender, EventArgs e)
-        {
-            // Is there a changed axis?
-            var newRotation = sender as AxisRotationViewModel;
-            if (newRotation == null)
+            var rotations = GetValue<ObservableCollection<AxisRotationViewModel>>(RotationsProperty);
+            if (rotations is null)
             {
                 return;
             }
 
-            // Then try to find the axis it now duplicates
-            var duplicateRotation = Rotations.FirstOrDefault(x => x != newRotation && x.Axis == newRotation.Axis);
-
-            // If there is an axis duplication (i.e. two axis have the same plane), then...
-            if (duplicateRotation != null)
+            for (int index = 0; index < rotations.Count; index++)
             {
-                // Find the Axis that is no longer specified
-                var otherRotation = Rotations.FirstOrDefault(x => x != newRotation && x != duplicateRotation);
-                if (otherRotation == null)
-                {
-                    return;
-                }
-
-                var missingAxis = newRotation.Axes.FirstOrDefault(x => x != duplicateRotation.Axis && x != otherRotation.Axis);
-
-                // Finally assign the missing axis to the duplicated plane and swap the rotations between the new and duplicated axes
-                duplicateRotation.Axis = missingAxis;
-                (duplicateRotation.RotationAngle, newRotation.RotationAngle) = (newRotation.RotationAngle, duplicateRotation.RotationAngle);
-            }
-
-            // Set the updated parameters
-            //This should come from the viewer if additional rotations are required by the viewer.
-            //PropVisualModel.AxisRotations = AxisRotationViewModel.ConvertToModel(Rotations);           
-        }
-
-		#endregion
-
-		#region Protected Methods
-
-		protected override async Task InitializeAsync()
-        {
-           // PropVisualModel.AxisRotations = AxisRotationViewModel.ConvertToModel(Rotations);
-            // Kick an initial build so the preview is populated when the wizard first opens,
-            // not just on the first user edit. PreviewBuilder is set by derived ctors before
-            // InitializeAsync runs, so this is safe.
-            TriggerPreviewRebuild();
-        }
-
-		#endregion
-
-        #region Private Methods
-
-        private void TriggerPreviewRebuild()
-        {
-            if (PreviewBuilder is null) return;
-            var model = PreviewBuilder();
-            if (model is TPropModel typed)
-            {
-                PropVisualModel = typed;
-                DrawingEngine.SetModels([PropVisualModel]);
+                rotations[index].RotationAngleDefault = rotations[index].RotationAngle;
             }
         }
+    }
 
-        #endregion
-	}
+    private static readonly IPropertyData RotationsProperty =
+        RegisterProperty<ObservableCollection<AxisRotationViewModel>>(nameof(Rotations));
+
+    /// <summary>
+    /// OpenGL prop drawing engine.
+    /// </summary>
+    public OpenGLPropDrawingEngine DrawingEngine { get; }
+
+    /// <inheritdoc />
+    public bool IsDrawingEngineInitialized => DrawingEngine.IsInitialized;
+
+    protected override async Task InitializeAsync()
+    {
+        TriggerPreviewRebuild();
+    }
+
+    private void AttachRotationHandlers(ObservableCollection<AxisRotationViewModel>? rotationCollection)
+    {
+        if (rotationCollection is null)
+        {
+            return;
+        }
+
+        rotationCollection.CollectionChanged -= OnRotationsCollectionChanged;
+        rotationCollection.CollectionChanged += OnRotationsCollectionChanged;
+
+        foreach (var rotation in rotationCollection)
+        {
+            rotation.RotationChanged -= OnRotationChanged;
+            rotation.RotationChanged += OnRotationChanged;
+        }
+    }
+
+    private void DetachRotationHandlers(ObservableCollection<AxisRotationViewModel>? rotationCollection)
+    {
+        if (rotationCollection is null)
+        {
+            return;
+        }
+
+        rotationCollection.CollectionChanged -= OnRotationsCollectionChanged;
+
+        foreach (var rotation in rotationCollection)
+        {
+            rotation.RotationChanged -= OnRotationChanged;
+        }
+    }
+
+    private void OnRotationsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (e.OldItems is not null)
+        {
+            foreach (AxisRotationViewModel oldItem in e.OldItems)
+            {
+                oldItem.RotationChanged -= OnRotationChanged;
+            }
+        }
+
+        if (e.NewItems is not null)
+        {
+            foreach (AxisRotationViewModel newItem in e.NewItems)
+            {
+                newItem.RotationChanged -= OnRotationChanged;
+                newItem.RotationChanged += OnRotationChanged;
+            }
+        }
+
+        if (e.Action == NotifyCollectionChangedAction.Reset && sender is ObservableCollection<AxisRotationViewModel> rotationCollection)
+        {
+            DetachRotationHandlers(rotationCollection);
+            AttachRotationHandlers(rotationCollection);
+        }
+    }
+
+    private void OnRotationChanged(object? sender, EventArgs e)
+    {
+        if (sender is not AxisRotationViewModel newRotation)
+        {
+            return;
+        }
+
+        var duplicateRotation = Rotations.FirstOrDefault(x => x != newRotation && x.Axis == newRotation.Axis);
+        if (duplicateRotation is null)
+        {
+            return;
+        }
+
+        var otherRotation = Rotations.FirstOrDefault(x => x != newRotation && x != duplicateRotation);
+        if (otherRotation is null)
+        {
+            return;
+        }
+
+        var missingAxis = newRotation.Axes.FirstOrDefault(x => x != duplicateRotation.Axis && x != otherRotation.Axis);
+        duplicateRotation.Axis = missingAxis;
+        (duplicateRotation.RotationAngle, newRotation.RotationAngle) = (newRotation.RotationAngle, duplicateRotation.RotationAngle);
+    }
+
+    private void TriggerPreviewRebuild()
+    {
+        if (PreviewBuilder is null)
+        {
+            return;
+        }
+
+        CurrentPreviewModel = PreviewBuilder();
+        DrawingEngine.SetModels(CurrentPreviewModel is null ? [] : [CurrentPreviewModel]);
+    }
+}

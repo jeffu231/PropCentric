@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using Catel.Data;
 using Catel.MVVM;
 using Props.Abstractions.Props;
-using Props.Abstractions.PropVisualModels;
 using Props.Runtime.Tree.Wizard.Pages;
 using Props.Runtime.ViewModels;
 using Props.Runtime.Wizards.Core.ViewModels;
@@ -13,7 +12,7 @@ namespace Props.Runtime.Tree.Wizard.ViewModels;
 /// View model for the tree prop wizard page; binds wizard UI fields to the <see cref="TreePropWizardPage"/> model
 /// and wires the preview builder closure.
 /// </summary>
-public class TreePropWizardPageViewModel : LightWizardPageViewModel<TreePropWizardPage, TreePropVisualModel>, IPropWizardPageViewModel
+public class TreePropWizardPageViewModel : LightWizardPageViewModel<TreePropWizardPage>, IPropWizardPageViewModel
 {
     public TreePropWizardPageViewModel(TreePropWizardPage wizardPage) : base(wizardPage)
     {

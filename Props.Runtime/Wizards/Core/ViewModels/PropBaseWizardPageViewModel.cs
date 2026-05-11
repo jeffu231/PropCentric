@@ -1,16 +1,12 @@
-﻿using Catel.Data;
+using Catel.Data;
 using Catel.MVVM;
 using Orc.Wizard;
-using Props.Abstractions.PropVisualModels;
 
 namespace Props.Runtime.Wizards.Core.ViewModels;
 
-public class PropBaseWizardPageViewModel<TWizardPage, TPropModel> : GraphicsWizardPageViewModelBase<TWizardPage, TPropModel>
+public class PropBaseWizardPageViewModel<TWizardPage> : GraphicsWizardPageViewModelBase<TWizardPage>
     where TWizardPage : class, IWizardPage
-    where TPropModel : class, IPropVisualModel, new()
 {
-    #region Constructor
-
     /// <summary>
     /// Constructor
     /// </summary>
@@ -18,10 +14,6 @@ public class PropBaseWizardPageViewModel<TWizardPage, TPropModel> : GraphicsWiza
     public PropBaseWizardPageViewModel(TWizardPage wizardPage) : base(wizardPage)
     {
     }
-
-    #endregion
-
-    #region Name Property
 
     /// <summary>
     /// Gets or sets the prop name.
@@ -32,12 +24,8 @@ public class PropBaseWizardPageViewModel<TWizardPage, TPropModel> : GraphicsWiza
         get { return GetValue<string>(NameProperty); }
         set { SetValue(NameProperty, value); }
     }
-		
+
     private static readonly IPropertyData NameProperty = RegisterProperty<string>(nameof(Name));
-
-    #endregion
-
-    #region Protected Methods
 
     /// <summary>
     /// Performs validation on the properties.
@@ -52,6 +40,4 @@ public class PropBaseWizardPageViewModel<TWizardPage, TPropModel> : GraphicsWiza
             validationResults.Add(FieldValidationResult.CreateError("Name", "Name is required"));
         }
     }
-
-    #endregion
 }

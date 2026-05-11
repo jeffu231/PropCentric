@@ -1,16 +1,12 @@
-﻿using Catel.Data;
+using Catel.Data;
 using Catel.MVVM;
 using Orc.Wizard;
-using Props.Abstractions.PropVisualModels;
 
 namespace Props.Runtime.Wizards.Core.ViewModels;
 
-public class LightWizardPageViewModel<TWizardPage, TPropModel>: PropBaseWizardPageViewModel<TWizardPage, TPropModel>
+public class LightWizardPageViewModel<TWizardPage> : PropBaseWizardPageViewModel<TWizardPage>
     where TWizardPage : class, IWizardPage
-    where TPropModel : class, ILightPropVisualModel, new()
 {
-    #region Constructor
-
     /// <summary>
     /// Constructor
     /// </summary>
@@ -18,10 +14,6 @@ public class LightWizardPageViewModel<TWizardPage, TPropModel>: PropBaseWizardPa
     public LightWizardPageViewModel(TWizardPage wizardPage) : base(wizardPage)
     {
     }
-
-    #endregion
-
-    #region LightSize property
 
     /// <summary>
     /// Gets or sets the size of each light.
@@ -34,15 +26,10 @@ public class LightWizardPageViewModel<TWizardPage, TPropModel>: PropBaseWizardPa
     public int LightSize
     {
         get { return GetValue<int>(LightSizeProperty); }
-        set
-        {
-            SetValue(LightSizeProperty, Math.Clamp(value, LightSizeMinimum, LightSizeMaximum));
-            //PropModel.LightSize = Math.Clamp(value, LightSizeMinimum, LightSizeMaximum);				
-        }
+        set { SetValue(LightSizeProperty, Math.Clamp(value, LightSizeMinimum, LightSizeMaximum)); }
     }
-		
-    private static readonly IPropertyData LightSizeProperty = RegisterProperty<int>(nameof(LightSize));
 
+    private static readonly IPropertyData LightSizeProperty = RegisterProperty<int>(nameof(LightSize));
 
     [ViewModelToModel]
     public int LightSizeMinimum
@@ -54,9 +41,11 @@ public class LightWizardPageViewModel<TWizardPage, TPropModel>: PropBaseWizardPa
             {
                 LightSize = value;
             }
+
             SetValue(LightSizeMinimumProperty, value);
         }
     }
+
     private static readonly IPropertyData LightSizeMinimumProperty = RegisterProperty<int>(nameof(LightSizeMinimum));
 
     [ViewModelToModel]
@@ -69,10 +58,10 @@ public class LightWizardPageViewModel<TWizardPage, TPropModel>: PropBaseWizardPa
             {
                 LightSize = value;
             }
+
             SetValue(LightSizeMaximumProperty, value);
         }
     }
-    private static readonly IPropertyData LightSizeMaximumProperty = RegisterProperty<int>(nameof(LightSizeMaximum));
 
-    #endregion
+    private static readonly IPropertyData LightSizeMaximumProperty = RegisterProperty<int>(nameof(LightSizeMaximum));
 }

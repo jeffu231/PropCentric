@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using Catel.Data;
 using Catel.MVVM;
-using Props.Runtime.PolyLine.Visuals;
 using Props.Runtime.PolyLine.Wizard.Pages;
 using Props.Runtime.ViewModels;
 using Props.Runtime.Wizards.Core.ViewModels;
@@ -12,7 +11,7 @@ namespace Props.Runtime.PolyLine.Wizard.ViewModels;
 /// View model for the polyline prop wizard page.
 /// </summary>
 public sealed class PolyLinePropWizardPageViewModel
-    : LightWizardPageViewModel<PolyLinePropWizardPage, PolyLinePropVisualModel>, IPropWizardPageViewModel
+    : LightWizardPageViewModel<PolyLinePropWizardPage>, IPropWizardPageViewModel
 {
     public PolyLinePropWizardPageViewModel(PolyLinePropWizardPage wizardPage) : base(wizardPage)
     {
