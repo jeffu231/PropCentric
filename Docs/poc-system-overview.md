@@ -24,8 +24,9 @@ Defines the core contracts and shared base types:
 
 - `IProp`, `BaseProp<TModel>`, `BaseLightProp<TModel>`
 - feature interfaces such as `IHasLights`, `IHasDimming`, and `IHasSegments`
+- draft-facing feature contracts such as `IHasSegmentsDraft`
 - setup contracts such as `IPropSetup`, `IPropSetupContext`, `IPropDraftMapper<,>`, and `ISegmentCaptureNormalizer`
-- visual contracts such as `IVisualInputMapper<,>`, `IPropVisualModelBuilder<,>`, `IWizardPreviewCoordinator<>`
+- visual contracts such as `IVisualInputMapper<,>`, `IPropVisualModelBuilder<,>`, `IWizardPreviewCoordinator<>`, and `IWizardPreviewSession`
 - visual element types such as `LightPoint`, `LightPointCloud`, and `IPropVisualModel`
 
 This project defines the shape of the system without hard-coding a specific prop type.
@@ -160,7 +161,8 @@ The setup wrapper:
 - creates a wizard draft model
 - populates the draft from the prop for edit flows
 - resolves feature wizard pages for the prop type
-- resolves feature data mappers for those pages
+- initializes draft-backed feature pages for the current wizard instance
+- resolves feature data mappers for legacy mapper-backed pages
 - creates the prop-specific wizard
 - applies draft and feature data back into the prop when the wizard is accepted
 - commits the prop
@@ -203,27 +205,32 @@ For the polyline example:
 
 These are discovered independently and inserted based on prop feature support.
 
-For example, `DimmingFeatureWizardPage` is discovered through:
+For example, `DimmingFeatureWizardPage` and `SegmentsFeatureWizardPage` are discovered through:
 
 - `FeatureWizardPageAttribute`
 
-Then `FeatureWizardPageResolver` determines which pages apply to a given prop type.
+Then `FeatureWizardPageResolver` determines which pages apply to a given prop type and initializes any page that implements `IFeatureWizardDraftPage`.
 
 Relevant files:
 
 - [FeatureWizardPageScanner.cs](C:/Dev/PropCentric/Props.Registry/FeatureWizardPageScanner.cs)
 - [FeatureWizardPageResolver.cs](C:/Dev/PropCentric/Props.Registry/FeatureWizardPageResolver.cs)
 
-### Feature data mappers
+### Feature page patterns
 
-Each feature page can have a companion mapper that moves data between the page and the prop's feature interface.
+There are now two supported feature-page patterns:
 
-Examples:
+- mapper-backed pages, such as `DimmingFeatureWizardPage`
+- draft-backed pages, such as `SegmentsFeatureWizardPage`
 
-- [DimmingFeatureWizardDataMapper.cs](C:/Dev/PropCentric/Props.Runtime/Wizards/Features/Dimming/Mappers/DimmingFeatureWizardDataMapper.cs)
-- [SegmentsFeatureWizardDataMapper.cs](C:/Dev/PropCentric/Props.Runtime/Wizards/Features/Segments/Mappers/SegmentsFeatureWizardDataMapper.cs)
+Mapper-backed pages can declare a companion `IFeatureWizardDataMapper` that moves data between the page and the prop.
 
-This keeps page logic independent from concrete prop implementations.
+Draft-backed pages implement `IFeatureWizardDraftPage` and are initialized with:
+
+- the shared wizard draft
+- the shared `IWizardPreviewSession` for that wizard instance
+
+This lets a feature page participate in live preview without duplicating preview-driving state in a page-local model.
 
 ## 5. Draft and Mapping Pattern
 
@@ -249,6 +256,18 @@ The mapper is responsible for:
 - copying draft state back into the prop after the user confirms
 
 This pattern isolates the translation between UI/setup state and domain state.
+
+### Draft-backed feature edits
+
+Some feature pages now edit shared draft state directly instead of holding disconnected page copies.
+
+For the polyline flow:
+
+- `PolyLinePropDraft` implements `IHasSegmentsDraft`
+- `IHasSegmentsDraft` exposes `ObservableCollection<SegmentDraftState>`
+- `SegmentsFeatureWizardPage` wraps those segment draft items for display and editing
+
+This is important because the preview coordinator already reads from the shared prop draft. When a feature page edits that same draft state, preview can rebuild immediately without waiting for wizard completion.
 
 ## 6. Visual Model Generation Pattern
 
@@ -318,13 +337,27 @@ Example:
 
 This gives a dedicated place for preview-specific concerns without changing the prop model directly.
 
+### Preview session
+
+Feature pages that need live preview do not talk to a preview coordinator directly. Instead, the setup wrapper creates an `IWizardPreviewSession<TDraft>` once per wizard instance.
+
+The preview session:
+
+- exposes the shared draft
+- delegates preview generation to the existing preview coordinator
+- gives prop-specific pages and feature pages a common way to request preview rebuilds
+
+`SegmentsFeatureWizardPageViewModel` uses `IWizardPreviewSession.BuildPreview()` so its preview stays in sync with draft changes made on that same page.
+
 ## 8. Commit Flow
 
 After the wizard is accepted:
 
 1. the draft mapper applies prop-specific data
-2. feature mappers apply feature-specific data
+2. legacy feature mappers apply feature-specific page data
 3. `CommitAsync()` finalizes the prop
+
+For draft-backed feature pages such as Segments, the feature-specific edits are already in the shared draft, so the prop draft mapper applies them as part of the normal draft-to-prop step.
 
 For light props, commit typically does two things:
 
@@ -378,12 +411,15 @@ Create an `IPropSetup` implementation that:
 - creates/edits the prop
 - creates the draft
 - resolves feature pages
-- maps draft and feature data back into the prop
+- initializes any draft-backed feature pages
+- maps draft and legacy feature-page data back into the prop
 - commits the prop
 
 ### Step 4: Add the draft type
 
 Create an `IPropDraft` implementation that holds the wizard's working state.
+
+If a feature page must edit preview-driving state directly, expose that state through a feature-specific draft contract such as `IHasSegmentsDraft`.
 
 ### Step 5: Add the draft mapper
 
@@ -431,6 +467,8 @@ Create the core wizard page(s) needed to collect prop-specific data.
 
 If the prop implements existing features such as dimming, the corresponding feature wizard pages can be discovered and inserted automatically.
 
+If a feature page should rebuild preview immediately while the user edits it, make that page draft-backed by implementing `IFeatureWizardDraftPage`.
+
 ### Step 12: Let discovery register everything
 
 If all types live in a scanned `Props*` assembly and implement the expected contracts, startup discovery will now register:
@@ -469,6 +507,7 @@ The implemented segmentable-prop slice establishes these rules:
 - `PolyLineProp` is open-only in this first slice
 - segment feature pages edit `PointCount`, not capture geometry
 - continuity is validated during normalization before rendering
+- the Segments feature page uses the shared wizard draft and preview session instead of a prop-bound mapper
 
 ## Why This Pattern Matters
 
@@ -483,6 +522,7 @@ It is that each concern is isolated:
 - mappers isolate translation
 - builders isolate geometry logic
 - feature pages are reusable
+- live preview can be shared across prop pages and draft-backed feature pages
 - DI resolves the full pipeline automatically
 
 That is the main architectural result of the POC and the part most worth carrying forward into the real Vixen refactor.
