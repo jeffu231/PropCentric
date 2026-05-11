@@ -11,6 +11,7 @@ using Props.Runtime.Tree.Wizard;
 using Props.Runtime.Tree.Wizard.Pages;
 using Props.Runtime.Wizards;
 using Props.Runtime.Wizards.Core;
+using Props.Runtime.Wizards.Core.Preview;
 
 namespace Props.Runtime.Tree;
 
@@ -41,8 +42,10 @@ public class TreePropSetup(
         var treeProp = propFactory.Create<TreeProp>();
         var draft = new TreePropDraft();
         draftMapper.PopulateDraft(draft, treeProp);
+        var previewSession = new WizardPreviewSession<TreePropDraft>(draft, previewCoordinator);
 
         var featurePages = featurePageResolver.GetPagesFor(typeof(TreeProp));
+        featurePageResolver.InitializePages(featurePages, draft, previewSession);
         var featureMappers = featurePageResolver.GetMappersFor(featurePages);
         var treeWizard = CreateTreeWizard(draft, featurePages);
 
@@ -59,8 +62,10 @@ public class TreePropSetup(
     {
         var draft = new TreePropDraft();
         draftMapper.PopulateDraft(draft, treeProp);
+        var previewSession = new WizardPreviewSession<TreePropDraft>(draft, previewCoordinator);
 
         var featurePages = featurePageResolver.GetPagesFor(typeof(TreeProp));
+        featurePageResolver.InitializePages(featurePages, draft, previewSession);
         var featureMappers = featurePageResolver.GetMappersFor(featurePages);
         var treeWizard = CreateTreeWizard(draft, featurePages);
 

@@ -1,4 +1,6 @@
 using Orc.Wizard;
+using Props.Abstractions.Setup;
+using Props.Abstractions.Visuals;
 
 namespace Props.Abstractions.Features;
 
@@ -27,4 +29,12 @@ public interface IFeatureWizardPageResolver
     /// a declared mapper type. Use <c>foreach</c> directly; each mapper is paired to the matching page.
     /// </returns>
     IReadOnlyList<IFeatureWizardDataMapper> GetMappersFor(IReadOnlyList<IWizardPage> pages);
+
+    /// <summary>
+    /// Initializes any feature pages that opt into shared-draft behavior for the current wizard instance.
+    /// </summary>
+    /// <param name="pages">The resolved feature pages to initialize.</param>
+    /// <param name="draft">The shared draft for the current wizard flow.</param>
+    /// <param name="previewSession">The shared preview session for the current wizard flow.</param>
+    void InitializePages(IReadOnlyList<IWizardPage> pages, IPropDraft draft, IWizardPreviewSession previewSession);
 }

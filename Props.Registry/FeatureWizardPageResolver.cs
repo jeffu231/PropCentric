@@ -1,6 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Orc.Wizard;
 using Props.Abstractions.Features;
+using Props.Abstractions.Setup;
+using Props.Abstractions.Visuals;
 
 namespace Props.Registry;
 
@@ -30,5 +32,16 @@ public class FeatureWizardPageResolver(
                     serviceProvider, mapperType, page));
         }
         return result;
+    }
+
+    public void InitializePages(IReadOnlyList<IWizardPage> pages, IPropDraft draft, IWizardPreviewSession previewSession)
+    {
+        foreach (var page in pages)
+        {
+            if (page is IFeatureWizardDraftPage draftPage)
+            {
+                draftPage.Initialize(draft, previewSession);
+            }
+        }
     }
 }

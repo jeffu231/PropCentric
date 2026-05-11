@@ -127,6 +127,34 @@ public class PolyLinePropSetupTests : IDisposable
         });
     }
 
+    [Fact]
+    public async Task EditAsync_InitializesDraftBackedFeaturePages()
+    {
+        await RunInStaAsync(async () =>
+        {
+            var page = new TestDraftBackedFeatureWizardPage();
+            var wizardService = new TestWizardService(wizard =>
+            {
+                var featurePage = Assert.IsType<TestDraftBackedFeatureWizardPage>(
+                    wizard.Pages.Single(p => p is TestDraftBackedFeatureWizardPage));
+                Assert.NotNull(featurePage.InitializedDraft);
+                Assert.NotNull(featurePage.PreviewSession);
+                Assert.Same(featurePage.InitializedDraft, featurePage.PreviewSession!.Draft);
+            });
+            RegisterGlobalServices(wizardService);
+
+            var setup = CreateSetup(
+                wizardService,
+                new TestFeatureWizardPageResolver([page], []));
+            var prop = PolyLineTestData.CreateTreeProp();
+
+            await setup.EditAsync(prop);
+
+            var typedDraft = Assert.IsType<PolyLinePropDraft>(page.InitializedDraft);
+            Assert.Equal(prop.Segments.Count, typedDraft.Segments.Count);
+        });
+    }
+
     public void Dispose()
     {
         var serviceLocator = ServiceLocator.Default;
@@ -210,6 +238,27 @@ public class PolyLinePropSetupTests : IDisposable
         public IReadOnlyList<IWizardPage> GetPagesFor(Type propType) => pages;
 
         public IReadOnlyList<IFeatureWizardDataMapper> GetMappersFor(IReadOnlyList<IWizardPage> requestedPages) => mappers;
+
+        public void InitializePages(IReadOnlyList<IWizardPage> requestedPages, IPropDraft draft, IWizardPreviewSession previewSession)
+        {
+            foreach (var page in requestedPages.OfType<IFeatureWizardDraftPage>())
+            {
+                page.Initialize(draft, previewSession);
+            }
+        }
+    }
+
+    private sealed class TestDraftBackedFeatureWizardPage : WizardPageBase, IFeatureWizardDraftPage
+    {
+        public IPropDraft? InitializedDraft { get; private set; }
+
+        public IWizardPreviewSession? PreviewSession { get; private set; }
+
+        public void Initialize(IPropDraft draft, IWizardPreviewSession previewSession)
+        {
+            InitializedDraft = draft;
+            PreviewSession = previewSession;
+        }
     }
 
     private sealed class TestPropFactory : IPropFactory

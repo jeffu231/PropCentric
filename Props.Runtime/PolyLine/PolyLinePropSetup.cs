@@ -9,6 +9,7 @@ using Props.Abstractions.Visuals;
 using Props.Runtime.PolyLine.Setup;
 using Props.Runtime.PolyLine.Wizard;
 using Props.Runtime.PolyLine.Wizard.Pages;
+using Props.Runtime.Wizards.Core.Preview;
 using Props.Runtime.Wizards.Core;
 
 namespace Props.Runtime.PolyLine;
@@ -75,8 +76,10 @@ public sealed class PolyLinePropSetup : IPropSetup
 
         var draft = new PolyLinePropDraft();
         _draftMapper.PopulateDraft(draft, polyLineProp);
+        var previewSession = new WizardPreviewSession<PolyLinePropDraft>(draft, _previewCoordinator);
 
         var featurePages = _featurePageResolver.GetPagesFor(typeof(PolyLineProp));
+        _featurePageResolver.InitializePages(featurePages, draft, previewSession);
         var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var wizard = _wizardFactory(draft, featurePages);
 
@@ -97,8 +100,10 @@ public sealed class PolyLinePropSetup : IPropSetup
 
         var draft = new PolyLinePropDraft();
         _draftMapper.PopulateDraft(draft, polyLineProp);
+        var previewSession = new WizardPreviewSession<PolyLinePropDraft>(draft, _previewCoordinator);
 
         var featurePages = _featurePageResolver.GetPagesFor(typeof(PolyLineProp));
+        _featurePageResolver.InitializePages(featurePages, draft, previewSession);
         var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var wizard = _wizardFactory(draft, featurePages);
 
