@@ -6,8 +6,13 @@ using Props.Runtime.Tree;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
 using Microsoft.Extensions.DependencyInjection;
+using Props.Runtime.PolyLine;
+using Props.Runtime.PolyLine.Setup;
+using Props.Runtime.PolyLine.Visuals;
 using Props.Runtime.Wizards.Features.Dimming.Mappers;
 using Props.Runtime.Wizards.Features.Dimming.Pages;
+using Props.Runtime.Wizards.Features.Segments.Mappers;
+using Props.Runtime.Wizards.Features.Segments.Pages;
 
 namespace PropCentric.Tests;
 
@@ -40,6 +45,29 @@ public class PropDiscoveryTests
     }
 
     [Fact]
+    public void PropFeatureInferrer_InferPolyLineProp_ReturnsExpectedFlags()
+    {
+        var inferrer = new PropFeatureInferrer();
+
+        var flags = inferrer.Infer(typeof(PolyLineProp));
+
+        Assert.True(flags.HasFlag(PropFeatureFlags.Lights));
+        Assert.True(typeof(IHasLights).IsAssignableFrom(typeof(PolyLineProp)));
+        Assert.True(flags.HasFlag(PropFeatureFlags.Segments));
+        Assert.True(typeof(IHasSegments).IsAssignableFrom(typeof(PolyLineProp)));
+    }
+
+    [Fact]
+    public void PropScanner_ScanRuntimeAssembly_FindsPolyLineDescriptor()
+    {
+        IReadOnlyList<PropDescriptor> descriptors = PropScanner.Scan([typeof(PolyLineProp).Assembly]);
+
+        var descriptor = Assert.Single(descriptors, d => d.PropType == typeof(PolyLineProp));
+        Assert.Equal("PolyLine", descriptor.Name);
+        Assert.Equal(typeof(PolyLineSetup), descriptor.SetupType);
+    }
+
+    [Fact]
     public void FeatureWizardPageScanner_ScanRuntimeAssembly_FindsDimmingWizardRegistration()
     {
         IReadOnlyList<FeatureWizardPageDescriptor> registrations =
@@ -49,6 +77,18 @@ public class PropDiscoveryTests
         Assert.Equal(typeof(IHasDimming), registration.FeatureInterface);
         Assert.Equal(typeof(DimmingFeatureWizardDataMapper), registration.MapperType);
         Assert.Equal(100, registration.Priority);
+    }
+
+    [Fact]
+    public void FeatureWizardPageScanner_ScanRuntimeAssembly_FindsSegmentsWizardRegistration()
+    {
+        IReadOnlyList<FeatureWizardPageDescriptor> registrations =
+            FeatureWizardPageScanner.Scan([typeof(SegmentsFeatureWizardPage).Assembly]);
+
+        var registration = Assert.Single(registrations, r => r.PageType == typeof(SegmentsFeatureWizardPage));
+        Assert.Equal(typeof(IHasSegments), registration.FeatureInterface);
+        Assert.Equal(typeof(SegmentsFeatureWizardDataMapper), registration.MapperType);
+        Assert.Equal(50, registration.Priority);
     }
 
     [Fact]
@@ -70,5 +110,26 @@ public class PropDiscoveryTests
         Assert.NotNull(provider.GetService<ISegmentCaptureNormalizer>());
         Assert.NotNull(provider.GetService<TreeProp>());
         Assert.NotNull(provider.GetService<TreePropSetup>());
+    }
+
+    [Fact]
+    public void AddPropSystem_RegistersDiscoveredPolyLineServicesWithoutManualBootstrap()
+    {
+        var services = new ServiceCollection();
+        var pluginDirectory = Path.GetDirectoryName(typeof(PolyLineProp).Assembly.Location);
+
+        Assert.NotNull(pluginDirectory);
+
+        services.AddPropSystem(pluginDirectory!);
+        using var provider = services.BuildServiceProvider();
+
+        Assert.NotNull(provider.GetService<IVisualInputMapper<PolyLineProp, PolyLineVisualInput>>());
+        Assert.NotNull(provider.GetService<IVisualInputMapper<PolyLinePropDraft, PolyLineVisualInput>>());
+        Assert.NotNull(provider.GetService<IPropVisualModelBuilder<PolyLineVisualInput, PolyLinePropVisualModel>>());
+        Assert.NotNull(provider.GetService<IPropDraftMapper<PolyLinePropDraft, PolyLineProp>>());
+        Assert.NotNull(provider.GetService<IWizardPreviewCoordinator<PolyLinePropDraft>>());
+        Assert.NotNull(provider.GetService<PolyLineProp>());
+        Assert.NotNull(provider.GetService<PolyLineSetup>());
+        Assert.NotNull(provider.GetService<SegmentsFeatureWizardPage>());
     }
 }

@@ -49,8 +49,8 @@ public class OpenGLPropDrawingEngine : OpenGLDrawingEngineBase<LightCloudShape>,
 
             _shapes = _models
                 .SelectMany(m => m.Elements)
-                .OfType<LightPointCloud>()
-                .Select(c => new LightCloudShape(c))
+                .SelectMany(ProjectElementToClouds)
+                .Select(cloud => new LightCloudShape(cloud))
                 .ToList();
 
             _modelsDirty = false;
@@ -90,4 +90,14 @@ public class OpenGLPropDrawingEngine : OpenGLDrawingEngineBase<LightCloudShape>,
     protected override float CalculatePointScale() => GetFocalDepthMultiplier() * 2.0f;
 
     protected override void ResetTimers() { }
+
+    private static IEnumerable<LightPointCloud> ProjectElementToClouds(IVisualElement element)
+    {
+        return element switch
+        {
+            LightPointCloud cloud => [cloud],
+            LightSegment segment => [new LightPointCloud { Points = segment.Lights }],
+            _ => []
+        };
+    }
 }
