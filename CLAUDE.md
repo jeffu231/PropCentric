@@ -25,6 +25,17 @@ dotnet clean PropCentric.sln
 
 PropCentric is a plugin-oriented POC for defining, discovering, configuring, and rendering Props.
 
+## Use Docs First
+
+Before changing architecture, naming, setup flow, or prop-pipeline behavior, check the relevant files under `Docs/` first and treat them as the primary repository reference unless the code clearly diverged and needs to be brought back into alignment.
+
+Common references:
+
+- `Docs/naming-conventions.md` for type and pipeline naming
+- `Docs/poc-system-overview.md` for the current end-to-end architecture
+- `Docs/segmentable-props.md` for segmentable-prop behavior and constraints
+- `Docs/core-design-goals.md` for architecture intent and review criteria
+
 ### Main Projects
 
 | Project | Role |
@@ -79,6 +90,8 @@ Each feature interface is decorated with `[PropFeature(...)]`. `PropFeatureInfer
 
 Each prop has a setup wrapper implementing `IPropSetup`.
 
+`IPropSetup` supports optional external setup input through `IPropSetupContext`. For segmentable props, captured world-space geometry is passed into setup this way and normalized before wizard editing.
+
 The setup wrapper is responsible for:
 
 - creating or accepting the prop instance
@@ -91,6 +104,8 @@ The setup wrapper is responsible for:
 - calling `await prop.CommitAsync()`
 
 Wizard pages should not edit props directly.
+
+For `IHasSegments` props, the reusable segments feature page edits `PointCount` values only. It is not a geometry editor.
 
 ## Draft / Mapping / Visual Pattern
 
@@ -129,6 +144,7 @@ Important:
 
 - not every prop field must be part of the visual input
 - props may contain additional configuration used for patching or other runtime behavior
+- segmentable props persist normalized model-space geometry on the prop; capture transforms remain outside the prop
 
 ### Visual Input Mappers
 
@@ -179,7 +195,7 @@ If these types are placed in a scanned `Props*` assembly and implement the expec
 
 Use the naming rules documented in:
 
-- `Docs/NamingConventions.md`
+- `Docs/naming-conventions.md`
 
 Important current patterns:
 
@@ -194,7 +210,22 @@ Important current patterns:
 - `{Prop}VisualModelBuilder`
 - `{Prop}WizardPreviewCoordinator`
 
+Current concrete polyline examples:
+
+- `PolyLineProp`
+- `PolyLinePropSetup`
+- `PolyLinePropDraft`
+- `PolyLinePropDraftMapper`
+- `PolyLineVisualInput`
+- `PolyLinePropToVisualInputMapper`
+- `PolyLineDraftToVisualInputMapper`
+- `PolyLinePropVisualModel`
+- `PolyLineVisualModelBuilder`
+- `PolyLineWizardPreviewCoordinator`
+
 ## References
 
-- `Docs/Core_Design_Goals.md` is the architecture intent document used for reviews.
-- `Docs/NamingConventions.md` is the naming source of truth.
+- `Docs/naming-conventions.md` is the naming source of truth.
+- `Docs/poc-system-overview.md` is the current architecture overview.
+- `Docs/segmentable-props.md` is the source of truth for segmentable-prop design in this POC.
+- `Docs/core-design-goals.md` is the architecture intent document used for reviews.
