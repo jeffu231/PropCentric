@@ -229,3 +229,8 @@ Current concrete polyline examples:
 - `Docs/poc-system-overview.md` is the current architecture overview.
 - `Docs/segmentable-props.md` is the source of truth for segmentable-prop design in this POC.
 - `Docs/core-design-goals.md` is the architecture intent document used for reviews.
+
+# ExecPlans
+
+When writing complex features or significant refactors, use an ExecPlan (as described in .agents/PLANS.md) from design to implementation.
+
