@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Orc.Wizard;
 using Props.Abstractions.Props;
+using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Visuals;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Wizards.Core.Pages;
@@ -108,6 +109,52 @@ namespace Props.Runtime.Tree.Wizard.Pages
             get => _draft.BottomRadius;
             set { _draft.BottomRadius = value; RaisePropertyChanged(nameof(BottomRadius)); }
         }
+        
+        //Placeholders for real rotation properties
+        public int XRotation
+        {
+            get
+            {
+                var axis = _draft.AxisRotations.First(x => x.Axis == Axis.XAxis);
+                return axis.RotationAngle;
+            }
+            set
+            {
+                var axis = _draft.AxisRotations.First(x => x.Axis == Axis.XAxis);
+                axis.RotationAngle = value;
+                RaisePropertyChanged(nameof(XRotation));
+            }
+        }
+        
+        public int YRotation
+        {
+            get
+            {
+                var axis = _draft.AxisRotations.First(x => x.Axis == Axis.YAxis);
+                return axis.RotationAngle;
+            }
+            set
+            {
+                var axis = _draft.AxisRotations.First(x => x.Axis == Axis.YAxis);
+                axis.RotationAngle = value;
+                RaisePropertyChanged(nameof(YRotation));
+            }
+        }
+        
+        public int ZRotation
+        {
+            get
+            {
+                var axis = _draft.AxisRotations.First(x => x.Axis == Axis.ZAxis);
+                return axis.RotationAngle;
+            }
+            set
+            {
+                var axis = _draft.AxisRotations.First(x => x.Axis == Axis.ZAxis);
+                axis.RotationAngle = value;
+                RaisePropertyChanged(nameof(ZRotation));
+            }
+        }
 
         #endregion
 
@@ -147,6 +194,12 @@ namespace Props.Runtime.Tree.Wizard.Pages
             {
                 case nameof(Name): _draft.Name = Name; break;
                 case nameof(LightSize): _draft.LightSize = LightSize; break;
+                case nameof(NodesPerString): _draft.NodesPerString = NodesPerString; break;
+                case nameof(DegreesCoverage): _draft.DegreesCoverage = DegreesCoverage; break;
+                case nameof(BaseHeight): _draft.BaseHeight = BaseHeight; break;
+                case nameof(TopHeight): _draft.TopHeight = TopHeight; break;
+                case nameof(TopWidth): _draft.TopWidth = TopWidth; break;
+                case nameof(BottomRadius): _draft.BottomRadius = BottomRadius; break;
             }
         }
 

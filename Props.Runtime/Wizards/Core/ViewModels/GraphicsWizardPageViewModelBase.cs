@@ -53,6 +53,7 @@ public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelB
     [ViewModelToModel]
     public ObservableCollection<AxisRotationViewModel> Rotations
     {
+        //TODO this does not belong in here. It should be part of the actual Prop View Models.
         get => GetValue<ObservableCollection<AxisRotationViewModel>>(RotationsProperty);
         set
         {
@@ -189,7 +190,6 @@ public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelB
         {
             return;
         }
-
         CurrentPreviewModel = PreviewBuilder();
         DrawingEngine.SetModels(CurrentPreviewModel is null ? [] : [CurrentPreviewModel]);
     }

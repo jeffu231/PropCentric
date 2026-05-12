@@ -17,10 +17,11 @@ public class TreePropWizardPageViewModel : LightWizardPageViewModel<TreePropWiza
     public TreePropWizardPageViewModel(TreePropWizardPage wizardPage) : base(wizardPage)
     {
         PreviewBuilder = () =>
-        {
-	        // Sync rotation state into the draft immediately before each build so the
-            // coordinator always reflects the current rotation selections.
-            wizardPage.Draft.AxisRotations = AxisRotationViewModel.ConvertToModel(Rotations);
+        {   // TODO this rotation stuff is in the wrong place. It should not be in the Graphics page base. This needs to be fixed so Props own their 
+	        // Rotations and then the draft logic will work like it does here in the POC with the 3 specific properties. 
+	        // Need to make the model stuff work so the view can have the fancy control and then that should be synced to the 
+	        // draft in the VM or here with something like this.
+            //wizardPage.Draft.AxisRotations = AxisRotationViewModel.ConvertToModel(Rotations);
 
             return wizardPage.Coordinator.BuildPreview(wizardPage.Draft);
         };
@@ -52,13 +53,62 @@ public class TreePropWizardPageViewModel : LightWizardPageViewModel<TreePropWiza
     {
         get { return GetValue<int>(NodesPerStringProperty); }
         set { SetValue(NodesPerStringProperty, value); }
-        //RefreshGraphics();
     }
 
     /// <summary>
     /// NodesPerString property data.
     /// </summary>
     public static readonly IPropertyData NodesPerStringProperty = RegisterProperty<int>(nameof(NodesPerString), 50);
+
+    #endregion
+
+    #region Rotations placeholders
+
+    /// <summary>
+    /// Gets or sets the XRotation value.
+    /// </summary>
+    [ViewModelToModel]
+    public int XRotation
+    {
+	    get => GetValue<int>(XRotationProperty);
+	    set => SetValue(XRotationProperty, value);
+    }
+
+    /// <summary>
+    /// XRotation property data.
+    /// </summary>
+    public static readonly IPropertyData XRotationProperty = RegisterProperty<int>(nameof(XRotation), 0);
+    
+    /// <summary>
+    /// Gets or sets the YRotation value.
+    /// </summary>
+    [ViewModelToModel]
+    public int YRotation
+    {
+	    get => GetValue<int>(YRotationProperty);
+	    set => SetValue(YRotationProperty, value);
+    }
+
+    /// <summary>
+    /// YRotation property data.
+    /// </summary>
+    public static readonly IPropertyData YRotationProperty = RegisterProperty<int>(nameof(YRotation), 0);
+    
+    /// <summary>
+    /// Gets or sets the ZRotation value.
+    /// </summary>
+    [ViewModelToModel]
+    public int ZRotation
+    {
+	    get => GetValue<int>(ZRotationProperty);
+	    set => SetValue(ZRotationProperty, value);
+    }
+
+    /// <summary>
+    /// ZRotation property data.
+    /// </summary>
+    public static readonly IPropertyData ZRotationProperty = RegisterProperty<int>(nameof(ZRotation), 0);
+
 
     #endregion
     
