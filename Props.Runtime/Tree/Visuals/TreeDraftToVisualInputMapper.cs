@@ -1,12 +1,13 @@
 using Props.Abstractions.Visuals;
+using Props.Abstractions.PropVisualModels;
 using Props.Runtime.Tree.Setup;
 
 namespace Props.Runtime.Tree.Visuals;
 
 /// <summary>
 /// Projects a <see cref="TreePropDraft"/> onto a <see cref="TreeVisualInput"/> record for use
-/// by the wizard preview coordinator.
-/// </summary>
+    /// by the wizard preview coordinator.
+    /// </summary>
 public sealed class TreeDraftToVisualInputMapper : IVisualInputMapper<TreePropDraft, TreeVisualInput>
 {
     public TreeVisualInput Map(TreePropDraft prop) => new(
@@ -17,5 +18,14 @@ public sealed class TreeDraftToVisualInputMapper : IVisualInputMapper<TreePropDr
         prop.DegreeOffset,
         prop.TopRadius,
         prop.BottomRadius,
-        prop.AxisRotations);
+        SnapshotRotations(prop.AxisRotations));
+
+    private static IReadOnlyList<AxisRotationModel> SnapshotRotations(IEnumerable<AxisRotationModel> rotations)
+    {
+        return rotations.Select(rotation => new AxisRotationModel
+        {
+            Axis = rotation.Axis,
+            RotationAngle = rotation.RotationAngle
+        }).ToArray();
+    }
 }

@@ -35,6 +35,7 @@ public class TreeDraftMappingTests
         Assert.Equal(prop.TopRadius, draft.TopRadius);
         Assert.Equal(prop.BottomRadius, draft.BottomRadius);
         AssertRotationsEqual(prop.AxisRotations, draft.AxisRotations);
+        AssertRotationInstancesAreDistinct(prop.AxisRotations, draft.AxisRotations);
     }
 
     [Fact]
@@ -78,6 +79,7 @@ public class TreeDraftMappingTests
         Assert.Equal(draft.TopRadius, prop.TopRadius);
         Assert.Equal(draft.BottomRadius, prop.BottomRadius);
         AssertRotationsEqual(draft.AxisRotations, prop.AxisRotations);
+        AssertRotationInstancesAreDistinct(draft.AxisRotations, prop.AxisRotations);
     }
 
     [Fact]
@@ -109,8 +111,27 @@ public class TreeDraftMappingTests
         Assert.Equal(draft.DegreeOffset, input.DegreeOffset);
         Assert.Equal(draft.TopRadius, input.TopRadius);
         Assert.Equal(draft.BottomRadius, input.BottomRadius);
-        Assert.Equal(draft.AxisRotations.Count, input.AxisRotations.Count);
-        Assert.Same(draft.AxisRotations, input.AxisRotations);
+        AssertRotationsEqual(draft.AxisRotations, input.AxisRotations);
+        AssertRotationInstancesAreDistinct(draft.AxisRotations, input.AxisRotations);
+    }
+
+    [Fact]
+    public void TreePropToVisualInputMapper_Map_ProjectsPropIntoVisualInputWithRotationSnapshot()
+    {
+        var mapper = new TreePropToVisualInputMapper();
+        var prop = TreeTestData.CreateTreeProp();
+
+        TreeVisualInput input = mapper.Map(prop);
+
+        Assert.Equal(prop.Strings, input.Strings);
+        Assert.Equal(prop.NodesPerString, input.NodesPerString);
+        Assert.Equal(prop.LightSize, input.LightSize);
+        Assert.Equal(prop.DegreesCoverage, input.DegreesCoverage);
+        Assert.Equal(prop.DegreeOffset, input.DegreeOffset);
+        Assert.Equal(prop.TopRadius, input.TopRadius);
+        Assert.Equal(prop.BottomRadius, input.BottomRadius);
+        AssertRotationsEqual(prop.AxisRotations, input.AxisRotations);
+        AssertRotationInstancesAreDistinct(prop.AxisRotations, input.AxisRotations);
     }
 
     private static void AssertRotationsEqual(
@@ -123,6 +144,18 @@ public class TreeDraftMappingTests
         {
             Assert.Equal(expected[i].Axis, actual[i].Axis);
             Assert.Equal(expected[i].RotationAngle, actual[i].RotationAngle);
+        }
+    }
+
+    private static void AssertRotationInstancesAreDistinct(
+        IReadOnlyList<AxisRotationModel> expected,
+        IReadOnlyList<AxisRotationModel> actual)
+    {
+        Assert.NotSame(expected, actual);
+
+        for (var index = 0; index < expected.Count; index++)
+        {
+            Assert.NotSame(expected[index], actual[index]);
         }
     }
 }

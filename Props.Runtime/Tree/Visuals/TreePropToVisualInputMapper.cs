@@ -1,4 +1,5 @@
 using Props.Abstractions.Visuals;
+using Props.Abstractions.PropVisualModels;
 
 namespace Props.Runtime.Tree.Visuals;
 
@@ -16,5 +17,14 @@ public sealed class TreePropToVisualInputMapper : IVisualInputMapper<TreeProp, T
         prop.DegreeOffset,
         prop.TopRadius,
         prop.BottomRadius,
-        prop.AxisRotations);
+        SnapshotRotations(prop.AxisRotations));
+
+    private static IReadOnlyList<AxisRotationModel> SnapshotRotations(IEnumerable<AxisRotationModel> rotations)
+    {
+        return rotations.Select(rotation => new AxisRotationModel
+        {
+            Axis = rotation.Axis,
+            RotationAngle = rotation.RotationAngle
+        }).ToArray();
+    }
 }

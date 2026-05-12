@@ -16,11 +16,12 @@ public sealed class TreeVisualModelBuilder : IPropVisualModelBuilder<TreeVisualI
         var clouds = points
             .Select(p => new LightPointCloud { Points = p })
             .ToList();
-        ApplyRotations(clouds, input.AxisRotations);
+        var rotatedClouds = ApplyRotations(clouds, input.AxisRotations);
+
         return new TreePropVisualModel
         {
-            StartingLightPoint = points[0][0],
-            Elements = clouds
+            StartingLightPoint = rotatedClouds.FirstOrDefault()?.Points.FirstOrDefault(),
+            Elements = rotatedClouds
         };
     }
 
@@ -73,35 +74,34 @@ public sealed class TreeVisualModelBuilder : IPropVisualModelBuilder<TreeVisualI
     /// </summary>
     /// <param name="points"></param>
     /// <param name="rotations"></param>
-    private void ApplyRotations(List<LightPointCloud> points, IReadOnlyList<AxisRotationModel> rotations)
+    private static IReadOnlyList<LightPointCloud> ApplyRotations(
+        IReadOnlyList<LightPointCloud> points,
+        IReadOnlyList<AxisRotationModel> rotations)
     {
-        //TODO Determine if this can be extracted to a base coordinator class and reused over
-        // many model types.
-        foreach (var rotation in rotations)
+        if (rotations.Count == 0)
         {
-            var axis = Vector3.UnitX;
-            switch (rotation.Axis)
-            {
-                case Axis.YAxis:
-                    axis = Vector3.UnitY;
-                    break;
-                case Axis.ZAxis:
-                    axis = Vector3.UnitZ;
-                    break;
-            }
-            
-            foreach (var pointCloud in points)
-            {
-                foreach (var point in pointCloud.Points)
-                {
-                    // Create a rotation
-                    // Note: Quaternions often use radians (degrees * PI / 180)
-                    Quaternion q = Quaternion.CreateFromAxisAngle(axis, (float)(rotation.RotationAngle * Math.PI / 180f));
-                    Vector3 rotatedVector = Vector3.Transform(point.Position, q);
-                    
-                }
-            }
-            //TODO Transform the model geometry using the rotation model
+            return points;
         }
+
+        var quaternion = rotations.Aggregate(Quaternion.Identity, (current, rotation) =>
+            Quaternion.Normalize(
+                current * Quaternion.CreateFromAxisAngle(
+                    rotation.Axis switch
+                    {
+                        Axis.YAxis => Vector3.UnitY,
+                        Axis.ZAxis => Vector3.UnitZ,
+                        _ => Vector3.UnitX
+                    },
+                    rotation.RotationAngle * (MathF.PI / 180f))));
+
+        return points.Select(pointCloud => new LightPointCloud
+        {
+            Points = pointCloud.Points.Select(point => new LightPoint
+            {
+                Position = Vector3.Transform(point.Position, quaternion),
+                PointSize = point.PointSize,
+                ElementId = point.ElementId
+            }).ToArray()
+        }).ToArray();
     }
 }

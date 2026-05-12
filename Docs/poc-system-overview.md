@@ -277,6 +277,12 @@ The prop itself owns its configuration, but the visual model is generated from a
 
 Each prop has a mapper that projects prop state into a visual input record.
 
+Important:
+
+- if the prop contains mutable reference-type state that affects rendering, the mapper must project that state as a value snapshot, not as a shared object reference
+- otherwise a later in-place edit can change the underlying data without changing the visual input record identity or equality result
+- axis rotation collections are the current concrete example: map the axis/angle values, not the original mutable collection and item instances
+
 Example:
 
 - [TreePropToVisualInputMapper.cs](C:/Dev/PropCentric/Props.Runtime/Tree/Visuals/TreePropToVisualInputMapper.cs)
@@ -285,6 +291,11 @@ Example:
 ### Draft -> visual input mapper
 
 Each wizard preview flow has a mapper that projects draft state into the same visual input shape.
+
+Important:
+
+- the draft-to-visual-input mapper has the same snapshot requirement as the prop-to-visual-input mapper
+- wizard preview often mutates draft-owned objects in place, so passing mutable references through to the visual input record breaks unchanged-input detection in preview caching
 
 Example:
 
@@ -305,6 +316,9 @@ Important design point:
 - a prop may have additional data that does not directly affect the visual model
 - that data still belongs on the prop and can still be collected in setup
 - only the rendering-relevant subset is mapped into the visual input transfer object
+- if preview caching compares visual input records for equality, the record must behave like a value object for every rendering-relevant field
+- mutable reference members inside the record must therefore either be converted to immutable/value-like snapshots before construction or be compared structurally by their contents
+- do not assume record equality is sufficient if the record contains mutable reference types such as collections of mutable models
 
 ### Visual model builder
 
@@ -329,6 +343,12 @@ The preview coordinator:
 - maps draft state to visual input
 - optionally reuses the last built preview if the input is unchanged
 - returns the visual model used by the wizard drawing engine
+
+Important:
+
+- "unchanged" must mean value-equal rendering input, not "the same mutable objects are still referenced"
+- if the coordinator caches based on `TVisualInput` equality, the mapper and record design must guarantee that an in-place change to rendering data produces a different equality result
+- otherwise preview can incorrectly reuse stale geometry after edits such as changing a rotation angle inside an existing collection item
 
 Example:
 
@@ -434,6 +454,8 @@ Create a record that contains only the subset of state required to generate the 
 
 This is the rendering contract for the prop.
 
+If the record contains reference-type members that affect rendering, define them so equality still reflects value changes. Do not rely on default record equality over mutable shared references.
+
 ### Step 7: Add the visual input mappers
 
 Create:
@@ -442,6 +464,8 @@ Create:
 - `IVisualInputMapper<TDraft, TVisualInput>`
 
 These let both runtime and wizard preview use the same builder contract.
+
+When mapping mutable rendering state such as rotation collections, project a snapshot by value instead of passing the original mutable objects through unchanged.
 
 ### Step 8: Add the visual model builder
 
@@ -458,6 +482,8 @@ Create:
 - `IWizardPreviewCoordinator<TDraft>`
 
 This handles wizard preview rebuild behavior.
+
+If it reuses the previous preview when the visual input is unchanged, "unchanged" must be based on value-equal rendering data, not reference identity of mutable child objects.
 
 ### Step 10: Add the prop-specific wizard page(s)
 

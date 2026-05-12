@@ -1,4 +1,5 @@
 using PropCentric.Tests.Common;
+using System.Numerics;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Props;
 using Props.Runtime.Tree;
@@ -75,7 +76,18 @@ public class TreeVisualModelBuilderTests
 
         var baseModel = Assert.IsType<TreePropVisualModel>(builder.Create(baseInput));
         var rotatedModel = Assert.IsType<TreePropVisualModel>(builder.Create(rotatedInput));
+        var baseCloud = Assert.IsType<LightPointCloud>(baseModel.Elements.First());
+        var rotatedCloud = Assert.IsType<LightPointCloud>(rotatedModel.Elements.First());
 
         Assert.NotEqual(baseModel.StartingLightPoint?.Position, rotatedModel.StartingLightPoint?.Position);
+        AssertVectorEqual(new Vector3(0.5f, 0.5f, 0f), rotatedModel.StartingLightPoint!.Value.Position);
+        Assert.NotEqual(baseCloud.Points[0].Position, rotatedCloud.Points[0].Position);
+    }
+
+    private static void AssertVectorEqual(Vector3 expected, Vector3 actual, float tolerance = 1e-5f)
+    {
+        Assert.True(MathF.Abs(expected.X - actual.X) <= tolerance);
+        Assert.True(MathF.Abs(expected.Y - actual.Y) <= tolerance);
+        Assert.True(MathF.Abs(expected.Z - actual.Z) <= tolerance);
     }
 }

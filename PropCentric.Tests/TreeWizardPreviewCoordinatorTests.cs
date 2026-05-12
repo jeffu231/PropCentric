@@ -53,4 +53,26 @@ public class TreeWizardPreviewCoordinatorTests
 
         Assert.NotSame(first, second);
     }
+
+    [Fact]
+    public void TreeWizardPreviewCoordinator_BuildPreview_WhenRotationAngleChangesOnSameDraft_RebuildsModel()
+    {
+        var coordinator = new TreeWizardPreviewCoordinator(
+            new TreeDraftToVisualInputMapper(),
+            new TreeVisualModelBuilder());
+        var draft = new TreePropDraft
+        {
+            Strings = 8,
+            NodesPerString = 10,
+            AxisRotations = TestDataHelper.CreateRotations((Props.Abstractions.PropVisualModels.Axis.ZAxis, 0))
+        };
+
+        var first = coordinator.BuildPreview(draft);
+
+        draft.AxisRotations[0].RotationAngle = 90;
+
+        var second = coordinator.BuildPreview(draft);
+
+        Assert.NotSame(first, second);
+    }
 }
