@@ -43,6 +43,21 @@ public class PolyLineWizardPreviewCoordinatorTests
         Assert.Equal(2, builder.CallCount);
     }
 
+    [Fact]
+    public void BuildPreview_ChangedRotationAngleOnSameDraft_RebuildsModel()
+    {
+        var builder = new CountingBuilder();
+        var coordinator = new PolyLineWizardPreviewCoordinator(new PolyLineDraftToVisualInputMapper(), builder);
+        var draft = CreateDraft();
+
+        var first = coordinator.BuildPreview(draft);
+        draft.AxisRotations[0].RotationAngle = 90;
+        var second = coordinator.BuildPreview(draft);
+
+        Assert.NotSame(first, second);
+        Assert.Equal(2, builder.CallCount);
+    }
+
     private static PolyLinePropDraft CreateDraft()
     {
         return new PolyLinePropDraft

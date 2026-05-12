@@ -23,6 +23,7 @@ public class PolyLineDraftMappingTests
 
         AssertSegmentsEqual(draft.Segments, prop.Segments);
         AssertRotationsEqual(prop.AxisRotations, draft.AxisRotations);
+        AssertRotationInstancesAreDistinct(prop.AxisRotations, draft.AxisRotations);
     }
 
     [Fact]
@@ -46,6 +47,7 @@ public class PolyLineDraftMappingTests
         Assert.Equal(draft.LightSize, prop.LightSize);
         AssertSegmentsEqual(draft.Segments, prop.Segments);
         AssertRotationsEqual(draft.AxisRotations, prop.AxisRotations);
+        AssertRotationInstancesAreDistinct(draft.AxisRotations, prop.AxisRotations);
     }
 
     private static void AssertRotationsEqual(
@@ -58,6 +60,18 @@ public class PolyLineDraftMappingTests
         {
             Assert.Equal(expected[i].Axis, actual[i].Axis);
             Assert.Equal(expected[i].RotationAngle, actual[i].RotationAngle);
+        }
+    }
+
+    private static void AssertRotationInstancesAreDistinct(
+        IReadOnlyList<AxisRotationModel> expected,
+        IReadOnlyList<AxisRotationModel> actual)
+    {
+        Assert.NotSame(expected, actual);
+
+        for (var index = 0; index < expected.Count; index++)
+        {
+            Assert.NotSame(expected[index], actual[index]);
         }
     }
 

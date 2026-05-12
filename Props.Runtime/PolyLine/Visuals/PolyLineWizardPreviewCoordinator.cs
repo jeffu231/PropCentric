@@ -30,7 +30,7 @@ public sealed class PolyLineWizardPreviewCoordinator : IWizardPreviewCoordinator
     public IPropVisualModel BuildPreview(PolyLinePropDraft draft)
     {
         var input = _mapper.Map(draft);
-        if (_lastInput is not null && InputsEqual(input, _lastInput) && _lastModel is not null)
+        if (input == _lastInput && _lastModel is not null)
         {
             return _lastModel;
         }
@@ -38,37 +38,5 @@ public sealed class PolyLineWizardPreviewCoordinator : IWizardPreviewCoordinator
         _lastInput = input;
         _lastModel = _builder.Create(input);
         return _lastModel;
-    }
-
-    private static bool InputsEqual(PolyLineVisualInput left, PolyLineVisualInput right)
-    {
-        if (left.LightSize != right.LightSize)
-        {
-            return false;
-        }
-
-        if (left.Segments.Count != right.Segments.Count || left.AxisRotations.Count != right.AxisRotations.Count)
-        {
-            return false;
-        }
-
-        for (var index = 0; index < left.Segments.Count; index++)
-        {
-            if (left.Segments[index] != right.Segments[index])
-            {
-                return false;
-            }
-        }
-
-        for (var index = 0; index < left.AxisRotations.Count; index++)
-        {
-            if (left.AxisRotations[index].Axis != right.AxisRotations[index].Axis ||
-                left.AxisRotations[index].RotationAngle != right.AxisRotations[index].RotationAngle)
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

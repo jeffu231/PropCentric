@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Linq;
 using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.PropVisualModels;
@@ -13,7 +14,7 @@ public class PolyLinePropDraftMapper : IPropDraftMapper<PolyLinePropDraft, PolyL
     {
         draft.Name = prop.Name;
         draft.LightSize = prop.LightSize;
-        draft.AxisRotations = new ObservableCollection<AxisRotationModel>(prop.AxisRotations);
+        draft.AxisRotations = CloneRotations(prop.AxisRotations);
         draft.Segments = new ObservableCollection<SegmentDraftState>(
             prop.Segments.Select(x =>
                 new SegmentDraftState { Start = x.Start, End = x.End, PointCount = x.PointCount }));
@@ -23,8 +24,19 @@ public class PolyLinePropDraftMapper : IPropDraftMapper<PolyLinePropDraft, PolyL
     {
         prop.Name = draft.Name;
         prop.LightSize = draft.LightSize;
-        prop.AxisRotations = new ObservableCollection<AxisRotationModel>(draft.AxisRotations);
+        prop.AxisRotations = CloneRotations(draft.AxisRotations);
         prop.ReplaceSegments(draft.Segments.Select(x =>
             new Segment(x.Start, x.End, x.PointCount)).ToImmutableList());
+    }
+
+    private static ObservableCollection<AxisRotationModel> CloneRotations(
+        IEnumerable<AxisRotationModel> rotations)
+    {
+        return new ObservableCollection<AxisRotationModel>(
+            rotations.Select(rotation => new AxisRotationModel
+            {
+                Axis = rotation.Axis,
+                RotationAngle = rotation.RotationAngle
+            }));
     }
 }

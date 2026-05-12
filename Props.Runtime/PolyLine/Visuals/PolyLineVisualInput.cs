@@ -16,4 +16,79 @@ namespace Props.Runtime.PolyLine.Visuals;
 public sealed record PolyLineVisualInput(
     IReadOnlyList<Segment> Segments,
     int LightSize,
-    IReadOnlyList<AxisRotationModel> AxisRotations);
+    IReadOnlyList<AxisRotationModel> AxisRotations)
+{
+    public bool Equals(PolyLineVisualInput? other)
+    {
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        if (other is null)
+        {
+            return false;
+        }
+
+        return LightSize == other.LightSize
+            && SegmentsEqual(Segments, other.Segments)
+            && RotationsEqual(AxisRotations, other.AxisRotations);
+    }
+
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        hash.Add(LightSize);
+
+        foreach (var segment in Segments)
+        {
+            hash.Add(segment);
+        }
+
+        foreach (var rotation in AxisRotations)
+        {
+            hash.Add(rotation.Axis);
+            hash.Add(rotation.RotationAngle);
+        }
+
+        return hash.ToHashCode();
+    }
+
+    private static bool SegmentsEqual(IReadOnlyList<Segment> left, IReadOnlyList<Segment> right)
+    {
+        if (left.Count != right.Count)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < left.Count; index++)
+        {
+            if (left[index] != right[index])
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool RotationsEqual(
+        IReadOnlyList<AxisRotationModel> left,
+        IReadOnlyList<AxisRotationModel> right)
+    {
+        if (left.Count != right.Count)
+        {
+            return false;
+        }
+
+        for (var index = 0; index < left.Count; index++)
+        {
+            if (left[index].Axis != right[index].Axis || left[index].RotationAngle != right[index].RotationAngle)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
