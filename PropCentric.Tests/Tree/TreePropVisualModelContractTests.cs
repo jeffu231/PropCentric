@@ -2,7 +2,7 @@ using Props.Abstractions.Props;
 using Props.Abstractions.PropVisualModels;
 using Props.Runtime.Tree;
 
-namespace PropCentric.Tests;
+namespace PropCentric.Tests.Tree;
 
 /// <summary>
 /// Verifies the remaining prop-to-visual-model contract expected by the design goals.

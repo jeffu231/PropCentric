@@ -1,10 +1,10 @@
 using PropCentric.Tests.Common;
-using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Props;
+using Props.Abstractions.PropVisualModels;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
 
-namespace PropCentric.Tests;
+namespace PropCentric.Tests.Tree;
 
 /// <summary>
 /// Verifies that tree setup data moves correctly between draft, prop, and visual input layers.

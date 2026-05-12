@@ -1,7 +1,7 @@
 using System.Numerics;
 using Props.Abstractions.Setup;
 
-namespace PropCentric.Tests;
+namespace PropCentric.Tests.Segments;
 
 /// <summary>
 /// Verifies captured segment normalization behavior.

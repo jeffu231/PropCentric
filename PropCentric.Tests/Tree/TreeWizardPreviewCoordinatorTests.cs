@@ -2,7 +2,7 @@ using PropCentric.Tests.Common;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
 
-namespace PropCentric.Tests;
+namespace PropCentric.Tests.Tree;
 
 /// <summary>
 /// Verifies the current preview coordinator rebuild behavior.

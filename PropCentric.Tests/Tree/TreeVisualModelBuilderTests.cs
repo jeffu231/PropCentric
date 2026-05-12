@@ -1,11 +1,10 @@
-using PropCentric.Tests.Common;
 using System.Numerics;
+using PropCentric.Tests.Common;
 using Props.Abstractions.PropVisualModels;
-using Props.Abstractions.Props;
 using Props.Runtime.Tree;
 using Props.Runtime.Tree.Visuals;
 
-namespace PropCentric.Tests;
+namespace PropCentric.Tests.Tree;
 
 /// <summary>
 /// Verifies the current tree visual-model generation path independent of any WPF-hosted preview surface.

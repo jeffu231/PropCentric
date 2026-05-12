@@ -13,7 +13,7 @@ using Props.Runtime.Wizards.Features.Dimming.Mappers;
 using Props.Runtime.Wizards.Features.Dimming.Pages;
 using Props.Runtime.Wizards.Features.Segments.Pages;
 
-namespace PropCentric.Tests;
+namespace PropCentric.Tests.Discovery;
 
 /// <summary>
 /// Verifies discovery-oriented behavior.

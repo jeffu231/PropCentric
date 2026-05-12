@@ -1,11 +1,10 @@
-using System.Collections.ObjectModel;
 using PropCentric.Tests.Common;
-using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Props;
+using Props.Abstractions.PropVisualModels;
 using Props.Runtime.Tree;
 using Props.Runtime.Tree.Visuals;
 
-namespace PropCentric.Tests;
+namespace PropCentric.Tests.Tree;
 
 /// <summary>
 /// Provides shared test helpers for constructing tree props and rotation data.
