@@ -1,5 +1,6 @@
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Props;
+using Props.Abstractions.Visuals;
 
 namespace Props.Runtime.Tree.Visuals;
 
@@ -48,7 +49,7 @@ public sealed record TreeVisualInput(
             && DegreeOffset == other.DegreeOffset
             && TopRadius.Equals(other.TopRadius)
             && BottomRadius.Equals(other.BottomRadius)
-            && RotationsEqual(AxisRotations, other.AxisRotations);
+            && VisualInputRotationSupport.RotationsEqual(AxisRotations, other.AxisRotations);
     }
 
     public override int GetHashCode()
@@ -62,32 +63,8 @@ public sealed record TreeVisualInput(
         hash.Add(TopRadius);
         hash.Add(BottomRadius);
 
-        foreach (var rotation in AxisRotations)
-        {
-            hash.Add(rotation.Axis);
-            hash.Add(rotation.RotationAngle);
-        }
+        VisualInputRotationSupport.AddRotationsToHashCode(ref hash, AxisRotations);
 
         return hash.ToHashCode();
-    }
-
-    private static bool RotationsEqual(
-        IReadOnlyList<AxisRotationModel> left,
-        IReadOnlyList<AxisRotationModel> right)
-    {
-        if (left.Count != right.Count)
-        {
-            return false;
-        }
-
-        for (var index = 0; index < left.Count; index++)
-        {
-            if (left[index].Axis != right[index].Axis || left[index].RotationAngle != right[index].RotationAngle)
-            {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

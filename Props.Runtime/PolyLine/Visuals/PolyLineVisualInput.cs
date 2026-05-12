@@ -1,5 +1,6 @@
 using Props.Abstractions.Props;
 using Props.Abstractions.PropVisualModels;
+using Props.Abstractions.Visuals;
 
 namespace Props.Runtime.PolyLine.Visuals;
 
@@ -32,7 +33,7 @@ public sealed record PolyLineVisualInput(
 
         return LightSize == other.LightSize
             && SegmentsEqual(Segments, other.Segments)
-            && RotationsEqual(AxisRotations, other.AxisRotations);
+            && VisualInputRotationSupport.RotationsEqual(AxisRotations, other.AxisRotations);
     }
 
     public override int GetHashCode()
@@ -45,11 +46,7 @@ public sealed record PolyLineVisualInput(
             hash.Add(segment);
         }
 
-        foreach (var rotation in AxisRotations)
-        {
-            hash.Add(rotation.Axis);
-            hash.Add(rotation.RotationAngle);
-        }
+        VisualInputRotationSupport.AddRotationsToHashCode(ref hash, AxisRotations);
 
         return hash.ToHashCode();
     }
@@ -64,26 +61,6 @@ public sealed record PolyLineVisualInput(
         for (var index = 0; index < left.Count; index++)
         {
             if (left[index] != right[index])
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static bool RotationsEqual(
-        IReadOnlyList<AxisRotationModel> left,
-        IReadOnlyList<AxisRotationModel> right)
-    {
-        if (left.Count != right.Count)
-        {
-            return false;
-        }
-
-        for (var index = 0; index < left.Count; index++)
-        {
-            if (left[index].Axis != right[index].Axis || left[index].RotationAngle != right[index].RotationAngle)
             {
                 return false;
             }

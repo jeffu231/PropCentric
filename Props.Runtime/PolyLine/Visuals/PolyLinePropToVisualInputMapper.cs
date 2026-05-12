@@ -1,5 +1,4 @@
 using Props.Abstractions.Props;
-using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Visuals;
 
 namespace Props.Runtime.PolyLine.Visuals;
@@ -12,19 +11,11 @@ public sealed class PolyLinePropToVisualInputMapper : IVisualInputMapper<PolyLin
     public PolyLineVisualInput Map(PolyLineProp source) => new(
         SnapshotSegments(source.Segments),
         source.LightSize,
-        SnapshotRotations(source.AxisRotations));
+        VisualInputRotationSupport.SnapshotRotations(source.AxisRotations));
 
     private static IReadOnlyList<Segment> SnapshotSegments(IEnumerable<Segment> segments)
     {
         return segments.Select(segment => new Segment(segment.Start, segment.End, segment.PointCount)).ToArray();
     }
 
-    private static IReadOnlyList<AxisRotationModel> SnapshotRotations(IEnumerable<AxisRotationModel> rotations)
-    {
-        return rotations.Select(rotation => new AxisRotationModel
-        {
-            Axis = rotation.Axis,
-            RotationAngle = rotation.RotationAngle
-        }).ToArray();
-    }
 }
