@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Common.WPFCommon.Converters;
 using Orc.Wizard;
 using Props.Abstractions.Props;
@@ -12,23 +11,20 @@ namespace Props.Runtime.Tree.Wizard.Pages
     /// Maintains a tree wizard page. Properties delegate to the shared draft so the
     /// preview coordinator always reads current values without a separate sync step.
     /// </summary>
-    public class TreePropWizardPage : LightPropWizardPage
+    public class TreePropWizardPage : LightPropWizardPage<TreePropDraft>
     {
         private readonly TreePropDraft _draft;
 
         #region Constructor
 
         public TreePropWizardPage(TreePropDraft draft, IWizardPreviewCoordinator<TreePropDraft> coordinator)
+            : base(draft)
         {
             _draft = draft;
             Coordinator = coordinator;
 
             Title = "Basic Attributes";
             Description = "Enter attributes for Tree";
-            SyncDraftToParent();
-
-            // Keep parent-class Catel-stored properties (Name, LightSize) in sync with the draft.
-            PropertyChanged += OnParentPropertyChanged;
         }
 
         #endregion
@@ -138,31 +134,6 @@ namespace Props.Runtime.Tree.Wizard.Pages
                           $"Top Radius: {TopRadius}\n" +
                           $"Bottom Radius: {BottomRadius}\n"
             };
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        // Keeps parent-class Catel-stored Name and LightSize mirrored to the draft
-        // so the preview coordinator always has current values.
-        private void OnParentPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case nameof(Name): _draft.Name = Name; break;
-                case nameof(LightSize): _draft.LightSize = LightSize; break;
-                case nameof(BottomRadius): _draft.BottomRadius = BottomRadius; break;
-                case nameof(StringType): _draft.StringType = StringType; break;
-            }
-        }
-
-        private void SyncDraftToParent()
-        {
-            Name = _draft.Name;
-            LightSize = _draft.LightSize;
-            BottomRadius = _draft.BottomRadius;
-            StringType = _draft.StringType;
         }
 
         #endregion

@@ -1,20 +1,35 @@
-using Catel.Data;
 using Orc.Wizard;
+using Props.Abstractions.Setup.Drafts;
 
 namespace Props.Runtime.Wizards.Core.Pages
 {
-	public abstract class PropWizardPageBase : WizardPageBase, IPropWizardPageBase
+	public abstract class PropWizardPageBase<TDraft> : WizardPageBase, IPropWizardPageBase
+		where TDraft : class, IHasNameDraft
 	{
+		protected PropWizardPageBase(TDraft draft)
+		{
+			Draft = draft ?? throw new ArgumentNullException(nameof(draft));
+		}
+
+		protected TDraft Draft { get; }
+
 		#region IPropWizardPageBase
 
 		/// <inheritdoc/>
 		public string Name
 		{
-			get { return GetValue<string>(NameProperty); }
-			set { SetValue(NameProperty, value); }
-		}
+			get { return Draft.Name; }
+			set
+			{
+				if (Draft.Name == value)
+				{
+					return;
+				}
 
-		private static readonly IPropertyData NameProperty = RegisterProperty<string>(nameof(Name));
+				Draft.Name = value;
+				RaisePropertyChanged(nameof(Name));
+			}
+		}
 
 		#endregion
 	}

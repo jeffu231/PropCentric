@@ -1,4 +1,5 @@
-﻿using Catel.Data;
+using Catel.Data;
+using Props.Abstractions.Setup.Drafts;
 using Vixen.Sys.Props;
 
 namespace Props.Runtime.Wizards.Core.Pages
@@ -6,18 +7,19 @@ namespace Props.Runtime.Wizards.Core.Pages
 	/// <summary>
 	/// Maintains base Light Prop Wizard page data.
 	/// </summary>
-	public abstract class LightPropWizardPage : PropWizardPageBase, ILightPropWizardPage
+	public abstract class LightPropWizardPage<TDraft> : PropWizardPageBase<TDraft>, ILightPropWizardPage
+		where TDraft : class, IHasLightSettingsDraft
 	{
 		#region Constructor
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public LightPropWizardPage()
+		protected LightPropWizardPage(TDraft draft)
+			: base(draft)
 		{
 			LightSizeMinimum = 1;
 			LightSizeMaximum = 50;
-			LightSize = 2;
 		}
 
 		#endregion
@@ -33,11 +35,19 @@ namespace Props.Runtime.Wizards.Core.Pages
 		/// </remarks>
 		public int LightSize
 		{
-			get { return GetValue<int>(LightSizeProperty); }
-			set { SetValue(LightSizeProperty, Math.Clamp(value, LightSizeMinimum, LightSizeMaximum)); }
-		}
+			get { return Draft.LightSize; }
+			set
+			{
+				var clampedValue = Math.Clamp(value, LightSizeMinimum, LightSizeMaximum);
+				if (Draft.LightSize == clampedValue)
+				{
+					return;
+				}
 
-		private static readonly IPropertyData LightSizeProperty = RegisterProperty<int>(nameof(LightSize));
+				Draft.LightSize = clampedValue;
+				RaisePropertyChanged(nameof(LightSize));
+			}
+		}
 
 		#endregion
 
@@ -75,11 +85,18 @@ namespace Props.Runtime.Wizards.Core.Pages
 		
 		protected StringTypes StringType
 		{
-			get { return GetValue<StringTypes>(StringTypeProperty); }
-			set { SetValue(StringTypeProperty, value); }
-		}
+			get { return Draft.StringType; }
+			set
+			{
+				if (Draft.StringType == value)
+				{
+					return;
+				}
 
-		private static readonly IPropertyData StringTypeProperty = RegisterProperty<StringTypes>(nameof(StringType));
+				Draft.StringType = value;
+				RaisePropertyChanged(nameof(StringType));
+			}
+		}
 
 		#endregion
 	}

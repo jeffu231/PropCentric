@@ -13,8 +13,8 @@ A user should be able to open the Tree and PolyLine wizards, see existing values
 ## Progress
 
 - [x] (2025-02-14 00:00Z) Define shared draft capability interfaces for common wizard fields.
-- [ ] Refactor base wizard page classes to delegate shared properties to the draft instead of Catel-owned duplicate state.
-- [ ] Update `TreePropWizardPage` and `PolyLinePropWizardPage` to inherit from the new draft-backed base types.
+- [x] (2025-02-14 00:00Z) Refactor base wizard page classes to delegate shared properties to the draft instead of Catel-owned duplicate state.
+- [x] (2025-02-14 00:00Z) Update `TreePropWizardPage` and `PolyLinePropWizardPage` to inherit from the new draft-backed base types.
 - [ ] Remove setup-time wizard seeding for shared fields from `TreePropSetup` and `PolyLinePropSetup`.
 - [ ] Add or update tests proving edit-flow loading and draft mutation for shared fields.
 - [ ] Run targeted tests for Tree and PolyLine wizard/draft behavior.
@@ -32,6 +32,12 @@ A user should be able to open the Tree and PolyLine wizards, see existing values
 
 - Observation: `PolyLinePropDraft` already carried `Name` and `LightSize`, but not `StringType`, even though `PolyLineProp` inherits `StringType` from `BaseLightProp<TModel>`.
   Evidence: `Props.Runtime/PolyLine/Setup/PolyLinePropDraft.cs` lacked `StringType`, while `Props.Runtime/PolyLine/PolyLineProp.cs` derives from `BaseLightProp<PolyLinePropVisualModel>`.
+
+- Observation: Converting the base pages to generic draft-backed types requires immediate constructor/base-type updates in derived pages even before their duplicate sync logic is removed.
+  Evidence: `TreePropWizardPage` and `PolyLinePropWizardPage` must now call `base(draft)` because `PropWizardPageBase<TDraft>` and `LightPropWizardPage<TDraft>` require a draft instance in the constructor.
+
+- Observation: Once shared properties are draft-backed at the base-page layer, the old page-level `PropertyChanged` mirrors become dead code rather than safety nets.
+  Evidence: `TreePropWizardPage` and `PolyLinePropWizardPage` no longer need constructor sync or `OnParentPropertyChanged(...)` to keep `Name`, `LightSize`, or `StringType` current.
 
 ## Decision Log
 
@@ -51,7 +57,15 @@ A user should be able to open the Tree and PolyLine wizards, see existing values
   Rationale: `IHasLightSettingsDraft` must mean the same thing across props, and the draft must be able to round-trip all shared light settings before the base pages can rely on it.
   Date/Author: 2025-02-14 / Codex
 
-Revision note: Added draft capability interfaces, updated Tree and PolyLine drafts to implement them, and extended `PolyLinePropDraftMapper` to round-trip `StringType` so the shared light-settings contract is complete.
+- Decision: Keep `LightSizeMinimum` and `LightSizeMaximum` as Catel-owned page state while moving `Name`, `LightSize`, and `StringType` to draft-backed storage.
+  Rationale: The min/max values are page behavior constraints rather than persisted prop setup data, so they do not belong on the draft.
+  Date/Author: 2025-02-14 / Codex
+
+- Decision: Remove the old page-level sync hooks entirely instead of leaving them in place as redundant observers.
+  Rationale: Keeping them would obscure the single-source-of-truth design and make future maintenance harder by implying two active synchronization paths.
+  Date/Author: 2025-02-14 / Codex
+
+Revision note: Added draft capability interfaces, updated Tree and PolyLine drafts to implement them, extended `PolyLinePropDraftMapper` to round-trip `StringType`, converted the core wizard page base classes to generic draft-backed forms, and removed redundant page-level sync hooks from Tree and PolyLine wizard pages.
 
 ## Outcomes & Retrospective
 

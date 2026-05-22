@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Orc.Wizard;
 using Props.Abstractions.Visuals;
 using Props.Runtime.PolyLine.Setup;
@@ -9,21 +8,20 @@ namespace Props.Runtime.PolyLine.Wizard.Pages;
 /// <summary>
 /// Minimal wizard page for polyline prop configuration.
 /// </summary>
-public sealed class PolyLinePropWizardPage : LightPropWizardPage
+public sealed class PolyLinePropWizardPage : LightPropWizardPage<PolyLinePropDraft>
 {
     private readonly PolyLinePropDraft _draft;
 
     public PolyLinePropWizardPage(
         PolyLinePropDraft draft,
         IWizardPreviewCoordinator<PolyLinePropDraft> coordinator)
+        : base(draft)
     {
         _draft = draft;
         Coordinator = coordinator;
 
         Title = "Basic Attributes";
         Description = "Configure the PolyLine prop name, display settings, and live preview.";
-
-        PropertyChanged += OnParentPropertyChanged;
     }
 
     public IWizardPreviewCoordinator<PolyLinePropDraft> Coordinator { get; }
@@ -53,25 +51,5 @@ public sealed class PolyLinePropWizardPage : LightPropWizardPage
                       $"Segments: {SegmentCount}\n" +
                       $"Total Points: {TotalPoints}\n"
         };
-    }
-
-    private void OnParentPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        switch (e.PropertyName)
-        {
-            case nameof(Name):
-                _draft.Name = Name;
-                break;
-            case nameof(LightSize):
-                _draft.LightSize = LightSize;
-                break;
-        }
-
-        if (e.PropertyName is nameof(Name) or nameof(LightSize))
-        {
-            RaisePropertyChanged(nameof(SegmentCount));
-            RaisePropertyChanged(nameof(TotalPoints));
-            RaisePropertyChanged(nameof(SegmentSummary));
-        }
     }
 }
