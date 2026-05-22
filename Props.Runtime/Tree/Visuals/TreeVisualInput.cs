@@ -1,6 +1,7 @@
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Props;
 using Props.Abstractions.Visuals;
+using Vixen.Sys.Props;
 
 namespace Props.Runtime.Tree.Visuals;
 
@@ -14,6 +15,7 @@ namespace Props.Runtime.Tree.Visuals;
 /// <param name="Strings">The number of light strings on the tree.</param>
 /// <param name="NodesPerString">The number of nodes per string.</param>
 /// <param name="LightSize">The rendered diameter of each light node in pixels.</param>
+/// <param name="StringType"><see cref="StringTypes"/> The StringTypes of the light strings.</param>
 /// <param name="DegreesCoverage">The arc covered by strings, in degrees.</param>
 /// <param name="DegreeOffset">The rotational offset of string 1, in degrees.</param>
 /// <param name="TopRadius">The radius at the top of the tree as a percentage of the maximum width.</param>
@@ -23,6 +25,7 @@ public sealed record TreeVisualInput(
     int Strings,
     int NodesPerString,
     int LightSize,
+    StringTypes StringType,
     int DegreesCoverage,
     int DegreeOffset,
     float TopRadius,
@@ -45,6 +48,7 @@ public sealed record TreeVisualInput(
         return Strings == other.Strings
             && NodesPerString == other.NodesPerString
             && LightSize == other.LightSize
+            && StringType == other.StringType
             && DegreesCoverage == other.DegreesCoverage
             && DegreeOffset == other.DegreeOffset
             && TopRadius.Equals(other.TopRadius)
@@ -58,6 +62,7 @@ public sealed record TreeVisualInput(
         hash.Add(Strings);
         hash.Add(NodesPerString);
         hash.Add(LightSize);
+        hash.Add(StringType);
         hash.Add(DegreesCoverage);
         hash.Add(DegreeOffset);
         hash.Add(TopRadius);

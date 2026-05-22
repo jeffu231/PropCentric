@@ -8,6 +8,7 @@ using Props.Abstractions.Visuals;
 using Props.Runtime.Tree.Visuals;
 using Vixen.Controls.Theme;
 using Common.WPFCommon.Converters;
+using Vixen.Sys.Props;
 
 namespace Props.Runtime.Tree;
 
@@ -38,7 +39,6 @@ public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights, ICanAxis
 	    DegreeOffset = 0;
 	    Strings = 16;
 	    NodesPerString = 50;
-	    LightSize = 2;
 	    TopRadius = 10;
 	    BottomRadius = 100;	
     }
@@ -262,6 +262,7 @@ public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights, ICanAxis
 		    $"<b>Strings:</b> {Strings}<br>" +
 		    $"<b>Nodes per String:</b> {NodesPerString}<br>" +
 		    $"<b>Light Size:</b> {LightSize}<br>" +
+		    $"<b>Light Type:</b> {EnumValueTypeConverter.GetDescription(StringType)}<br>" +
 		    $"<b>Degrees Coverage:</b> {DegreesCoverage}<br>" +
 		    $"<b>Degree offset:</b> {DegreeOffset}<br>" +
 		    $"<b>Base Height:</b> {BaseHeight}<br>" +

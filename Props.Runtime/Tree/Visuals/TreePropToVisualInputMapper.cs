@@ -13,6 +13,7 @@ public sealed class TreePropToVisualInputMapper : IVisualInputMapper<TreeProp, T
         prop.Strings,
         prop.NodesPerString,
         prop.LightSize,
+        prop.StringType,
         prop.DegreesCoverage,
         prop.DegreeOffset,
         prop.TopRadius,

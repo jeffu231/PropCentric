@@ -1,17 +1,18 @@
 using Catel.Data;
 using Catel.MVVM;
 using Orc.Wizard;
+using Vixen.Sys.Props;
 
 namespace Props.Runtime.Wizards.Core.ViewModels;
 
-public class LightWizardPageViewModel<TWizardPage> : PropBaseWizardPageViewModel<TWizardPage>
+public abstract class LightWizardPageViewModel<TWizardPage> : PropBaseWizardPageViewModel<TWizardPage>
     where TWizardPage : class, IWizardPage
 {
     /// <summary>
     /// Constructor
     /// </summary>
     /// <typeparam name="TWizardPage">Type of wizard page</typeparam>
-    public LightWizardPageViewModel(TWizardPage wizardPage) : base(wizardPage)
+    protected LightWizardPageViewModel(TWizardPage wizardPage) : base(wizardPage)
     {
     }
 
@@ -25,8 +26,8 @@ public class LightWizardPageViewModel<TWizardPage> : PropBaseWizardPageViewModel
     [ViewModelToModel]
     public int LightSize
     {
-        get { return GetValue<int>(LightSizeProperty); }
-        set { SetValue(LightSizeProperty, Math.Clamp(value, LightSizeMinimum, LightSizeMaximum)); }
+        get => GetValue<int>(LightSizeProperty);
+        set => SetValue(LightSizeProperty, Math.Clamp(value, LightSizeMinimum, LightSizeMaximum));
     }
 
     private static readonly IPropertyData LightSizeProperty = RegisterProperty<int>(nameof(LightSize));
@@ -34,7 +35,7 @@ public class LightWizardPageViewModel<TWizardPage> : PropBaseWizardPageViewModel
     [ViewModelToModel]
     public int LightSizeMinimum
     {
-        get { return GetValue<int>(LightSizeMinimumProperty); }
+        get => GetValue<int>(LightSizeMinimumProperty);
         set
         {
             if (LightSize < value)
@@ -51,7 +52,7 @@ public class LightWizardPageViewModel<TWizardPage> : PropBaseWizardPageViewModel
     [ViewModelToModel]
     public int LightSizeMaximum
     {
-        get { return GetValue<int>(LightSizeMaximumProperty); }
+        get => GetValue<int>(LightSizeMaximumProperty);
         set
         {
             if (LightSize > value)
@@ -64,4 +65,13 @@ public class LightWizardPageViewModel<TWizardPage> : PropBaseWizardPageViewModel
     }
 
     private static readonly IPropertyData LightSizeMaximumProperty = RegisterProperty<int>(nameof(LightSizeMaximum));
+    
+    [ViewModelToModel]
+    public StringTypes StringType
+    {
+        get => GetValue<StringTypes>(StringTypeProperty);
+        set => SetValue(StringTypeProperty, value);
+    }
+
+    private static readonly IPropertyData StringTypeProperty = RegisterProperty<StringTypes>(nameof(StringType));
 }

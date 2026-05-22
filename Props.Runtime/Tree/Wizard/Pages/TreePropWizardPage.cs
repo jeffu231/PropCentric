@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Common.WPFCommon.Converters;
 using Orc.Wizard;
 using Props.Abstractions.Props;
 using Props.Abstractions.Visuals;
@@ -121,10 +122,13 @@ namespace Props.Runtime.Tree.Wizard.Pages
                 Summary = $"Prop Type: Tree\n" +
                           $"Name: {Name}\n" +
                           $"Strings: {Strings}\n" +
-                          $"Light Size: {LightSize}\n" +
                           $"Nodes Per String: {NodesPerString}\n" +
+                          $"Light Size: {LightSize}\n" +
+                          $"Light Type: {EnumValueTypeConverter.GetDescription(StringType)}\n" +
+                          $"String Type: {StringType}\n" +
                           $"Degree Offset: {DegreeOffset}\n" +
                           $"Degrees Coverage: {DegreesCoverage}\n" +
+                          $"Start Location: {EnumValueTypeConverter.GetDescription(StartLocation)}\n" +
                           $"Base Height: {BaseHeight}\n" +
                           $"Top Height: {TopHeight}\n" +
                           $"Top Width: {TopWidth}\n" +
@@ -148,6 +152,7 @@ namespace Props.Runtime.Tree.Wizard.Pages
                 case nameof(Name): _draft.Name = Name; break;
                 case nameof(LightSize): _draft.LightSize = LightSize; break;
                 case nameof(BottomRadius): _draft.BottomRadius = BottomRadius; break;
+                case nameof(StringType): _draft.StringType = StringType; break;
             }
         }
 

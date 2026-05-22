@@ -1,4 +1,5 @@
 ﻿using Catel.Data;
+using Vixen.Sys.Props;
 
 namespace Props.Runtime.Wizards.Core.Pages
 {
@@ -71,6 +72,14 @@ namespace Props.Runtime.Wizards.Core.Pages
 		}
 
 		private static readonly IPropertyData LightSizeMaximumProperty = RegisterProperty<int>(nameof(LightSizeMaximum));
+		
+		protected StringTypes StringType
+		{
+			get { return GetValue<StringTypes>(StringTypeProperty); }
+			set { SetValue(StringTypeProperty, value); }
+		}
+
+		private static readonly IPropertyData StringTypeProperty = RegisterProperty<StringTypes>(nameof(StringType));
 
 		#endregion
 	}

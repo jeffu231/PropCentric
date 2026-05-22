@@ -24,6 +24,7 @@ namespace Props.Abstractions.Props
 			}, 500);
 
 			StringType = StringTypes.ColorMixingRGB;
+			LightSize = 2;
 			Brightness = 100;
 			Gamma = 1.0;
 			SingleColorOption = System.Drawing.Color.RoyalBlue;
