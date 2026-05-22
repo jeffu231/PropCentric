@@ -13,14 +13,11 @@ namespace Props.Runtime.Tree.Wizard.Pages
     /// </summary>
     public class TreePropWizardPage : LightPropWizardPage<TreePropDraft>
     {
-        private readonly TreePropDraft _draft;
-
         #region Constructor
 
         public TreePropWizardPage(TreePropDraft draft, IWizardPreviewCoordinator<TreePropDraft> coordinator)
             : base(draft)
         {
-            _draft = draft;
             Coordinator = coordinator;
 
             Title = "Basic Attributes";
@@ -33,78 +30,76 @@ namespace Props.Runtime.Tree.Wizard.Pages
 
         public IWizardPreviewCoordinator<TreePropDraft> Coordinator { get; }
 
-        public TreePropDraft Draft => _draft;
-
         public int Strings
         {
-            get => _draft.Strings;
-            set { _draft.Strings = value; RaisePropertyChanged(nameof(Strings)); }
+            get => Draft.Strings;
+            set { Draft.Strings = value; RaisePropertyChanged(nameof(Strings)); }
         }
 
         public int NodesPerString
         {
-            get => _draft.NodesPerString;
-            set { _draft.NodesPerString = value; RaisePropertyChanged(nameof(NodesPerString)); }
+            get => Draft.NodesPerString;
+            set { Draft.NodesPerString = value; RaisePropertyChanged(nameof(NodesPerString)); }
         }
 
         public int DegreesCoverage
         {
-            get => _draft.DegreesCoverage;
-            set { _draft.DegreesCoverage = value; RaisePropertyChanged(nameof(DegreesCoverage)); }
+            get => Draft.DegreesCoverage;
+            set { Draft.DegreesCoverage = value; RaisePropertyChanged(nameof(DegreesCoverage)); }
         }
 
         public int DegreeOffset
         {
-            get => _draft.DegreeOffset;
-            set { _draft.DegreeOffset = value; RaisePropertyChanged(nameof(DegreeOffset)); }
+            get => Draft.DegreeOffset;
+            set { Draft.DegreeOffset = value; RaisePropertyChanged(nameof(DegreeOffset)); }
         }
 
         public int BaseHeight
         {
-            get => _draft.BaseHeight;
-            set { _draft.BaseHeight = value; RaisePropertyChanged(nameof(BaseHeight)); }
+            get => Draft.BaseHeight;
+            set { Draft.BaseHeight = value; RaisePropertyChanged(nameof(BaseHeight)); }
         }
 
         public int TopHeight
         {
-            get => _draft.TopHeight;
-            set { _draft.TopHeight = value; RaisePropertyChanged(nameof(TopHeight)); }
+            get => Draft.TopHeight;
+            set { Draft.TopHeight = value; RaisePropertyChanged(nameof(TopHeight)); }
         }
 
         public int TopWidth
         {
-            get => _draft.TopWidth;
-            set { _draft.TopWidth = value; RaisePropertyChanged(nameof(TopWidth)); }
+            get => Draft.TopWidth;
+            set { Draft.TopWidth = value; RaisePropertyChanged(nameof(TopWidth)); }
         }
 
         public StartLocation StartLocation
         {
-            get => _draft.StartLocation;
-            set { _draft.StartLocation = value; RaisePropertyChanged(nameof(StartLocation)); }
+            get => Draft.StartLocation;
+            set { Draft.StartLocation = value; RaisePropertyChanged(nameof(StartLocation)); }
         }
 
         public bool ZigZag
         {
-            get => _draft.ZigZag;
-            set { _draft.ZigZag = value; RaisePropertyChanged(nameof(ZigZag)); }
+            get => Draft.ZigZag;
+            set { Draft.ZigZag = value; RaisePropertyChanged(nameof(ZigZag)); }
         }
 
         public int ZigZagOffset
         {
-            get => _draft.ZigZagOffset;
-            set { _draft.ZigZagOffset = value; RaisePropertyChanged(nameof(ZigZagOffset)); }
+            get => Draft.ZigZagOffset;
+            set { Draft.ZigZagOffset = value; RaisePropertyChanged(nameof(ZigZagOffset)); }
         }
 
         public float TopRadius
         {
-            get => _draft.TopRadius;
-            set { _draft.TopRadius = value; RaisePropertyChanged(nameof(TopRadius)); }
+            get => Draft.TopRadius;
+            set { Draft.TopRadius = value; RaisePropertyChanged(nameof(TopRadius)); }
         }
 
         public float BottomRadius
         {
-            get => _draft.BottomRadius;
-            set { _draft.BottomRadius = value; RaisePropertyChanged(nameof(BottomRadius)); }
+            get => Draft.BottomRadius;
+            set { Draft.BottomRadius = value; RaisePropertyChanged(nameof(BottomRadius)); }
         }
         
         #endregion

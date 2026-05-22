@@ -10,14 +10,11 @@ namespace Props.Runtime.PolyLine.Wizard.Pages;
 /// </summary>
 public sealed class PolyLinePropWizardPage : LightPropWizardPage<PolyLinePropDraft>
 {
-    private readonly PolyLinePropDraft _draft;
-
     public PolyLinePropWizardPage(
         PolyLinePropDraft draft,
         IWizardPreviewCoordinator<PolyLinePropDraft> coordinator)
         : base(draft)
     {
-        _draft = draft;
         Coordinator = coordinator;
 
         Title = "Basic Attributes";
@@ -26,17 +23,15 @@ public sealed class PolyLinePropWizardPage : LightPropWizardPage<PolyLinePropDra
 
     public IWizardPreviewCoordinator<PolyLinePropDraft> Coordinator { get; }
 
-    public PolyLinePropDraft Draft => _draft;
+    public int SegmentCount => Draft.Segments.Count;
 
-    public int SegmentCount => _draft.Segments.Count;
-
-    public int TotalPoints => _draft.Segments.Sum(segment => segment.PointCount);
+    public int TotalPoints => Draft.Segments.Sum(segment => segment.PointCount);
 
     public string SegmentSummary =>
         SegmentCount == 0
             ? "No captured segments."
             : string.Join(Environment.NewLine,
-                _draft.Segments.Select((segment, index) =>
+                Draft.Segments.Select((segment, index) =>
                     $"Segment {index + 1}: ({segment.Start.X:0.###}, {segment.Start.Y:0.###}) -> " +
                     $"({segment.End.X:0.###}, {segment.End.Y:0.###}), points: {segment.PointCount}"));
 

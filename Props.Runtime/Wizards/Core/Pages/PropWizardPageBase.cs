@@ -11,7 +11,7 @@ namespace Props.Runtime.Wizards.Core.Pages
 			Draft = draft ?? throw new ArgumentNullException(nameof(draft));
 		}
 
-		protected TDraft Draft { get; }
+		public TDraft Draft { get; }
 
 		#region IPropWizardPageBase
 
