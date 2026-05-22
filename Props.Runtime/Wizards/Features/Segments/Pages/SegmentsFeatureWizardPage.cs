@@ -6,6 +6,7 @@ using Catel.MVVM;
 using Orc.Wizard;
 using Props.Abstractions.Features;
 using Props.Abstractions.Setup;
+using Props.Abstractions.Setup.Drafts;
 using Props.Abstractions.Visuals;
 
 namespace Props.Runtime.Wizards.Features.Segments.Pages;

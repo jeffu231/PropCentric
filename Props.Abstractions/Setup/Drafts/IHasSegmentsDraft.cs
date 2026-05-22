@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Numerics;
 
-namespace Props.Abstractions.Features;
+namespace Props.Abstractions.Setup.Drafts;
 
 /// <summary>
 /// Exposes mutable draft segment state for wizard pages that edit segmented props.

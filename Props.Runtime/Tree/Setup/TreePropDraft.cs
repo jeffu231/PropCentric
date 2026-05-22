@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
-using Props.Abstractions.Features;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Props;
 using Props.Abstractions.Setup;
+using Props.Abstractions.Setup.Drafts;
 
 namespace Props.Runtime.Tree.Setup;
 

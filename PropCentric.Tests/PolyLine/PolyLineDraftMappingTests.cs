@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using PropCentric.Tests.Common;
-using Props.Abstractions.Features;
 using Props.Abstractions.Props;
+using Props.Abstractions.Setup.Drafts;
 using Props.Runtime.PolyLine.Setup;
 
 namespace PropCentric.Tests.PolyLine;

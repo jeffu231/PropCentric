@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using Props.Abstractions.PropVisualModels;
 
-namespace Props.Abstractions.Features;
+namespace Props.Abstractions.Setup.Drafts;
 
 /// <summary>
 /// Exposes mutable draft rotation state for wizard pages that edit prop rotations.

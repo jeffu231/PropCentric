@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using PropCentric.Tests.PolyLine;
-using Props.Abstractions.Features;
 using Props.Abstractions.PropVisualModels;
+using Props.Abstractions.Setup.Drafts;
 using Props.Abstractions.Visuals;
 using Props.Runtime.PolyLine.Setup;
 using Props.Runtime.PolyLine.Visuals;

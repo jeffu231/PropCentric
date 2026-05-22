@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.Setup;
+using Props.Abstractions.Setup.Drafts;
 
 namespace Props.Runtime.PolyLine.Setup;
 

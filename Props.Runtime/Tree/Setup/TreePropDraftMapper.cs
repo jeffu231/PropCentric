@@ -1,5 +1,3 @@
-using System.Collections.ObjectModel;
-using System.Linq;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Setup;
 
@@ -26,7 +24,7 @@ public sealed class TreePropDraftMapper : IPropDraftMapper<TreePropDraft, TreePr
         draft.ZigZagOffset = prop.ZigZagOffset;
         draft.TopRadius = prop.TopRadius;
         draft.BottomRadius = prop.BottomRadius;
-        draft.AxisRotations = CloneRotations(prop.AxisRotations);
+        draft.AxisRotations = AxisRotationCollectionFactory.Clone(prop.AxisRotations);
     }
 
     public void ApplyDraft(TreePropDraft draft, TreeProp prop)
@@ -45,17 +43,6 @@ public sealed class TreePropDraftMapper : IPropDraftMapper<TreePropDraft, TreePr
         prop.ZigZagOffset = draft.ZigZagOffset;
         prop.TopRadius = draft.TopRadius;
         prop.BottomRadius = draft.BottomRadius;
-        prop.AxisRotations = CloneRotations(draft.AxisRotations);
-    }
-
-    private static ObservableCollection<AxisRotationModel> CloneRotations(
-        IEnumerable<AxisRotationModel> rotations)
-    {
-        return new ObservableCollection<AxisRotationModel>(
-            rotations.Select(rotation => new AxisRotationModel
-            {
-                Axis = rotation.Axis,
-                RotationAngle = rotation.RotationAngle
-            }));
+        prop.AxisRotations = AxisRotationCollectionFactory.Clone(draft.AxisRotations);
     }
 }

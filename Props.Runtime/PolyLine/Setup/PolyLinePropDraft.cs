@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
-using Props.Abstractions.Features;
 using Props.Abstractions.Setup;
+using Props.Abstractions.Setup.Drafts;
 
 namespace Props.Runtime.PolyLine.Setup;
 
