@@ -15,7 +15,7 @@ namespace Props.Runtime.Tree;
 /// A conical pixel-tree prop consisting of individually addressable light strings arranged radially.
 /// </summary>
 [PropDescriptor("BCD3FB69-4827-49EE-B877-BD2AE14E792D", "Tree", typeof(TreePropSetup))]
-public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights, ICanRotate
+public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights, ICanAxisRotate
 {
     private readonly IVisualInputMapper<TreeProp, TreeVisualInput> _inputMapper;
     private readonly IPropVisualModelBuilder<TreeVisualInput, TreePropVisualModel> _builder;

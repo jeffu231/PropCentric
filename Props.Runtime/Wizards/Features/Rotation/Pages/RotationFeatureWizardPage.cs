@@ -15,7 +15,7 @@ namespace Props.Runtime.Wizards.Features.Rotation.Pages;
 /// <summary>
 /// Wizard page for editing prop axis rotations.
 /// </summary>
-[FeatureWizardPage(typeof(ICanRotate), priority: 140)]
+[FeatureWizardPage(typeof(ICanAxisRotate), priority: 140)]
 public sealed class RotationFeatureWizardPage : WizardPageBase, IFeatureWizardDraftPage
 {
     public RotationFeatureWizardPage()
@@ -73,9 +73,9 @@ public sealed class RotationFeatureWizardPage : WizardPageBase, IFeatureWizardDr
 
     public void Initialize(IPropDraft draft, IWizardPreviewSession previewSession)
     {
-        if (draft is not IHasRotationsDraft rotationsDraft)
+        if (draft is not IHasAxisRotationsDraft rotationsDraft)
         {
-            throw new InvalidOperationException($"Draft {draft.GetType()} does not implement {nameof(IHasRotationsDraft)}.");
+            throw new InvalidOperationException($"Draft {draft.GetType()} does not implement {nameof(IHasAxisRotationsDraft)}.");
         }
 
         PreviewSession = previewSession;

@@ -7,7 +7,7 @@ namespace Props.Abstractions.Features;
 /// Marks a prop as supporting wizard-editable axis rotations and exposes the persisted rotation state.
 /// </summary>
 [PropFeature(PropFeatureFlags.Rotation)]
-public interface ICanRotate
+public interface ICanAxisRotate
 {
     /// <summary>
     /// Gets or sets the ordered axis rotations owned by the prop.

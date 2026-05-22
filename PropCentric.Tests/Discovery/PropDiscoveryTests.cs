@@ -33,7 +33,7 @@ public class PropDiscoveryTests
         Assert.True(flags.HasFlag(PropFeatureFlags.Dimming));
         Assert.True(typeof(IHasDimming).IsAssignableFrom(typeof(TreeProp)));
         Assert.True(flags.HasFlag(PropFeatureFlags.Rotation));
-        Assert.True(typeof(ICanRotate).IsAssignableFrom(typeof(TreeProp)));
+        Assert.True(typeof(ICanAxisRotate).IsAssignableFrom(typeof(TreeProp)));
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class PropDiscoveryTests
         Assert.True(flags.HasFlag(PropFeatureFlags.Segments));
         Assert.True(typeof(IHasSegments).IsAssignableFrom(typeof(PolyLineProp)));
         Assert.False(flags.HasFlag(PropFeatureFlags.Rotation));
-        Assert.False(typeof(ICanRotate).IsAssignableFrom(typeof(PolyLineProp)));
+        Assert.False(typeof(ICanAxisRotate).IsAssignableFrom(typeof(PolyLineProp)));
     }
 
     [Fact]
@@ -102,15 +102,15 @@ public class PropDiscoveryTests
             FeatureWizardPageScanner.Scan([typeof(RotationFeatureWizardPage).Assembly]);
 
         var registration = Assert.Single(registrations, r => r.PageType == typeof(RotationFeatureWizardPage));
-        Assert.Equal(typeof(ICanRotate), registration.FeatureInterface);
+        Assert.Equal(typeof(ICanAxisRotate), registration.FeatureInterface);
         Assert.Null(registration.MapperType);
         Assert.Equal(140, registration.Priority);
     }
 
     [Fact]
-    public void ICanRotate_UsesRotationFeatureFlag()
+    public void ICanAxisRotate_UsesRotationFeatureFlag()
     {
-        var attribute = typeof(ICanRotate).GetCustomAttributes(typeof(PropFeatureAttribute), inherit: false)
+        var attribute = typeof(ICanAxisRotate).GetCustomAttributes(typeof(PropFeatureAttribute), inherit: false)
             .OfType<PropFeatureAttribute>()
             .Single();
 

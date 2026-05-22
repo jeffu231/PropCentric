@@ -6,7 +6,7 @@ namespace Props.Abstractions.Setup.Drafts;
 /// <summary>
 /// Exposes mutable draft rotation state for wizard pages that edit prop rotations.
 /// </summary>
-public interface IHasRotationsDraft
+public interface IHasAxisRotationsDraft
 {
     /// <summary>
     /// Gets the ordered mutable axis rotations for the current wizard flow.
