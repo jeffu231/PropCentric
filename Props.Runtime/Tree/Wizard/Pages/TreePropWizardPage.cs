@@ -25,6 +25,7 @@ namespace Props.Runtime.Tree.Wizard.Pages
 
             Title = "Basic Attributes";
             Description = "Enter attributes for Tree";
+            SyncDraftToParent();
 
             // Keep parent-class Catel-stored properties (Name, LightSize) in sync with the draft.
             PropertyChanged += OnParentPropertyChanged;
@@ -154,6 +155,14 @@ namespace Props.Runtime.Tree.Wizard.Pages
                 case nameof(BottomRadius): _draft.BottomRadius = BottomRadius; break;
                 case nameof(StringType): _draft.StringType = StringType; break;
             }
+        }
+
+        private void SyncDraftToParent()
+        {
+            Name = _draft.Name;
+            LightSize = _draft.LightSize;
+            BottomRadius = _draft.BottomRadius;
+            StringType = _draft.StringType;
         }
 
         #endregion

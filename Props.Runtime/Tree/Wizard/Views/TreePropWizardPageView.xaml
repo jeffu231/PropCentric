@@ -77,8 +77,13 @@
                 <Label Grid.Column="0" Grid.Row="3" Content="Light Type" />
                 <ComboBox Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Center"
                           ItemsSource="{Binding Source={ markupExtensions:EnumBindingSource {x:Type props:StringTypes}}}"
-
-                          SelectedItem="{Binding StringType, Converter={StaticResource EnumValueTypeConverter}, ConverterParameter={x:Type props:StringTypes}}" />
+                          SelectedItem="{Binding StringType, Mode=TwoWay}" >
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource EnumValueTypeConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
 
                 <Label Grid.Column="0" Grid.Row="4" Content="Degrees Coverage" />
                 <TextBox Grid.Column="1" Grid.Row="4"
