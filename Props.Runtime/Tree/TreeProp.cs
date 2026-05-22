@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Drawing;
 using Props.Abstractions.Features;
 using Props.Abstractions.Props;
@@ -210,6 +211,22 @@ public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights, ICanRota
 			}
 		}
 		
+		/// <summary>Gets or sets the persisted axis rotations for the tree.</summary>
+		public ObservableCollection<AxisRotationModel> AxisRotations
+		{
+			get;
+			set
+			{
+				if (ReferenceEquals(field, value))
+				{
+					return;
+				}
+
+				field = value;
+				OnPropertyChanged(nameof(AxisRotations));
+			}
+		} = AxisRotationCollectionFactory.CreateDefaultAxisRotations();
+		
 		//TODO Map element structure to model nodes
 					
 		#endregion
@@ -229,6 +246,9 @@ public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights, ICanRota
 
     public override string GetSummary()
     {
+	    var rotationSummary = string.Concat(
+		    AxisRotations.Select(rotation => $"<b>{rotation.Axis} Rotation:</b> {rotation.RotationAngle}\u00B0<br>"));
+
 	    string summary =
 		    "<style>" +
 		    $"  h2   {{color: #{ColorTranslator.ToHtml(ThemeColorTable.ForeColor)}; margin-top: 0; margin-bottom: 0; text-decoration: underline;}}" +
@@ -253,9 +273,7 @@ public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights, ICanRota
 		    $"<b>ZigZag Offset:</b> {ZigZagOffset}<br>" +
 		    $"<b>Top Radius:</b> {TopRadius}<br>" +
 		    $"<b>Bottom Radius:</b> {BottomRadius}<br>" +
-		    $"<b>{AxisRotations[0].Axis} Rotation:</b> {AxisRotations[0].RotationAngle}\u00B0<br>" +
-		    $"<b>{AxisRotations[1].Axis} Rotation:</b> {AxisRotations[1].RotationAngle}\u00B0<br>" +
-		    $"<b>{AxisRotations[2].Axis} Rotation:</b> {AxisRotations[2].RotationAngle}\u00B0<br>" +
+		    rotationSummary +
 		    "</body>" +
 		    "<h2>Additional Props</h2>" +
 		    "<body>" +

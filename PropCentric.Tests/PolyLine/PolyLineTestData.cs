@@ -1,8 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Numerics;
-using PropCentric.Tests.Common;
 using Props.Abstractions.Props;
-using Props.Abstractions.PropVisualModels;
 using Props.Runtime.PolyLine;
 using Props.Runtime.PolyLine.Visuals;
 
@@ -19,8 +17,7 @@ public class PolyLineTestData
         var prop = new PolyLineProp(new PolyLinePropToVisualInputMapper(), new PolyLineVisualModelBuilder())
         {
             Name = "Configured PolyLine",
-            LightSize = 2,
-            AxisRotations = TestDataHelper.CreateRotations((Axis.XAxis, 5), (Axis.YAxis, 10), (Axis.ZAxis, 15))
+            LightSize = 2
         };
         
         prop.ReplaceSegments(CreateSegments());

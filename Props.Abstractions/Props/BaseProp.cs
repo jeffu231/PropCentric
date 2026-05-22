@@ -47,11 +47,6 @@ namespace Props.Abstractions.Props
 			_createdBy = Environment.UserName;
 			//PropType = propType;			
 			UserDefinedPropComponents = new();
-			// Initialize the Axis rotations
-			AxisRotations = new ObservableCollection<AxisRotationModel>();
-			AxisRotations.Add(new AxisRotationModel() { Axis = Axis.XAxis, RotationAngle = 0 });
-			AxisRotations.Add(new AxisRotationModel() { Axis = Axis.YAxis, RotationAngle = 0 });
-			AxisRotations.Add(new AxisRotationModel() { Axis = Axis.ZAxis, RotationAngle = 0 });
 			
 			PropertyChanged += Prop_PropertyChanged;
 		}
@@ -103,21 +98,6 @@ namespace Props.Abstractions.Props
 					RenamePropElement(_name, value);
 					SetProperty(ref _name, value);
 				}
-			}
-		}
-
-		public ObservableCollection<AxisRotationModel> AxisRotations
-		{
-			get;
-			set
-			{
-				if (value == field)
-				{
-					return;
-				}
-
-				field = value;
-				OnPropertyChanged(nameof(AxisRotations));
 			}
 		}
 
