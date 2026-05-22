@@ -10,7 +10,7 @@ namespace Props.Runtime.Tree.Setup;
 /// <summary>
 /// Wizard-owned draft that holds user-entered field values for a <see cref="TreeProp"/> during setup.
 /// </summary>
-public sealed class TreePropDraft : IPropDraft, IHasAxisRotationsDraft
+public sealed class TreePropDraft : IPropDraft, IHasAxisRotationsDraft, IHasLightSettingsDraft
 {
     /// <summary>Gets or sets the display name of the prop.</summary>
     public string Name { get; set; } = "Tree 1";
