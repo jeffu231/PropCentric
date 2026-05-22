@@ -16,8 +16,8 @@ A user should be able to open the Tree and PolyLine wizards, see existing values
 - [x] (2025-02-14 00:00Z) Refactor base wizard page classes to delegate shared properties to the draft instead of Catel-owned duplicate state.
 - [x] (2025-02-14 00:00Z) Update `TreePropWizardPage` and `PolyLinePropWizardPage` to inherit from the new draft-backed base types.
 - [x] (2025-02-14 00:00Z) Remove setup-time wizard seeding for shared fields from `TreePropSetup` and `PolyLinePropSetup`.
-- [ ] Add or update tests proving edit-flow loading and draft mutation for shared fields.
-- [ ] Run targeted tests for Tree and PolyLine wizard/draft behavior.
+- [x] (2025-02-14 00:00Z) Add or update tests proving edit-flow loading and draft mutation for shared fields.
+- [x] (2025-02-14 00:00Z) Run targeted tests for Tree and PolyLine wizard/draft behavior.
 
 ## Surprises & Discoveries
 
@@ -41,6 +41,12 @@ A user should be able to open the Tree and PolyLine wizards, see existing values
 
 - Observation: After the page refactor, the setup helpers no longer needed access to wizard page instances at all; their remaining job was only feature-mapper initialization.
   Evidence: `PopulateWizardFromDraft(...)` in both setup classes reduced to `mapper.PopulateFrom(prop)` calls and was removed.
+
+- Observation: `StringType` remains a protected base-page property, so direct regression coverage for it must either go through the view model or use reflection in tests.
+  Evidence: This was true during the initial test pass design, but the property was later made public on `ILightPropWizardPage` and `LightPropWizardPage<TDraft>`, so the final regression tests use direct property access.
+
+- Observation: The targeted test suite passed after the refactor, but the build reports pre-existing nullable warnings in `Props.OpenGlCommon` and member-hiding warnings for `Draft` on the concrete wizard pages.
+  Evidence: `dotnet test PropCentric.Tests\PropCentric.Tests.csproj --filter "Tree|PolyLine|DraftBackedWizardPageTests"` passed with 36 tests; warnings included `CS0108` for `TreePropWizardPage.Draft` and `PolyLinePropWizardPage.Draft`.
 
 ## Decision Log
 
@@ -72,7 +78,11 @@ A user should be able to open the Tree and PolyLine wizards, see existing values
   Rationale: Once page seeding was removed, the helper no longer clarified intent; the direct loop is shorter and makes the remaining responsibility obvious.
   Date/Author: 2025-02-14 / Codex
 
-Revision note: Added draft capability interfaces, updated Tree and PolyLine drafts to implement them, extended `PolyLinePropDraftMapper` to round-trip `StringType`, converted the core wizard page base classes to generic draft-backed forms, removed redundant page-level sync hooks from Tree and PolyLine wizard pages, and deleted setup-time shared-field seeding from both prop setup flows.
+- Decision: Add focused wizard-page tests that verify shared fields read from and write to the draft directly, using reflection to cover `StringType`.
+  Rationale: This keeps the regression surface tight around the new single-source-of-truth behavior without broadening the test scope to unrelated WPF view concerns. After `StringType` became public, the tests were simplified to use direct access.
+  Date/Author: 2025-02-14 / Codex
+
+Revision note: Added draft capability interfaces, updated Tree and PolyLine drafts to implement them, extended `PolyLinePropDraftMapper` to round-trip `StringType`, converted the core wizard page base classes to generic draft-backed forms, removed redundant page-level sync hooks from Tree and PolyLine wizard pages, deleted setup-time shared-field seeding from both prop setup flows, added wizard-page regression tests for shared draft-backed fields, made `StringType` public on the light wizard page abstraction, and ran targeted tests successfully.
 
 ## Outcomes & Retrospective
 

@@ -83,7 +83,7 @@ namespace Props.Runtime.Wizards.Core.Pages
 
 		private static readonly IPropertyData LightSizeMaximumProperty = RegisterProperty<int>(nameof(LightSizeMaximum));
 		
-		protected StringTypes StringType
+		public StringTypes StringType
 		{
 			get { return Draft.StringType; }
 			set
