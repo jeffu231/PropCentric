@@ -83,7 +83,10 @@ public sealed class PolyLinePropSetup : IPropSetup
         var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var wizard = _wizardFactory(draft, featurePages);
 
-        PopulateWizardFromDraft(draft, wizard, polyLineProp, featureMappers);
+        foreach (var mapper in featureMappers)
+        {
+            mapper.PopulateFrom(polyLineProp);
+        }
 
         var result = await _wizardPresenter(wizard);
         if (result == true)
@@ -107,7 +110,10 @@ public sealed class PolyLinePropSetup : IPropSetup
         var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var wizard = _wizardFactory(draft, featurePages);
 
-        PopulateWizardFromDraft(draft, wizard, polyLineProp, featureMappers);
+        foreach (var mapper in featureMappers)
+        {
+            mapper.PopulateFrom(polyLineProp);
+        }
 
         var result = await _wizardPresenter(wizard);
         if (result == true)
@@ -138,22 +144,6 @@ public sealed class PolyLinePropSetup : IPropSetup
         var propGroup = new PropGroup();
         propGroup.Props.Add(polyLineProp);
         return propGroup;
-    }
-
-    private static void PopulateWizardFromDraft(
-        PolyLinePropDraft draft,
-        IWizard wizard,
-        PolyLineProp polyLineProp,
-        IReadOnlyList<IFeatureWizardDataMapper> mappers)
-    {
-        var page = (PolyLinePropWizardPage)wizard.Pages.Single(p => p is PolyLinePropWizardPage);
-        page.Name = draft.Name;
-        page.LightSize = draft.LightSize;
-
-        foreach (var mapper in mappers)
-        {
-            mapper.PopulateFrom(polyLineProp);
-        }
     }
 
     private PolyLinePropWizard CreateWizard(PolyLinePropDraft draft, IReadOnlyList<IWizardPage> featurePages)

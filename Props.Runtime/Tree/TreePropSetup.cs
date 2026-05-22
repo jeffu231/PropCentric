@@ -49,7 +49,10 @@ public class TreePropSetup(
         var featureMappers = featurePageResolver.GetMappersFor(featurePages);
         var treeWizard = CreateTreeWizard(draft, featurePages);
 
-        PopulateWizardFromDraft(draft, treeWizard, treeProp, featureMappers);
+        foreach (var mapper in featureMappers)
+        {
+            mapper.PopulateFrom(treeProp);
+        }
 
         bool? result = await ShowWizard(treeWizard);
         if (result.HasValue && result.Value)
@@ -69,7 +72,7 @@ public class TreePropSetup(
         var featureMappers = featurePageResolver.GetMappersFor(featurePages);
         var treeWizard = CreateTreeWizard(draft, featurePages);
 
-        PopulateWizardFromDraft(draft, treeWizard, treeProp, featureMappers);
+        foreach (var mapper in featureMappers) mapper.PopulateFrom(treeProp);
 
         bool? result = await ShowWizard(treeWizard);
         if (result.HasValue && result.Value)
@@ -92,18 +95,6 @@ public class TreePropSetup(
         //TODO check grouping page results to see if we need to create more of the same Prop
         // The grouping wizard page is not here and beyond this POC
         return propGroup;
-    }
-
-    // Seeds the two parent-class Catel-stored properties (Name, LightSize) and all feature pages.
-    // Tree-specific properties are read directly from the draft by the page — no explicit seeding needed.
-    private static void PopulateWizardFromDraft(TreePropDraft draft, IWizard wizard, TreeProp treeProp,
-        IReadOnlyList<IFeatureWizardDataMapper> mappers)
-    {
-        var page = (TreePropWizardPage)wizard.Pages.Single(p => p is TreePropWizardPage);
-        page.Name = draft.Name;
-        page.LightSize = draft.LightSize;
-
-        foreach (var mapper in mappers) mapper.PopulateFrom(treeProp);
     }
 
     private TreePropWizard CreateTreeWizard(TreePropDraft draft, IReadOnlyList<IWizardPage> featurePages)

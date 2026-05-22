@@ -15,7 +15,7 @@ A user should be able to open the Tree and PolyLine wizards, see existing values
 - [x] (2025-02-14 00:00Z) Define shared draft capability interfaces for common wizard fields.
 - [x] (2025-02-14 00:00Z) Refactor base wizard page classes to delegate shared properties to the draft instead of Catel-owned duplicate state.
 - [x] (2025-02-14 00:00Z) Update `TreePropWizardPage` and `PolyLinePropWizardPage` to inherit from the new draft-backed base types.
-- [ ] Remove setup-time wizard seeding for shared fields from `TreePropSetup` and `PolyLinePropSetup`.
+- [x] (2025-02-14 00:00Z) Remove setup-time wizard seeding for shared fields from `TreePropSetup` and `PolyLinePropSetup`.
 - [ ] Add or update tests proving edit-flow loading and draft mutation for shared fields.
 - [ ] Run targeted tests for Tree and PolyLine wizard/draft behavior.
 
@@ -38,6 +38,9 @@ A user should be able to open the Tree and PolyLine wizards, see existing values
 
 - Observation: Once shared properties are draft-backed at the base-page layer, the old page-level `PropertyChanged` mirrors become dead code rather than safety nets.
   Evidence: `TreePropWizardPage` and `PolyLinePropWizardPage` no longer need constructor sync or `OnParentPropertyChanged(...)` to keep `Name`, `LightSize`, or `StringType` current.
+
+- Observation: After the page refactor, the setup helpers no longer needed access to wizard page instances at all; their remaining job was only feature-mapper initialization.
+  Evidence: `PopulateWizardFromDraft(...)` in both setup classes reduced to `mapper.PopulateFrom(prop)` calls and was removed.
 
 ## Decision Log
 
@@ -65,7 +68,11 @@ A user should be able to open the Tree and PolyLine wizards, see existing values
   Rationale: Keeping them would obscure the single-source-of-truth design and make future maintenance harder by implying two active synchronization paths.
   Date/Author: 2025-02-14 / Codex
 
-Revision note: Added draft capability interfaces, updated Tree and PolyLine drafts to implement them, extended `PolyLinePropDraftMapper` to round-trip `StringType`, converted the core wizard page base classes to generic draft-backed forms, and removed redundant page-level sync hooks from Tree and PolyLine wizard pages.
+- Decision: Inline feature-mapper initialization in setup flows instead of keeping a renamed helper method.
+  Rationale: Once page seeding was removed, the helper no longer clarified intent; the direct loop is shorter and makes the remaining responsibility obvious.
+  Date/Author: 2025-02-14 / Codex
+
+Revision note: Added draft capability interfaces, updated Tree and PolyLine drafts to implement them, extended `PolyLinePropDraftMapper` to round-trip `StringType`, converted the core wizard page base classes to generic draft-backed forms, removed redundant page-level sync hooks from Tree and PolyLine wizard pages, and deleted setup-time shared-field seeding from both prop setup flows.
 
 ## Outcomes & Retrospective
 
