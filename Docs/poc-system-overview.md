@@ -23,8 +23,8 @@ The solution is split into a few main layers.
 Defines the core contracts and shared base types:
 
 - `IProp`, `BaseProp<TModel>`, `BaseLightProp<TModel>`
-- feature interfaces such as `IHasLights`, `IHasDimming`, and `IHasSegments`
-- draft-facing feature contracts such as `IHasSegmentsDraft`
+- feature interfaces such as `IHasLights`, `IHasDimming`, `IHasSegments`, and `ICanAxisRotate`
+- setup-draft contracts such as `IHasSegmentsDraft` and `IHasAxisRotationsDraft` under `Props.Abstractions.Setup.Drafts`
 - setup contracts such as `IPropSetup`, `IPropSetupContext`, `IPropDraftMapper<,>`, and `ISegmentCaptureNormalizer`
 - visual contracts such as `IVisualInputMapper<,>`, `IPropVisualModelBuilder<,>`, `IWizardPreviewCoordinator<>`, and `IWizardPreviewSession`
 - visual element types such as `LightPoint`, `LightPointCloud`, and `IPropVisualModel`
@@ -134,6 +134,7 @@ Example:
 
 - `TreeProp : ... , IHasLights`
 - `BaseLightProp<TModel> : ... , IHasDimming`
+- `TreeProp : ... , ICanAxisRotate`
 
 At startup, feature flags are inferred by inspecting interfaces marked with `PropFeatureAttribute`.
 
@@ -267,7 +268,20 @@ For the polyline flow:
 - `IHasSegmentsDraft` exposes `ObservableCollection<SegmentDraftState>`
 - `SegmentsFeatureWizardPage` wraps those segment draft items for display and editing
 
+For the tree flow:
+
+- `TreePropDraft` implements `IHasAxisRotationsDraft`
+- `IHasAxisRotationsDraft` exposes `ObservableCollection<AxisRotationModel>`
+- `RotationFeatureWizardPage` wraps those draft rotation items for display and editing
+
 This is important because the preview coordinator already reads from the shared prop draft. When a feature page edits that same draft state, preview can rebuild immediately without waiting for wizard completion.
+
+Important design boundary:
+
+- `AxisRotations` are a setup-time and baseline prop-definition capability
+- they define the default orientation of the prop geometry itself
+- they are not the same thing as runtime rendered motion such as fixture pan, tilt, elevation, or other animated state
+- runtime rendered motion belongs in a separate render-state concept in the real application and should not be modeled as baseline prop-definition `AxisRotations`
 
 ## 6. Visual Model Generation Pattern
 
@@ -282,6 +296,7 @@ Important:
 - if the prop contains mutable reference-type state that affects rendering, the mapper must project that state as a value snapshot, not as a shared object reference
 - otherwise a later in-place edit can change the underlying data without changing the visual input record identity or equality result
 - axis rotation collections are the current concrete example: map the axis/angle values, not the original mutable collection and item instances
+- those axis rotations are baseline setup definition data, not live rendered motion state
 
 Example:
 
@@ -439,7 +454,9 @@ Create an `IPropSetup` implementation that:
 
 Create an `IPropDraft` implementation that holds the wizard's working state.
 
-If a feature page must edit preview-driving state directly, expose that state through a feature-specific draft contract such as `IHasSegmentsDraft`.
+If a feature page must edit preview-driving state directly, expose that state through a feature-specific draft contract such as `IHasSegmentsDraft` or `IHasAxisRotationsDraft`.
+
+Keep these contracts under `Props.Abstractions.Setup.Drafts` because they are setup-only shapes, not runtime prop feature interfaces.
 
 ### Step 5: Add the draft mapper
 

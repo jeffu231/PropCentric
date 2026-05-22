@@ -221,6 +221,15 @@ IPropDraftMapper<TDraft, TProp>
 - not the live prop
 - safe to discard if the wizard is cancelled
 
+Feature-specific draft capability interfaces should live under `Props.Abstractions.Setup.Drafts` and be named from the state they expose. Examples:
+
+```
+IHasSegmentsDraft
+IHasAxisRotationsDraft
+```
+
+These are setup-only contracts. They are not runtime prop feature interfaces.
+
 ## Visual Input Naming
 
 Use `VisualInput` for transfer objects that carry only the subset of data required to build a visual model.
@@ -262,3 +271,19 @@ var d = registry.GetDescriptorById(id);
 ```
 
 Single-letter loop variables (`i`, `flag`) remain acceptable in short, obvious contexts.
+
+## AxisRotation Naming
+
+When the abstraction is specifically about baseline prop-definition axis rotations, prefer `AxisRotation` in the name instead of generic `Rotation`.
+
+Examples:
+
+```
+AxisRotationModel
+AxisRotationCollectionFactory
+AxisRotations
+ICanAxisRotate
+IHasAxisRotationsDraft
+```
+
+Use this naming for setup-time baseline prop orientation. Do not reuse `AxisRotation` naming for runtime rendered state such as fixture pan, tilt, elevation, or other animated motion. Those are separate concepts and should be named from their rendered-state behavior.

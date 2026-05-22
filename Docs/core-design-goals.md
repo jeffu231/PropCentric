@@ -44,6 +44,7 @@ Only the subset required for drawing should be mapped into the Visual Model inpu
 
 * Features should have a Feature Flag and a cooresponding interface that should be implemented by the Prop.
 * Features may have Wizard setup pages to handle thier data described in the feature interfaces.
+* Setup-only draft contracts used by feature wizard pages should remain separate from runtime feature interfaces. They belong with setup abstractions, not with runtime prop feature discovery.
 
 ### Discovery
  
@@ -63,11 +64,13 @@ For this POC, that will be assemblies starting with Props.
 
 ### Rotations
 
-* Props can have rotations applied at the Prop level as part of thier setup design to rotate the basic prop orientation.
-* Rotations can be in any plane for 3D use. One rotation in each plane will be allowed. 
-* Rotations will have an order in which they are applied to allow the user to get the state they desire. Example rotate X then Y. Or Y then X, then Z.
-* Visual Models are built using standard input and then rotations are applied as a transform to the completed model.
-* Viewers can apply their own rotations on top of the Prop based ones. The will likely only be a world view option initially and is to facilitate making the prop more accurate in the world space.
+* Props can have axis rotations applied at setup time as part of their baseline prop definition to rotate the basic prop orientation.
+* Baseline `AxisRotations` are a prop-definition capability, not a runtime rendered-state capability.
+* Axis rotations can be in any plane for 3D use. One rotation in each plane will be allowed.
+* Axis rotations will have an order in which they are applied to allow the user to get the state they desire. Example rotate X then Y. Or Y then X, then Z.
+* Visual Models are built using standard input and then baseline axis rotations are applied as a transform to the completed model.
+* Viewers can apply their own additional rotations on top of the baseline prop-defined axis rotations. This is separate from the prop definition and is closer to view or world placement behavior.
+* Props that are fixtures, or props that have some type of runtime state where they move in an axis such as pan, tilt, or elevation, should model that separately as rendered state in the real application. That runtime motion should not be conflated with setup-time `AxisRotations`.
 
 ### Wizards
 

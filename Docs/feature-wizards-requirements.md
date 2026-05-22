@@ -28,3 +28,9 @@ Feature setup pages are added to a prop's wizard flow when the prop supports the
   * it uses `IHasSegmentsDraft` and `SegmentDraftState`
   * it edits shared draft `PointCount` values directly
   * it hosts the OpenGL preview and reflects edits immediately
+* `RotationFeatureWizardPage` is the reference pattern for a draft-backed axis-rotation feature page:
+  * it targets `ICanAxisRotate`
+  * it uses `IHasAxisRotationsDraft`
+  * it edits shared draft `AxisRotations` values directly
+  * those `AxisRotations` define baseline setup-time prop orientation only
+  * they are not the same thing as runtime motion/state such as pan, tilt, elevation, or other rendered fixture movement
