@@ -12,8 +12,7 @@ public sealed class PolyLineDraftToVisualInputMapper : IVisualInputMapper<PolyLi
 {
     public PolyLineVisualInput Map(PolyLinePropDraft source) => new(
         SnapshotSegments(source.Segments),
-        source.LightSize,
-        VisualInputRotationSupport.SnapshotRotations(source.AxisRotations));
+        source.LightSize);
 
     private static IReadOnlyList<Segment> SnapshotSegments(IEnumerable<SegmentDraftState> segments)
     {

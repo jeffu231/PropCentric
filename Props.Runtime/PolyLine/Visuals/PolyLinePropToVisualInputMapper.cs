@@ -10,8 +10,7 @@ public sealed class PolyLinePropToVisualInputMapper : IVisualInputMapper<PolyLin
 {
     public PolyLineVisualInput Map(PolyLineProp source) => new(
         SnapshotSegments(source.Segments),
-        source.LightSize,
-        VisualInputRotationSupport.SnapshotRotations(source.AxisRotations));
+        source.LightSize);
 
     private static IReadOnlyList<Segment> SnapshotSegments(IEnumerable<Segment> segments)
     {

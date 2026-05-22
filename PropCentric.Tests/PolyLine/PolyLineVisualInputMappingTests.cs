@@ -1,6 +1,5 @@
 using PropCentric.Tests.Common;
 using Props.Abstractions.Features;
-using Props.Abstractions.PropVisualModels;
 using Props.Runtime.PolyLine.Setup;
 using Props.Runtime.PolyLine.Visuals;
 
@@ -22,8 +21,6 @@ public class PolyLineVisualInputMappingTests
         Assert.Equal(prop.LightSize, input.LightSize);
         AssertSegmentsEqual(prop.Segments, input.Segments);
         Assert.NotSame(prop.Segments, input.Segments);
-        AssertRotationsEqual(prop.AxisRotations, input.AxisRotations);
-        AssertRotationInstancesAreDistinct(prop.AxisRotations, input.AxisRotations);
     }
 
     [Fact]
@@ -38,8 +35,7 @@ public class PolyLineVisualInputMappingTests
                     Start = segment.Start,
                     End = segment.End,
                     PointCount = segment.PointCount
-                })),
-            AxisRotations = TestDataHelper.CreateRotations((Axis.XAxis, 15), (Axis.ZAxis, 30))
+                }))
         };
 
         var mapper = new PolyLineDraftToVisualInputMapper();
@@ -48,8 +44,6 @@ public class PolyLineVisualInputMappingTests
 
         Assert.Equal(draft.LightSize, input.LightSize);
         Assert.Equal(draft.Segments.Count, input.Segments.Count);
-        AssertRotationsEqual(draft.AxisRotations, input.AxisRotations);
-        AssertRotationInstancesAreDistinct(draft.AxisRotations, input.AxisRotations);
 
         for (var index = 0; index < draft.Segments.Count; index++)
         {
@@ -68,31 +62,6 @@ public class PolyLineVisualInputMappingTests
         for (var index = 0; index < expected.Count; index++)
         {
             Assert.Equal(expected[index], actual[index]);
-        }
-    }
-
-    private static void AssertRotationsEqual(
-        IReadOnlyList<AxisRotationModel> expected,
-        IReadOnlyList<AxisRotationModel> actual)
-    {
-        Assert.Equal(expected.Count, actual.Count);
-
-        for (var index = 0; index < expected.Count; index++)
-        {
-            Assert.Equal(expected[index].Axis, actual[index].Axis);
-            Assert.Equal(expected[index].RotationAngle, actual[index].RotationAngle);
-        }
-    }
-
-    private static void AssertRotationInstancesAreDistinct(
-        IReadOnlyList<AxisRotationModel> expected,
-        IReadOnlyList<AxisRotationModel> actual)
-    {
-        Assert.NotSame(expected, actual);
-
-        for (var index = 0; index < expected.Count; index++)
-        {
-            Assert.NotSame(expected[index], actual[index]);
         }
     }
 }

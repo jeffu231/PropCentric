@@ -7,13 +7,11 @@ namespace Props.Runtime.Wizards.Core.ViewModels;
 public class PropBaseWizardPageViewModel<TWizardPage> : GraphicsWizardPageViewModelBase<TWizardPage>
     where TWizardPage : class, IWizardPage
 {
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <typeparam name="TWizardPage">Type of wizard page</typeparam>
-    public PropBaseWizardPageViewModel(TWizardPage wizardPage) : base(wizardPage)
+    protected PropBaseWizardPageViewModel(TWizardPage wizardPage) : base(wizardPage)
     {
     }
+
+    #region Properties
 
     /// <summary>
     /// Gets or sets the prop name.
@@ -26,6 +24,8 @@ public class PropBaseWizardPageViewModel<TWizardPage> : GraphicsWizardPageViewMo
     }
 
     private static readonly IPropertyData NameProperty = RegisterProperty<string>(nameof(Name));
+
+    #endregion
 
     /// <summary>
     /// Performs validation on the properties.

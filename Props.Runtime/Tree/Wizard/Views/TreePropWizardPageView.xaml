@@ -28,7 +28,6 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -64,24 +63,7 @@
                     <catel:NumericTextBox />
                 </b:Interaction.Behaviors>
             </TextBox>
-            <Label Grid.Column="0" Grid.Row="5" Content="X Rotation" />
-            <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding XRotation, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" >
-                <b:Interaction.Behaviors>
-                    <catel:NumericTextBox />
-                </b:Interaction.Behaviors>
-            </TextBox>
-            <Label Grid.Column="0" Grid.Row="6" Content="Y Rotation" />
-            <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding YRotation, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" >
-                <b:Interaction.Behaviors>
-                    <catel:NumericTextBox />
-                </b:Interaction.Behaviors>
-            </TextBox>
-            <Label Grid.Column="0" Grid.Row="7" Content="Z Rotation" />
-            <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding ZRotation, ValidatesOnDataErrors=True, NotifyOnValidationError=True}" >
-                <b:Interaction.Behaviors>
-                    <catel:NumericTextBox />
-                </b:Interaction.Behaviors>
-            </TextBox>
+            
         </Grid>
        <Border BorderThickness="2"  Width="400" Grid.Column="1" Grid.Row="0" VerticalAlignment="Top"
                Height="400" Background="Black" BorderBrush="Silver" Margin="9,0,0,0">

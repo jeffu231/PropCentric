@@ -11,6 +11,7 @@ using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
 using Props.Runtime.Wizards.Features.Dimming.Mappers;
 using Props.Runtime.Wizards.Features.Dimming.Pages;
+using Props.Runtime.Wizards.Features.Rotation.Pages;
 using Props.Runtime.Wizards.Features.Segments.Pages;
 
 namespace PropCentric.Tests.Discovery;
@@ -31,6 +32,8 @@ public class PropDiscoveryTests
         Assert.True(typeof(IHasLights).IsAssignableFrom(typeof(TreeProp)));
         Assert.True(flags.HasFlag(PropFeatureFlags.Dimming));
         Assert.True(typeof(IHasDimming).IsAssignableFrom(typeof(TreeProp)));
+        Assert.True(flags.HasFlag(PropFeatureFlags.Rotation));
+        Assert.True(typeof(ICanRotate).IsAssignableFrom(typeof(TreeProp)));
     }
 
     [Fact]
@@ -54,6 +57,8 @@ public class PropDiscoveryTests
         Assert.True(typeof(IHasLights).IsAssignableFrom(typeof(PolyLineProp)));
         Assert.True(flags.HasFlag(PropFeatureFlags.Segments));
         Assert.True(typeof(IHasSegments).IsAssignableFrom(typeof(PolyLineProp)));
+        Assert.False(flags.HasFlag(PropFeatureFlags.Rotation));
+        Assert.False(typeof(ICanRotate).IsAssignableFrom(typeof(PolyLineProp)));
     }
 
     [Fact]
@@ -91,6 +96,28 @@ public class PropDiscoveryTests
     }
 
     [Fact]
+    public void FeatureWizardPageScanner_ScanRuntimeAssembly_FindsRotationWizardRegistration()
+    {
+        IReadOnlyList<FeatureWizardPageDescriptor> registrations =
+            FeatureWizardPageScanner.Scan([typeof(RotationFeatureWizardPage).Assembly]);
+
+        var registration = Assert.Single(registrations, r => r.PageType == typeof(RotationFeatureWizardPage));
+        Assert.Equal(typeof(ICanRotate), registration.FeatureInterface);
+        Assert.Null(registration.MapperType);
+        Assert.Equal(140, registration.Priority);
+    }
+
+    [Fact]
+    public void ICanRotate_UsesRotationFeatureFlag()
+    {
+        var attribute = typeof(ICanRotate).GetCustomAttributes(typeof(PropFeatureAttribute), inherit: false)
+            .OfType<PropFeatureAttribute>()
+            .Single();
+
+        Assert.Equal(PropFeatureFlags.Rotation, attribute.Flag);
+    }
+
+    [Fact]
     public void AddPropSystem_RegistersDiscoveredSupportServicesWithoutManualTreeBootstrap()
     {
         var services = new ServiceCollection();
@@ -109,6 +136,7 @@ public class PropDiscoveryTests
         Assert.NotNull(provider.GetService<ISegmentCaptureNormalizer>());
         Assert.NotNull(provider.GetService<TreeProp>());
         Assert.NotNull(provider.GetService<TreePropSetup>());
+        Assert.NotNull(provider.GetService<RotationFeatureWizardPage>());
     }
 
     [Fact]
@@ -130,5 +158,25 @@ public class PropDiscoveryTests
         Assert.NotNull(provider.GetService<PolyLineProp>());
         Assert.NotNull(provider.GetService<PolyLinePropSetup>());
         Assert.NotNull(provider.GetService<SegmentsFeatureWizardPage>());
+    }
+
+    [Fact]
+    public void FeatureWizardPageResolver_ResolvesRotationPageForTreeButNotPolyLine()
+    {
+        var services = new ServiceCollection();
+        var pluginDirectory = Path.GetDirectoryName(typeof(TreeProp).Assembly.Location);
+
+        Assert.NotNull(pluginDirectory);
+
+        services.AddPropSystem(pluginDirectory!);
+        using var provider = services.BuildServiceProvider();
+
+        var resolver = provider.GetRequiredService<IFeatureWizardPageResolver>();
+
+        var treePages = resolver.GetPagesFor(typeof(TreeProp));
+        var polyLinePages = resolver.GetPagesFor(typeof(PolyLineProp));
+
+        Assert.Contains(treePages, page => page.GetType() == typeof(RotationFeatureWizardPage));
+        Assert.DoesNotContain(polyLinePages, page => page.GetType() == typeof(RotationFeatureWizardPage));
     }
 }

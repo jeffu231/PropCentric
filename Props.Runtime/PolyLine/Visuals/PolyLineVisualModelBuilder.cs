@@ -14,12 +14,11 @@ public sealed class PolyLineVisualModelBuilder : IPropVisualModelBuilder<PolyLin
     public PolyLinePropVisualModel Create(PolyLineVisualInput input)
     {
         var segments = BuildSegments(input);
-        var rotatedSegments = ApplyRotations(segments, input.AxisRotations);
 
         return new PolyLinePropVisualModel
         {
-            StartingLightPoint = rotatedSegments.FirstOrDefault()?.Lights.FirstOrDefault(),
-            Elements = rotatedSegments
+            StartingLightPoint = segments.FirstOrDefault()?.Lights.FirstOrDefault(),
+            Elements = segments
         };
     }
 
@@ -83,40 +82,6 @@ public sealed class PolyLineVisualModelBuilder : IPropVisualModelBuilder<PolyLin
         }
 
         return points;
-    }
-
-    private static IReadOnlyList<LightSegment> ApplyRotations(
-        IReadOnlyList<LightSegment> segments,
-        IReadOnlyList<AxisRotationModel> rotations)
-    {
-        if (rotations.Count == 0)
-        {
-            return segments;
-        }
-
-        var quaternion = rotations.Aggregate(Quaternion.Identity, (current, rotation) =>
-            Quaternion.Normalize(
-                current * Quaternion.CreateFromAxisAngle(
-                    rotation.Axis switch
-                    {
-                        Axis.YAxis => Vector3.UnitY,
-                        Axis.ZAxis => Vector3.UnitZ,
-                        _ => Vector3.UnitX
-                    },
-                    rotation.RotationAngle * (MathF.PI / 180f))));
-
-        return segments.Select(segment => new LightSegment
-        {
-            Start = Vector3.Transform(segment.Start, quaternion),
-            End = Vector3.Transform(segment.End, quaternion),
-            PointSize = segment.PointSize,
-            Lights = segment.Lights.Select(light => new LightPoint
-            {
-                Position = Vector3.Transform(light.Position, quaternion),
-                PointSize = light.PointSize,
-                ElementId = light.ElementId
-            }).ToArray()
-        }).ToArray();
     }
 
     private static Vector3 ToVector3(Vector2 point) => new(point.X, point.Y, 0f);

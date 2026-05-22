@@ -1,5 +1,4 @@
 using Props.Abstractions.Props;
-using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Visuals;
 
 namespace Props.Runtime.PolyLine.Visuals;
@@ -13,11 +12,9 @@ namespace Props.Runtime.PolyLine.Visuals;
 /// </remarks>
 /// <param name="Segments">The ordered normalized segment geometry to render.</param>
 /// <param name="LightSize">The rendered diameter of each light node in pixels.</param>
-/// <param name="AxisRotations">The current 3-D axis rotation states.</param>
 public sealed record PolyLineVisualInput(
     IReadOnlyList<Segment> Segments,
-    int LightSize,
-    IReadOnlyList<AxisRotationModel> AxisRotations)
+    int LightSize)
 {
     public bool Equals(PolyLineVisualInput? other)
     {
@@ -32,8 +29,7 @@ public sealed record PolyLineVisualInput(
         }
 
         return LightSize == other.LightSize
-            && SegmentsEqual(Segments, other.Segments)
-            && VisualInputRotationSupport.RotationsEqual(AxisRotations, other.AxisRotations);
+            && SegmentsEqual(Segments, other.Segments);
     }
 
     public override int GetHashCode()
@@ -45,8 +41,6 @@ public sealed record PolyLineVisualInput(
         {
             hash.Add(segment);
         }
-
-        VisualInputRotationSupport.AddRotationsToHashCode(ref hash, AxisRotations);
 
         return hash.ToHashCode();
     }

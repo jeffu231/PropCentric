@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using PropCentric.Tests.Common;
 using Props.Abstractions.Features;
 using Props.Abstractions.Props;
-using Props.Abstractions.PropVisualModels;
 using Props.Runtime.PolyLine.Setup;
 
 namespace PropCentric.Tests.PolyLine;
@@ -22,8 +21,6 @@ public class PolyLineDraftMappingTests
         Assert.Equal(prop.LightSize, draft.LightSize);
 
         AssertSegmentsEqual(draft.Segments, prop.Segments);
-        AssertRotationsEqual(prop.AxisRotations, draft.AxisRotations);
-        AssertRotationInstancesAreDistinct(prop.AxisRotations, draft.AxisRotations);
     }
 
     [Fact]
@@ -37,8 +34,7 @@ public class PolyLineDraftMappingTests
         {
             Name = "PolyLine Draft",
             LightSize = 3,
-            Segments = new ObservableCollection<SegmentDraftState>(segments),
-            AxisRotations = TestDataHelper.CreateRotations((Axis.XAxis, 10), (Axis.YAxis, 20), (Axis.ZAxis, 30))
+            Segments = new ObservableCollection<SegmentDraftState>(segments)
         };
 
         mapper.ApplyDraft(draft, prop);
@@ -46,33 +42,6 @@ public class PolyLineDraftMappingTests
         Assert.Equal(draft.Name, prop.Name);
         Assert.Equal(draft.LightSize, prop.LightSize);
         AssertSegmentsEqual(draft.Segments, prop.Segments);
-        AssertRotationsEqual(draft.AxisRotations, prop.AxisRotations);
-        AssertRotationInstancesAreDistinct(draft.AxisRotations, prop.AxisRotations);
-    }
-
-    private static void AssertRotationsEqual(
-        IReadOnlyList<AxisRotationModel> expected,
-        IReadOnlyList<AxisRotationModel> actual)
-    {
-        Assert.Equal(expected.Count, actual.Count);
-
-        for (int i = 0; i < expected.Count; i++)
-        {
-            Assert.Equal(expected[i].Axis, actual[i].Axis);
-            Assert.Equal(expected[i].RotationAngle, actual[i].RotationAngle);
-        }
-    }
-
-    private static void AssertRotationInstancesAreDistinct(
-        IReadOnlyList<AxisRotationModel> expected,
-        IReadOnlyList<AxisRotationModel> actual)
-    {
-        Assert.NotSame(expected, actual);
-
-        for (var index = 0; index < expected.Count; index++)
-        {
-            Assert.NotSame(expected[index], actual[index]);
-        }
     }
 
     private static void AssertSegmentsEqual(IReadOnlyList<SegmentDraftState> expected, IReadOnlyList<Segment> actual)

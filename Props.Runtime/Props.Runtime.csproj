@@ -28,4 +28,14 @@
       </Page>
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="WPFCommon">
+        <HintPath>..\Vixen.Library\Lib\WPFCommon.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="ViewModels\" />
+    </ItemGroup>
+
 </Project>

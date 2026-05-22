@@ -1,12 +1,8 @@
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using Catel.Data;
-using Catel.MVVM;
 using Orc.Wizard;
 using Props.Abstractions.PropVisualModels;
 using Props.OpenGlCommon;
 using Props.Runtime.Utilities;
-using Props.Runtime.ViewModels;
 
 namespace Props.Runtime.Wizards.Core.ViewModels;
 
@@ -23,9 +19,6 @@ public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelB
     {
         DrawingEngine = new OpenGLPropDrawingEngine();
         DrawingEngine.SetModels([]);
-
-        AttachRotationHandlers(Rotations);
-
         PropertyChanged += (_, _) => _previewDebouncer.Invoke(TriggerPreviewRebuild);
     }
 
@@ -48,40 +41,6 @@ public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelB
     protected Func<IPropVisualModel>? PreviewBuilder { get; set; }
 
     /// <summary>
-    /// Collection of rotations to support rotating the props around the x,y, and z axis.
-    /// </summary>
-    [ViewModelToModel]
-    public ObservableCollection<AxisRotationViewModel> Rotations
-    {
-        //TODO this does not belong in here. It should be part of the actual Prop View Models.
-        get => GetValue<ObservableCollection<AxisRotationViewModel>>(RotationsProperty);
-        set
-        {
-            var currentRotations = GetValue<ObservableCollection<AxisRotationViewModel>>(RotationsProperty);
-            if (!ReferenceEquals(currentRotations, value))
-            {
-                DetachRotationHandlers(currentRotations);
-                SetValue(RotationsProperty, value);
-                AttachRotationHandlers(value);
-            }
-
-            var rotations = GetValue<ObservableCollection<AxisRotationViewModel>>(RotationsProperty);
-            if (rotations is null)
-            {
-                return;
-            }
-
-            for (int index = 0; index < rotations.Count; index++)
-            {
-                rotations[index].RotationAngleDefault = rotations[index].RotationAngle;
-            }
-        }
-    }
-
-    private static readonly IPropertyData RotationsProperty =
-        RegisterProperty<ObservableCollection<AxisRotationViewModel>>(nameof(Rotations));
-
-    /// <summary>
     /// OpenGL prop drawing engine.
     /// </summary>
     public OpenGLPropDrawingEngine DrawingEngine { get; }
@@ -100,88 +59,6 @@ public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelB
     protected void SchedulePreviewRebuild()
     {
         _previewDebouncer.Invoke(TriggerPreviewRebuild);
-    }
-
-    private void AttachRotationHandlers(ObservableCollection<AxisRotationViewModel>? rotationCollection)
-    {
-        if (rotationCollection is null)
-        {
-            return;
-        }
-
-        rotationCollection.CollectionChanged -= OnRotationsCollectionChanged;
-        rotationCollection.CollectionChanged += OnRotationsCollectionChanged;
-
-        foreach (var rotation in rotationCollection)
-        {
-            rotation.RotationChanged -= OnRotationChanged;
-            rotation.RotationChanged += OnRotationChanged;
-        }
-    }
-
-    private void DetachRotationHandlers(ObservableCollection<AxisRotationViewModel>? rotationCollection)
-    {
-        if (rotationCollection is null)
-        {
-            return;
-        }
-
-        rotationCollection.CollectionChanged -= OnRotationsCollectionChanged;
-
-        foreach (var rotation in rotationCollection)
-        {
-            rotation.RotationChanged -= OnRotationChanged;
-        }
-    }
-
-    private void OnRotationsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-    {
-        if (e.OldItems is not null)
-        {
-            foreach (AxisRotationViewModel oldItem in e.OldItems)
-            {
-                oldItem.RotationChanged -= OnRotationChanged;
-            }
-        }
-
-        if (e.NewItems is not null)
-        {
-            foreach (AxisRotationViewModel newItem in e.NewItems)
-            {
-                newItem.RotationChanged -= OnRotationChanged;
-                newItem.RotationChanged += OnRotationChanged;
-            }
-        }
-
-        if (e.Action == NotifyCollectionChangedAction.Reset && sender is ObservableCollection<AxisRotationViewModel> rotationCollection)
-        {
-            DetachRotationHandlers(rotationCollection);
-            AttachRotationHandlers(rotationCollection);
-        }
-    }
-
-    private void OnRotationChanged(object? sender, EventArgs e)
-    {
-        if (sender is not AxisRotationViewModel newRotation)
-        {
-            return;
-        }
-
-        var duplicateRotation = Rotations.FirstOrDefault(x => x != newRotation && x.Axis == newRotation.Axis);
-        if (duplicateRotation is null)
-        {
-            return;
-        }
-
-        var otherRotation = Rotations.FirstOrDefault(x => x != newRotation && x != duplicateRotation);
-        if (otherRotation is null)
-        {
-            return;
-        }
-
-        var missingAxis = newRotation.Axes.FirstOrDefault(x => x != duplicateRotation.Axis && x != otherRotation.Axis);
-        duplicateRotation.Axis = missingAxis;
-        (duplicateRotation.RotationAngle, newRotation.RotationAngle) = (newRotation.RotationAngle, duplicateRotation.RotationAngle);
     }
 
     private void TriggerPreviewRebuild()

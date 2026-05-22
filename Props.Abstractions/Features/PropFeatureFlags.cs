@@ -31,5 +31,8 @@ public enum PropFeatureFlags
     Face = 64,
 
     /// <summary>The prop tracks a discrete operational state.</summary>
-    State = 128
+    State = 128,
+
+    /// <summary>The prop supports wizard-editable axis rotations.</summary>
+    Rotation = 256
 }
