@@ -48,8 +48,6 @@ public sealed class ColorFeatureWizardPageViewModel : GraphicsWizardPageViewMode
         SaveCustomSetCommand = new TaskCommand(SaveCustomSetAsync);
     }
 
-    public ColorFeatureWizardPage Page => WizardPage;
-
     public Command PickSingleColorCommand { get; }
 
     public Command<EditableDiscreteColorItem?> EditWorkingDiscreteColorCommand { get; }
@@ -62,15 +60,15 @@ public sealed class ColorFeatureWizardPageViewModel : GraphicsWizardPageViewMode
 
     public LightType LightType
     {
-        get => Page.LightType;
+        get => WizardPage.LightType;
         set
         {
-            if (Page.LightType == value)
+            if (WizardPage.LightType == value)
             {
                 return;
             }
 
-            Page.LightType = value;
+            WizardPage.LightType = value;
             RaisePropertyChanged(nameof(LightType));
             RaisePropertyChanged(nameof(IsSingleColorMode));
             RaisePropertyChanged(nameof(IsMultipleDiscreteColorsMode));
@@ -78,81 +76,81 @@ public sealed class ColorFeatureWizardPageViewModel : GraphicsWizardPageViewMode
         }
     }
 
-    public bool IsSingleColorMode => Page.IsSingleColorMode;
+    public bool IsSingleColorMode => WizardPage.IsSingleColorMode;
 
-    public bool IsMultipleDiscreteColorsMode => Page.IsMultipleDiscreteColorsMode;
+    public bool IsMultipleDiscreteColorsMode => WizardPage.IsMultipleDiscreteColorsMode;
 
-    public bool IsFullColorMode => Page.IsFullColorMode;
+    public bool IsFullColorMode => WizardPage.IsFullColorMode;
 
-    public DrawingColor SingleColor => Page.SingleColor;
+    public DrawingColor SingleColor => WizardPage.SingleColor;
 
-    public string SingleColorHex => Page.SingleColorHex;
+    public string SingleColorHex => WizardPage.SingleColorHex;
 
-    public ObservableCollection<DiscreteColorSetDefinition> AvailableDiscreteColorSets => Page.AvailableDiscreteColorSets;
+    public ObservableCollection<DiscreteColorSetDefinition> AvailableDiscreteColorSets => WizardPage.AvailableDiscreteColorSets;
 
     public DiscreteColorSetDefinition? SelectedDiscreteColorSet
     {
-        get => Page.SelectedDiscreteColorSet;
+        get => WizardPage.SelectedDiscreteColorSet;
         set
         {
-            if (ReferenceEquals(Page.SelectedDiscreteColorSet, value))
+            if (ReferenceEquals(WizardPage.SelectedDiscreteColorSet, value))
             {
                 return;
             }
 
-            Page.SelectedDiscreteColorSet = value;
+            WizardPage.SelectedDiscreteColorSet = value;
             RaisePropertyChanged(nameof(SelectedDiscreteColorSet));
         }
     }
 
-    public ObservableCollection<EditableDiscreteColorItem> WorkingDiscreteColors => Page.WorkingDiscreteColors;
+    public ObservableCollection<EditableDiscreteColorItem> WorkingDiscreteColors => WizardPage.WorkingDiscreteColors;
 
     public EditableDiscreteColorItem? SelectedWorkingDiscreteColor
     {
-        get => Page.SelectedWorkingDiscreteColor;
+        get => WizardPage.SelectedWorkingDiscreteColor;
         set
         {
-            if (ReferenceEquals(Page.SelectedWorkingDiscreteColor, value))
+            if (ReferenceEquals(WizardPage.SelectedWorkingDiscreteColor, value))
             {
                 return;
             }
 
-            Page.SelectedWorkingDiscreteColor = value;
+            WizardPage.SelectedWorkingDiscreteColor = value;
             RaisePropertyChanged(nameof(SelectedWorkingDiscreteColor));
             RaisePropertyChanged(nameof(CanRemoveWorkingDiscreteColor));
         }
     }
 
-    public bool CanRemoveWorkingDiscreteColor => Page.CanRemoveWorkingDiscreteColor;
+    public bool CanRemoveWorkingDiscreteColor => WizardPage.CanRemoveWorkingDiscreteColor;
 
     public string NewDiscreteColorSetName
     {
-        get => Page.NewDiscreteColorSetName;
+        get => WizardPage.NewDiscreteColorSetName;
         set
         {
-            if (string.Equals(Page.NewDiscreteColorSetName, value, StringComparison.Ordinal))
+            if (string.Equals(WizardPage.NewDiscreteColorSetName, value, StringComparison.Ordinal))
             {
                 return;
             }
 
-            Page.NewDiscreteColorSetName = value;
+            WizardPage.NewDiscreteColorSetName = value;
             RaisePropertyChanged(nameof(NewDiscreteColorSetName));
         }
     }
 
-    public ObservableCollection<FullColorOrderDefinition> AvailableFullColorOrders => Page.AvailableFullColorOrders;
+    public ObservableCollection<FullColorOrderDefinition> AvailableFullColorOrders => WizardPage.AvailableFullColorOrders;
 
     public FullColorOrderDefinition? SelectedFullColorOrder
     {
-        get => Page.SelectedFullColorOrder;
+        get => WizardPage.SelectedFullColorOrder;
         set
         {
-            if (ReferenceEquals(Page.SelectedFullColorOrder, value))
+            if (ReferenceEquals(WizardPage.SelectedFullColorOrder, value))
             {
                 return;
             }
 
-            Page.SelectedFullColorOrder = value;
+            WizardPage.SelectedFullColorOrder = value;
             RaisePropertyChanged(nameof(SelectedFullColorOrder));
         }
     }
@@ -178,10 +176,10 @@ public sealed class ColorFeatureWizardPageViewModel : GraphicsWizardPageViewMode
 
     private void PickSingleColor()
     {
-        var selectedColor = _interactionService.PickColor(Page.SingleColor);
+        var selectedColor = _interactionService.PickColor(WizardPage.SingleColor);
         if (selectedColor is { } color)
         {
-            Page.SetSingleColor(color);
+            WizardPage.SetSingleColor(color);
         }
     }
 
@@ -195,25 +193,25 @@ public sealed class ColorFeatureWizardPageViewModel : GraphicsWizardPageViewMode
         var selectedColor = _interactionService.PickColor(item.Color);
         if (selectedColor is { } color)
         {
-            Page.SetWorkingDiscreteColor(item, color);
+            WizardPage.SetWorkingDiscreteColor(item, color);
         }
     }
 
     private void AddWorkingDiscreteColor()
     {
-        Page.AddWorkingDiscreteColor();
+        WizardPage.AddWorkingDiscreteColor();
     }
 
     private void RemoveWorkingDiscreteColor()
     {
-        Page.RemoveSelectedWorkingDiscreteColor();
+        WizardPage.RemoveSelectedWorkingDiscreteColor();
     }
 
     private async Task SaveCustomSetAsync()
     {
         try
         {
-            Page.SaveCustomDiscreteColorSet();
+            WizardPage.SaveCustomDiscreteColorSet();
         }
         catch (InvalidOperationException ex)
         {
@@ -342,7 +340,7 @@ public sealed class ColorFeatureWizardPageViewModel : GraphicsWizardPageViewMode
                 break;
             case nameof(ColorFeatureWizardPage.WorkingDiscreteColors):
                 UnhookWorkingColorHandlers(_trackedWorkingDiscreteColors);
-                _trackedWorkingDiscreteColors = Page.WorkingDiscreteColors;
+                _trackedWorkingDiscreteColors = WizardPage.WorkingDiscreteColors;
                 HookWorkingColorHandlers(_trackedWorkingDiscreteColors);
                 RaisePropertyChanged(nameof(WorkingDiscreteColors));
                 RaisePropertyChanged(nameof(CanRemoveWorkingDiscreteColor));

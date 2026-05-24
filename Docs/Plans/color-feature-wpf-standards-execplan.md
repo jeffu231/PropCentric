@@ -18,7 +18,8 @@ The proof is straightforward. Open the Color feature page for both Tree and Poly
 - [x] (2026-05-24 17:10 -05:00) Recorded the current standards gaps and implementation risks for the Color feature wizard.
 - [x] (2026-05-24 17:26 -05:00) Implemented Milestone 1 by moving single-color pick, discrete-color edit, add/remove, and custom-set save onto commands exposed by `ColorFeatureWizardPageViewModel`, rebinding the XAML away from button click handlers, and shrinking `ColorFeatureWizardPageView.xaml.cs` to an empty view shell.
 - [x] (2026-05-24 17:28 -05:00) Added focused command-surface tests and validated Milestone 1 with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~ColorFeatureWizardPageTests|FullyQualifiedName~ColorFeatureWizardPageViewModelTests|FullyQualifiedName~ColorPickerDialogViewModelTests"` and `dotnet build Props.Runtime/Props.Runtime.csproj`.
-- [ ] Narrow the code-behind to view-specific concerns only, or remove it entirely if no justified visual-only logic remains.
+- [x] (2026-05-24 17:37 -05:00) Completed the next boundary-narrowing step by removing public `Page` exposure from `ColorFeatureWizardPageViewModel` and keeping all view-facing interactions on the explicit view-model surface.
+- [x] (2026-05-24 17:43 -05:00) Completed the next structural cleanup step by extracting `EditableDiscreteColorItem` into its own file to match the repository's one-type-per-file rule.
 - [ ] Validate with focused tests, full tests, build, and manual harness exercise.
 
 ## Surprises & Discoveries
@@ -53,6 +54,12 @@ The proof is straightforward. Open the Color feature page for both Tree and Poly
 - Observation: the warning path should use Catel `IMessageService` directly rather than extending the custom picker interaction abstraction.
   Evidence: after review, the save-warning flow was corrected so `ColorFeatureWizardPageViewModel` calls `IMessageService.ShowWarningAsync(...)`, while `IColorFeatureWizardInteractionService` remains limited to typed color-picking interaction.
 
+- Observation: once the view stopped using code-behind, the remaining `Page` exposure on the view model was no longer needed for normal interaction.
+  Evidence: `ColorFeatureWizardPageViewModel` now uses `WizardPage` internally and no longer exposes a public `Page` property, while the focused page and view-model tests still pass.
+
+- Observation: `EditableDiscreteColorItem` could be separated cleanly without affecting the page/view-model behavior.
+  Evidence: after moving the type from `ColorFeatureWizardPage.cs` into `EditableDiscreteColorItem.cs`, the focused Color feature tests continued to pass unchanged.
+
 ## Decision Log
 
 - Decision: preserve the current user-facing flow and page layout while refactoring the interaction plumbing.
@@ -82,6 +89,10 @@ Milestone 1 is now complete. The view no longer contains ordinary button-click w
 This first slice also introduced a narrow interaction-service boundary earlier than originally planned. That reduced the amount of temporary rework because the picker and warning interactions could move off the view at the same time as the command migration.
 
 Follow-up review corrected one detail in that slice: warning presentation now uses injected Catel `IMessageService` instead of a custom warning method on the picker interaction service. The custom service remains only for the typed color-picker workflow.
+
+The next boundary-narrowing slice is now complete as well. The view model no longer exposes the underlying wizard page publicly, so the view-facing contract is now the explicit property and command surface rather than a page passthrough.
+
+The next structural cleanup slice is also complete. `EditableDiscreteColorItem` now lives in its own file, which brings the Color feature wizard back into line with the repository's one-type-per-file rule without changing behavior.
 
 ## Context and Orientation
 
