@@ -1,11 +1,14 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using Catel.Services;
 using Catel.Data;
+using Catel.MVVM;
 using DrawingColor = System.Drawing.Color;
 using Props.Abstractions.Features;
 using Props.Runtime.Wizards.Core.ViewModels;
 using Props.Runtime.Wizards.Features.Color.Pages;
+using Props.Runtime.Wizards.Features.Color.Services;
 
 namespace Props.Runtime.Wizards.Features.Color.ViewModels;
 
@@ -14,19 +17,48 @@ namespace Props.Runtime.Wizards.Features.Color.ViewModels;
 /// </summary>
 public sealed class ColorFeatureWizardPageViewModel : GraphicsWizardPageViewModelBase<ColorFeatureWizardPage>
 {
+    private readonly IColorFeatureWizardInteractionService _interactionService;
+    private readonly IMessageService _messageService;
     private ObservableCollection<EditableDiscreteColorItem> _trackedWorkingDiscreteColors;
 
-    public ColorFeatureWizardPageViewModel(ColorFeatureWizardPage featureWizardPage) : base(featureWizardPage)
+    public ColorFeatureWizardPageViewModel(ColorFeatureWizardPage featureWizardPage)
+        : this(featureWizardPage, new ColorFeatureWizardInteractionService(), new NoOpMessageService())
     {
+    }
+
+    public ColorFeatureWizardPageViewModel(
+        ColorFeatureWizardPage featureWizardPage,
+        IColorFeatureWizardInteractionService interactionService,
+        IMessageService messageService)
+        : base(featureWizardPage)
+    {
+        _interactionService = interactionService;
+        _messageService = messageService;
         PreviewBuilder = () => featureWizardPage.PreviewSession?.BuildPreview()
             ?? throw new InvalidOperationException("Color preview session has not been initialized.");
 
         _trackedWorkingDiscreteColors = featureWizardPage.WorkingDiscreteColors;
         HookWorkingColorHandlers(_trackedWorkingDiscreteColors);
         featureWizardPage.PropertyChanged += OnPagePropertyChanged;
+
+        PickSingleColorCommand = new Command(PickSingleColor);
+        EditWorkingDiscreteColorCommand = new Command<EditableDiscreteColorItem?>(EditWorkingDiscreteColor);
+        AddWorkingDiscreteColorCommand = new Command(AddWorkingDiscreteColor);
+        RemoveWorkingDiscreteColorCommand = new Command(RemoveWorkingDiscreteColor);
+        SaveCustomSetCommand = new TaskCommand(SaveCustomSetAsync);
     }
 
     public ColorFeatureWizardPage Page => WizardPage;
+
+    public Command PickSingleColorCommand { get; }
+
+    public Command<EditableDiscreteColorItem?> EditWorkingDiscreteColorCommand { get; }
+
+    public Command AddWorkingDiscreteColorCommand { get; }
+
+    public Command RemoveWorkingDiscreteColorCommand { get; }
+
+    public TaskCommand SaveCustomSetCommand { get; }
 
     public LightType LightType
     {
@@ -142,6 +174,78 @@ public sealed class ColorFeatureWizardPageViewModel : GraphicsWizardPageViewMode
                 nameof(SelectedFullColorOrder),
                 "A full color order must be selected."));
         }
+    }
+
+    private void PickSingleColor()
+    {
+        var selectedColor = _interactionService.PickColor(Page.SingleColor);
+        if (selectedColor is { } color)
+        {
+            Page.SetSingleColor(color);
+        }
+    }
+
+    private void EditWorkingDiscreteColor(EditableDiscreteColorItem? item)
+    {
+        if (item is null)
+        {
+            return;
+        }
+
+        var selectedColor = _interactionService.PickColor(item.Color);
+        if (selectedColor is { } color)
+        {
+            Page.SetWorkingDiscreteColor(item, color);
+        }
+    }
+
+    private void AddWorkingDiscreteColor()
+    {
+        Page.AddWorkingDiscreteColor();
+    }
+
+    private void RemoveWorkingDiscreteColor()
+    {
+        Page.RemoveSelectedWorkingDiscreteColor();
+    }
+
+    private async Task SaveCustomSetAsync()
+    {
+        try
+        {
+            Page.SaveCustomDiscreteColorSet();
+        }
+        catch (InvalidOperationException ex)
+        {
+            await _messageService.ShowWarningAsync(ex.Message, "Color Set");
+        }
+    }
+
+    private sealed class NoOpMessageService : IMessageService
+    {
+        public Task<MessageResult> ShowAsync(string message, string caption = "", MessageButton button = MessageButton.OK, MessageImage icon = MessageImage.None)
+            => Task.FromResult(MessageResult.OK);
+
+        public Task<MessageResult> ShowAsync(string message, string caption = "", MessageButton button = MessageButton.OK, MessageImage icon = MessageImage.None, MessageResult defaultResult = MessageResult.None)
+            => Task.FromResult(MessageResult.OK);
+
+        public Task<MessageResult> ShowErrorAsync(string message, string caption)
+            => Task.FromResult(MessageResult.OK);
+
+        public Task<MessageResult> ShowErrorAsync(string message, string caption = "", MessageButton button = MessageButton.OK, MessageResult defaultResult = MessageResult.None)
+            => Task.FromResult(MessageResult.OK);
+
+        public Task<MessageResult> ShowWarningAsync(string message, string caption)
+            => Task.FromResult(MessageResult.OK);
+
+        public Task<MessageResult> ShowWarningAsync(string message, string caption = "", MessageButton button = MessageButton.OK, MessageResult defaultResult = MessageResult.None)
+            => Task.FromResult(MessageResult.OK);
+
+        public Task<MessageResult> ShowInformationAsync(string message, string caption)
+            => Task.FromResult(MessageResult.OK);
+
+        public Task<MessageResult> ShowInformationAsync(string message, string caption = "", MessageButton button = MessageButton.OK, MessageResult defaultResult = MessageResult.None)
+            => Task.FromResult(MessageResult.OK);
     }
 
     private void HookWorkingColorHandlers(ObservableCollection<EditableDiscreteColorItem> items)
