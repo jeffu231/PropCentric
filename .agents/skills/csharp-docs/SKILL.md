@@ -9,6 +9,10 @@ name: csharp-docs
 ---
 # C# Documentation Best Practices
 
+- Use when writing C# code or dotnet tasks. MUST follow these rules.
+
+## General Guidelines
+
 - Public members should be documented with XML comments.
 - It is encouraged to document internal members as well, especially if they are complex or not self-explanatory.
 
