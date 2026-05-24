@@ -1,7 +1,6 @@
 using Catel.Data;
 using Catel.MVVM;
 using Orc.Wizard;
-using Vixen.Sys.Props;
 
 namespace Props.Runtime.Wizards.Core.ViewModels;
 
@@ -65,13 +64,4 @@ public abstract class LightWizardPageViewModel<TWizardPage> : PropBaseWizardPage
     }
 
     private static readonly IPropertyData LightSizeMaximumProperty = RegisterProperty<int>(nameof(LightSizeMaximum));
-    
-    [ViewModelToModel]
-    public StringTypes StringType
-    {
-        get => GetValue<StringTypes>(StringTypeProperty);
-        set => SetValue(StringTypeProperty, value);
-    }
-
-    private static readonly IPropertyData StringTypeProperty = RegisterProperty<StringTypes>(nameof(StringType));
 }

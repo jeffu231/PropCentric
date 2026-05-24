@@ -5,7 +5,6 @@ using Props.Runtime.PolyLine.Setup;
 using Props.Runtime.PolyLine.Wizard.Pages;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Wizard.Pages;
-using Vixen.Sys.Props;
 
 namespace PropCentric.Tests.Wizards;
 
@@ -20,15 +19,13 @@ public class DraftBackedWizardPageTests
         var draft = new TreePropDraft
         {
             Name = "Existing Tree",
-            LightSize = 7,
-            StringType = StringTypes.SingleColor
+            LightSize = 7
         };
 
         var page = new TreePropWizardPage(draft, new StubPreviewCoordinator<TreePropDraft>());
 
         Assert.Equal(draft.Name, page.Name);
         Assert.Equal(draft.LightSize, page.LightSize);
-        Assert.Equal(draft.StringType, page.StringType);
     }
 
     [Fact]
@@ -39,11 +36,9 @@ public class DraftBackedWizardPageTests
 
         page.Name = "Updated Tree";
         page.LightSize = 9;
-        page.StringType = StringTypes.MultiColor;
 
         Assert.Equal("Updated Tree", draft.Name);
         Assert.Equal(9, draft.LightSize);
-        Assert.Equal(StringTypes.MultiColor, draft.StringType);
     }
 
     [Fact]
@@ -52,15 +47,13 @@ public class DraftBackedWizardPageTests
         var draft = new PolyLinePropDraft
         {
             Name = "Existing PolyLine",
-            LightSize = 5,
-            StringType = StringTypes.SingleColor
+            LightSize = 5
         };
 
         var page = new PolyLinePropWizardPage(draft, new StubPreviewCoordinator<PolyLinePropDraft>());
 
         Assert.Equal(draft.Name, page.Name);
         Assert.Equal(draft.LightSize, page.LightSize);
-        Assert.Equal(draft.StringType, page.StringType);
     }
 
     [Fact]
@@ -71,11 +64,9 @@ public class DraftBackedWizardPageTests
 
         page.Name = "Updated PolyLine";
         page.LightSize = 6;
-        page.StringType = StringTypes.MultiColor;
 
         Assert.Equal("Updated PolyLine", draft.Name);
         Assert.Equal(6, draft.LightSize);
-        Assert.Equal(StringTypes.MultiColor, draft.StringType);
     }
 
     private sealed class StubPreviewCoordinator<TDraft> : IWizardPreviewCoordinator<TDraft>

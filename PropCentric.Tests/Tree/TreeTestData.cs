@@ -1,4 +1,6 @@
+using System.Drawing;
 using PropCentric.Tests.Common;
+using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.PropVisualModels;
 using Props.Runtime.Tree;
@@ -23,6 +25,13 @@ internal static class TreeTestData
             Strings = 16,
             NodesPerString = 50,
             LightSize = 2,
+            ColorConfiguration = new LightColorConfiguration(
+                LightType.MultipleDiscreteColors,
+                Color.White,
+                new DiscreteColorSetDefinition("RGBW", [Color.Red, Color.Green, Color.Blue, Color.White]),
+                new FullColorOrderDefinition(
+                    "RGBW",
+                    [LightColorChannel.Red, LightColorChannel.Green, LightColorChannel.Blue, LightColorChannel.White])),
             DegreesCoverage = 270,
             DegreeOffset = 30,
             BaseHeight = 45,
@@ -38,6 +47,4 @@ internal static class TreeTestData
 
         return prop;
     }
-
-   
 }

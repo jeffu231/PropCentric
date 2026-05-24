@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
+using System.Drawing;
 using PropCentric.Tests.Common;
+using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.Setup.Drafts;
 using Props.Runtime.PolyLine.Setup;
@@ -19,6 +21,7 @@ public class PolyLineDraftMappingTests
 
         Assert.Equal(prop.Name, draft.Name);
         Assert.Equal(prop.LightSize, draft.LightSize);
+        AssertColorConfigurationsEqual(prop.ColorConfiguration, draft.ColorConfiguration);
 
         AssertSegmentsEqual(draft.Segments, prop.Segments);
     }
@@ -34,6 +37,13 @@ public class PolyLineDraftMappingTests
         {
             Name = "PolyLine Draft",
             LightSize = 3,
+            ColorConfiguration = new LightColorConfiguration(
+                LightType.SingleColor,
+                Color.Cyan,
+                new DiscreteColorSetDefinition("RGB", [Color.Red, Color.Green, Color.Blue]),
+                new FullColorOrderDefinition(
+                    "GRB",
+                    [LightColorChannel.Green, LightColorChannel.Red, LightColorChannel.Blue])),
             Segments = new ObservableCollection<SegmentDraftState>(segments)
         };
 
@@ -41,6 +51,7 @@ public class PolyLineDraftMappingTests
 
         Assert.Equal(draft.Name, prop.Name);
         Assert.Equal(draft.LightSize, prop.LightSize);
+        AssertColorConfigurationsEqual(draft.ColorConfiguration, prop.ColorConfiguration);
         AssertSegmentsEqual(draft.Segments, prop.Segments);
     }
 
@@ -53,5 +64,15 @@ public class PolyLineDraftMappingTests
             Assert.Equal(expected[i].End, actual[i].End);
             Assert.Equal(expected[i].PointCount, actual[i].PointCount);
         }
+    }
+
+    private static void AssertColorConfigurationsEqual(
+        LightColorConfiguration expected,
+        LightColorConfiguration actual)
+    {
+        Assert.Equal(expected.LightType, actual.LightType);
+        Assert.Equal(expected.SingleColor, actual.SingleColor);
+        Assert.Equal(expected.DiscreteColorSet?.Name, actual.DiscreteColorSet?.Name);
+        Assert.Equal(expected.FullColorOrder?.Name, actual.FullColorOrder?.Name);
     }
 }

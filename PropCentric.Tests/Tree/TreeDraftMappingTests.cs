@@ -1,9 +1,10 @@
+using System.Drawing;
 using PropCentric.Tests.Common;
+using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Abstractions.PropVisualModels;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
-using Vixen.Sys.Props;
 
 namespace PropCentric.Tests.Tree;
 
@@ -25,7 +26,7 @@ public class TreeDraftMappingTests
         Assert.Equal(prop.Strings, draft.Strings);
         Assert.Equal(prop.NodesPerString, draft.NodesPerString);
         Assert.Equal(prop.LightSize, draft.LightSize);
-        Assert.Equal(prop.StringType, draft.StringType);
+        AssertColorConfigurationsEqual(prop.ColorConfiguration, draft.ColorConfiguration);
         Assert.Equal(prop.DegreesCoverage, draft.DegreesCoverage);
         Assert.Equal(prop.DegreeOffset, draft.DegreeOffset);
         Assert.Equal(prop.BaseHeight, draft.BaseHeight);
@@ -51,7 +52,13 @@ public class TreeDraftMappingTests
             Strings = 24,
             NodesPerString = 75,
             LightSize = 3,
-            StringType = StringTypes.SingleColor,
+            ColorConfiguration = new LightColorConfiguration(
+                LightType.SingleColor,
+                Color.Orange,
+                new DiscreteColorSetDefinition("RGB", [Color.Red, Color.Green, Color.Blue]),
+                new FullColorOrderDefinition(
+                    "BGR",
+                    [LightColorChannel.Blue, LightColorChannel.Green, LightColorChannel.Red])),
             DegreesCoverage = 180,
             DegreeOffset = 45,
             BaseHeight = 30,
@@ -71,7 +78,7 @@ public class TreeDraftMappingTests
         Assert.Equal(draft.Strings, prop.Strings);
         Assert.Equal(draft.NodesPerString, prop.NodesPerString);
         Assert.Equal(draft.LightSize, prop.LightSize);
-        Assert.Equal(draft.StringType, prop.StringType);
+        AssertColorConfigurationsEqual(draft.ColorConfiguration, prop.ColorConfiguration);
         Assert.Equal(draft.DegreesCoverage, prop.DegreesCoverage);
         Assert.Equal(draft.DegreeOffset, prop.DegreeOffset);
         Assert.Equal(draft.BaseHeight, prop.BaseHeight);
@@ -95,7 +102,13 @@ public class TreeDraftMappingTests
             Strings = 12,
             NodesPerString = 30,
             LightSize = 4,
-            StringType = StringTypes.SingleColor,
+            ColorConfiguration = new LightColorConfiguration(
+                LightType.SingleColor,
+                Color.DeepPink,
+                new DiscreteColorSetDefinition("RGB", [Color.Red, Color.Green, Color.Blue]),
+                new FullColorOrderDefinition(
+                    "RGB",
+                    [LightColorChannel.Red, LightColorChannel.Green, LightColorChannel.Blue])),
             DegreesCoverage = 270,
             DegreeOffset = 15,
             BaseHeight = 25,
@@ -112,7 +125,6 @@ public class TreeDraftMappingTests
         Assert.Equal(draft.Strings, input.Strings);
         Assert.Equal(draft.NodesPerString, input.NodesPerString);
         Assert.Equal(draft.LightSize, input.LightSize);
-        Assert.Equal(draft.StringType, input.StringType);
         Assert.Equal(draft.DegreesCoverage, input.DegreesCoverage);
         Assert.Equal(draft.DegreeOffset, input.DegreeOffset);
         Assert.Equal(draft.TopRadius, input.TopRadius);
@@ -162,6 +174,34 @@ public class TreeDraftMappingTests
         for (var index = 0; index < expected.Count; index++)
         {
             Assert.NotSame(expected[index], actual[index]);
+        }
+    }
+
+    private static void AssertColorConfigurationsEqual(
+        LightColorConfiguration expected,
+        LightColorConfiguration actual)
+    {
+        Assert.Equal(expected.LightType, actual.LightType);
+        Assert.Equal(expected.SingleColor, actual.SingleColor);
+        Assert.Equal(expected.DiscreteColorSet?.Name, actual.DiscreteColorSet?.Name);
+        Assert.Equal(expected.FullColorOrder?.Name, actual.FullColorOrder?.Name);
+
+        Assert.Equal(expected.DiscreteColorSet?.Colors.Count ?? 0, actual.DiscreteColorSet?.Colors.Count ?? 0);
+        if (expected.DiscreteColorSet is not null && actual.DiscreteColorSet is not null)
+        {
+            for (int i = 0; i < expected.DiscreteColorSet.Colors.Count; i++)
+            {
+                Assert.Equal(expected.DiscreteColorSet.Colors[i], actual.DiscreteColorSet.Colors[i]);
+            }
+        }
+
+        Assert.Equal(expected.FullColorOrder?.Channels.Count ?? 0, actual.FullColorOrder?.Channels.Count ?? 0);
+        if (expected.FullColorOrder is not null && actual.FullColorOrder is not null)
+        {
+            for (int i = 0; i < expected.FullColorOrder.Channels.Count; i++)
+            {
+                Assert.Equal(expected.FullColorOrder.Channels[i], actual.FullColorOrder.Channels[i]);
+            }
         }
     }
 }

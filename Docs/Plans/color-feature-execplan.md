@@ -16,7 +16,9 @@ The first user-visible proof should be in the existing harness flows for `TreePr
 - [x] (2026-05-24 11:10 -05:00) Inspected the current light/color-related runtime and wizard code in `Props.Abstractions`, `Props.Runtime`, `Props.Registry`, and `PropCentric.Tests`.
 - [x] (2026-05-24 11:10 -05:00) Identified the current architectural mismatch: `IHasColor` exists but is empty, while `BaseLightProp`, prop drafts, common wizard-page bases, and Tree-specific UI still own `StringType` and other color state directly.
 - [x] (2026-05-24 11:10 -05:00) Chosen the implementation direction: move color state into explicit reusable color contracts, add a draft-backed `ColorFeatureWizardPage`, and remove color editing from common light prop pages.
-- [ ] Implement the domain refactor that replaces `StringTypes` with `LightType` and introduces explicit color configuration types and contracts.
+- [x] (2026-05-24 11:34 -05:00) Implemented Milestone 1: replaced `StringTypes` with `LightType`, expanded `IHasColor`, introduced `LightColorConfiguration` and related value objects, and added `IHasColorSettingsDraft`.
+- [x] (2026-05-24 11:34 -05:00) Migrated `TreeProp`, `PolyLineProp`, their drafts, draft mappers, shared light wizard bases, and Tree visual-input plumbing away from `StringType`.
+- [x] (2026-05-24 11:34 -05:00) Updated focused discovery and draft-mapping tests, then validated Milestone 1 with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~PropDiscoveryTests|FullyQualifiedName~TreeDraftMappingTests|FullyQualifiedName~PolyLineDraftMappingTests|FullyQualifiedName~DraftBackedWizardPageTests|FullyQualifiedName~TreeVisualModelBuilderTests"` and `dotnet build PropCentric.sln`.
 - [ ] Implement reusable color-set catalog services and in-memory persistence for custom multiple-discrete color sets.
 - [ ] Implement the WPF color picker dialog, the inline multiple-discrete color editor, and the reusable `ColorFeatureWizardPage`.
 - [ ] Update `TreeProp`, `PolyLineProp`, setup/draft/summary code, and tests to prove discovery, persistence, and editing behavior.
@@ -37,6 +39,12 @@ The first user-visible proof should be in the existing harness flows for `TreePr
 
 - Observation: the existing `BaseLightProp` color summary logic is tightly tied to legacy names and incomplete behavior.
   Evidence: `Props.Abstractions/Props/BaseLightProp.cs` still formats summary text using `StringType`, only partially distinguishes modes, and leaves actual color-handling integration commented out.
+
+- Observation: `StringType` was still flowing through `TreeVisualInput` even though the tree visual-model builder never used it.
+  Evidence: `Props.Runtime/Tree/Visuals/TreeVisualInput.cs`, `Props.Runtime/Tree/Visuals/TreePropToVisualInputMapper.cs`, and `Props.Runtime/Tree/Visuals/TreeDraftToVisualInputMapper.cs` carried the field, but `Props.Runtime/Tree/Visuals/TreeVisualModelBuilder.cs` only reads geometry and rotation fields.
+
+- Observation: C# records cannot declare a member named `Clone`.
+  Evidence: the first Milestone 1 test run failed with `CS8859`, so the value-object copy helpers were renamed to `DeepClone`.
 
 ## Decision Log
 
@@ -64,11 +72,21 @@ The first user-visible proof should be in the existing harness flows for `TreePr
   Rationale: repository naming and architecture docs say reusable feature pages should own reusable feature editing. Leaving color fields in prop pages would duplicate state and undermine the feature system.
   Date/Author: 2026-05-24 / Codex
 
+- Decision: remove color-mode data from `TreeVisualInput` during Milestone 1 instead of keeping a renamed placeholder field.
+  Rationale: the current tree geometry builder does not consume color data, and carrying a renamed but unused field would preserve accidental coupling in the preview pipeline.
+  Date/Author: 2026-05-24 / Codex
+
+- Decision: use `DeepClone()` helpers on the new color value objects when copying between props and drafts.
+  Rationale: the configuration contains nested read-only lists. Explicit cloning keeps props and drafts from sharing the same underlying list instances during wizard edits.
+  Date/Author: 2026-05-24 / Codex
+
 ## Outcomes & Retrospective
 
-This document records the design and plan before implementation starts. The desired end state is a clean reusable Color feature slice that matches the existing discovery, draft, setup, and summary patterns instead of extending the current legacy `StringType` path.
+Milestone 1 is now complete. The repository has a real color-domain contract layer: `LightType`, `LightColorChannel`, `DiscreteColorSetDefinition`, `FullColorOrderDefinition`, `LightColorConfiguration`, and `IHasColorSettingsDraft` now exist, and `IHasColor` is a real feature contract rather than an empty marker.
 
-The main design conclusion is that this work is not just a wizard-page addition. It is a feature migration that touches runtime contracts, drafts, setup composition, reusable UI, summary formatting, and tests. The implementation should therefore be done in milestones that leave the repository in a coherent state after each slice.
+The current props and drafts now follow that contract. `TreeProp` and `PolyLineProp` both implement `IHasColor`, both drafts persist `ColorConfiguration`, and the shared light wizard base no longer owns color mode state. The Tree visual-input pipeline also no longer carries an unused color-mode field.
+
+The Milestone 1 validation slice passed: the focused tests for discovery, draft mapping, shared draft-backed page behavior, and tree visual generation all passed, and `dotnet build PropCentric.sln` succeeded. Remaining work is now centered on the catalog service and the reusable Color feature UI rather than on contract migration.
 
 ## Context and Orientation
 
@@ -76,7 +94,9 @@ In this repository, a "feature" is a capability a prop declares by implementing 
 
 A "draft" is the wizard-owned temporary state object that exists during prop create and edit flows. Setup wrappers such as `Props.Runtime/Tree/TreePropSetup.cs` and `Props.Runtime/PolyLine/PolyLinePropSetup.cs` populate the draft from the prop, build the wizard, initialize any draft-backed feature pages, and then copy accepted values back onto the prop before calling `CommitAsync()`.
 
-The current color implementation does not match that architecture. `Props.Abstractions/Features/IHasColor.cs` exists but contains no members. Instead, `Props.Abstractions/Props/BaseLightProp.cs` stores three color-related properties directly: `StringType`, `SingleColorOption`, and `SelectedColorSet`. The drafts in `Props.Runtime/Tree/Setup/TreePropDraft.cs` and `Props.Runtime/PolyLine/Setup/PolyLinePropDraft.cs` expose `StringType` through `IHasLightSettingsDraft`. The common light page base in `Props.Runtime/Wizards/Core/Pages/LightPropWizardPage.cs` exposes `StringType`, and the Tree-specific view still renders the combo box inline in `Props.Runtime/Tree/Wizard/Views/TreePropWizardPageView.xaml`. As a result, color is neither a reusable feature nor a coherent prop-owned configuration model.
+Before Milestone 1, the color implementation did not match that architecture. `Props.Abstractions/Features/IHasColor.cs` existed but contained no members. Instead, `Props.Abstractions/Props/BaseLightProp.cs` stored three color-related properties directly: `StringType`, `SingleColorOption`, and `SelectedColorSet`. The drafts in `Props.Runtime/Tree/Setup/TreePropDraft.cs` and `Props.Runtime/PolyLine/Setup/PolyLinePropDraft.cs` exposed `StringType` through `IHasLightSettingsDraft`. The common light page base in `Props.Runtime/Wizards/Core/Pages/LightPropWizardPage.cs` exposed `StringType`, and the Tree-specific view rendered the combo box inline in `Props.Runtime/Tree/Wizard/Views/TreePropWizardPageView.xaml`.
+
+After Milestone 1, that legacy path is gone. Color state now lives in `LightColorConfiguration` on the prop and draft, `IHasLightSettingsDraft` only carries shared non-color light state, and the shared light page base no longer owns a color-mode property.
 
 The requirements in `Docs/color-feature-requirements.md` establish the target behavior. A prop with color support must let the user choose one of three light types: single color, multiple discrete colors, or full color. Single color uses one concrete `System.Drawing.Color`. Multiple discrete colors uses a named list of colors and must support predefined and user-defined sets. Full color uses a named channel order such as `RGB` or `GRBW`, restricted to the channels Red, Green, Blue, and White.
 

@@ -3,7 +3,6 @@ using PropCentric.Tests.Common;
 using Props.Abstractions.PropVisualModels;
 using Props.Runtime.Tree;
 using Props.Runtime.Tree.Visuals;
-using Vixen.Sys.Props;
 
 namespace PropCentric.Tests.Tree;
 
@@ -20,7 +19,6 @@ public class TreeVisualModelBuilderTests
             Strings: 4,
             NodesPerString: 6,
             LightSize: 3,
-            StringTypes.ColorMixingRGB,
             DegreesCoverage: 180,
             DegreeOffset: 0,
             TopRadius: 10,
@@ -44,7 +42,6 @@ public class TreeVisualModelBuilderTests
             Strings: 4,
             NodesPerString: 5,
             LightSize: 2,
-            StringTypes.ColorMixingRGB,
             DegreesCoverage: 360,
             DegreeOffset: 0,
             TopRadius: 10,
@@ -66,7 +63,6 @@ public class TreeVisualModelBuilderTests
             Strings: 4,
             NodesPerString: 5,
             LightSize: 2,
-            StringTypes.ColorMixingRGB,
             DegreesCoverage: 360,
             DegreeOffset: 0,
             TopRadius: 10,

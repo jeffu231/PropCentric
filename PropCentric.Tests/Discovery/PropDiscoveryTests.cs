@@ -30,6 +30,8 @@ public class PropDiscoveryTests
 
         Assert.True(flags.HasFlag(PropFeatureFlags.Lights));
         Assert.True(typeof(IHasLights).IsAssignableFrom(typeof(TreeProp)));
+        Assert.True(flags.HasFlag(PropFeatureFlags.Color));
+        Assert.True(typeof(IHasColor).IsAssignableFrom(typeof(TreeProp)));
         Assert.True(flags.HasFlag(PropFeatureFlags.Dimming));
         Assert.True(typeof(IHasDimming).IsAssignableFrom(typeof(TreeProp)));
         Assert.True(flags.HasFlag(PropFeatureFlags.Rotation));
@@ -55,6 +57,8 @@ public class PropDiscoveryTests
 
         Assert.True(flags.HasFlag(PropFeatureFlags.Lights));
         Assert.True(typeof(IHasLights).IsAssignableFrom(typeof(PolyLineProp)));
+        Assert.True(flags.HasFlag(PropFeatureFlags.Color));
+        Assert.True(typeof(IHasColor).IsAssignableFrom(typeof(PolyLineProp)));
         Assert.True(flags.HasFlag(PropFeatureFlags.Segments));
         Assert.True(typeof(IHasSegments).IsAssignableFrom(typeof(PolyLineProp)));
         Assert.False(flags.HasFlag(PropFeatureFlags.Rotation));

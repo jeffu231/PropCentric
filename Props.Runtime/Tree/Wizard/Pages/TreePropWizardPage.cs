@@ -116,8 +116,6 @@ namespace Props.Runtime.Tree.Wizard.Pages
                           $"Strings: {Strings}\n" +
                           $"Nodes Per String: {NodesPerString}\n" +
                           $"Light Size: {LightSize}\n" +
-                          $"Light Type: {EnumValueTypeConverter.GetDescription(StringType)}\n" +
-                          $"String Type: {StringType}\n" +
                           $"Degree Offset: {DegreeOffset}\n" +
                           $"Degrees Coverage: {DegreesCoverage}\n" +
                           $"Start Location: {EnumValueTypeConverter.GetDescription(StartLocation)}\n" +

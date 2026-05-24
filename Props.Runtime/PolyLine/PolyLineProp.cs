@@ -16,7 +16,7 @@ namespace Props.Runtime.PolyLine;
 public class PolyLineProp(
     IVisualInputMapper<PolyLineProp, PolyLineVisualInput> inputMapper,
     IPropVisualModelBuilder<PolyLineVisualInput, PolyLinePropVisualModel> builder)
-    : BaseLightProp<PolyLinePropVisualModel>("PolyLine 1"), IHasLights, IHasSegments
+    : BaseLightProp<PolyLinePropVisualModel>("PolyLine 1"), IHasLights, IHasColor, IHasSegments
 {
    #region Properties
 

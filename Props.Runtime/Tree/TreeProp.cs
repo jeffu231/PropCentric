@@ -8,7 +8,6 @@ using Props.Abstractions.Visuals;
 using Props.Runtime.Tree.Visuals;
 using Vixen.Controls.Theme;
 using Common.WPFCommon.Converters;
-using Vixen.Sys.Props;
 
 namespace Props.Runtime.Tree;
 
@@ -16,7 +15,7 @@ namespace Props.Runtime.Tree;
 /// A conical pixel-tree prop consisting of individually addressable light strings arranged radially.
 /// </summary>
 [PropDescriptor("BCD3FB69-4827-49EE-B877-BD2AE14E792D", "Tree", typeof(TreePropSetup))]
-public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights, ICanAxisRotate
+public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights, ICanAxisRotate, IHasColor
 {
     private readonly IVisualInputMapper<TreeProp, TreeVisualInput> _inputMapper;
     private readonly IPropVisualModelBuilder<TreeVisualInput, TreePropVisualModel> _builder;
@@ -262,7 +261,6 @@ public class TreeProp : BaseLightProp<TreePropVisualModel>, IHasLights, ICanAxis
 		    $"<b>Strings:</b> {Strings}<br>" +
 		    $"<b>Nodes per String:</b> {NodesPerString}<br>" +
 		    $"<b>Light Size:</b> {LightSize}<br>" +
-		    $"<b>Light Type:</b> {EnumValueTypeConverter.GetDescription(StringType)}<br>" +
 		    $"<b>Degrees Coverage:</b> {DegreesCoverage}<br>" +
 		    $"<b>Degree offset:</b> {DegreeOffset}<br>" +
 		    $"<b>Base Height:</b> {BaseHeight}<br>" +

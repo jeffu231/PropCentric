@@ -1,16 +1,16 @@
 using System.Collections.ObjectModel;
+using Props.Abstractions.Features;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Props;
 using Props.Abstractions.Setup;
 using Props.Abstractions.Setup.Drafts;
-using Vixen.Sys.Props;
 
 namespace Props.Runtime.Tree.Setup;
 
 /// <summary>
 /// Wizard-owned draft that holds user-entered field values for a <see cref="TreeProp"/> during setup.
 /// </summary>
-public sealed class TreePropDraft : IPropDraft, IHasAxisRotationsDraft, IHasLightSettingsDraft
+public sealed class TreePropDraft : IPropDraft, IHasAxisRotationsDraft, IHasColorSettingsDraft, IHasLightSettingsDraft
 {
     /// <summary>Gets or sets the display name of the prop.</summary>
     public string Name { get; set; } = "Tree 1";
@@ -23,8 +23,9 @@ public sealed class TreePropDraft : IPropDraft, IHasAxisRotationsDraft, IHasLigh
 
     /// <summary>Gets or sets the rendered diameter of each light node in pixels.</summary>
     public int LightSize { get; set; } = 2;
-    
-    public StringTypes StringType { get; set; } = StringTypes.ColorMixingRGB;
+
+    /// <summary>Gets or sets the color configuration for the draft.</summary>
+    public LightColorConfiguration ColorConfiguration { get; set; } = LightColorConfiguration.CreateDefault();
 
     /// <summary>Gets or sets the arc of the tree covered by strings, in degrees (1–360).</summary>
     public int DegreesCoverage { get; set; } = 360;

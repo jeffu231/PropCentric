@@ -1,5 +1,3 @@
-using Vixen.Sys.Props;
-
 namespace Props.Runtime.Wizards.Core.Pages
 {
 	/// <summary>
@@ -12,9 +10,5 @@ namespace Props.Runtime.Wizards.Core.Pages
 		/// </summary>
 		int LightSize { get; set; }
 
-		/// <summary>
-		/// Type of light string used by the prop.
-		/// </summary>
-		StringTypes StringType { get; set; }
 	}
 }

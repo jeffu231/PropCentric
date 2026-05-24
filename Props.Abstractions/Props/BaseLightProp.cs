@@ -6,7 +6,6 @@ using Props.Abstractions.Features;
 using Props.Abstractions.PropVisualModels;
 using Vixen.Services;
 using Vixen.Sys;
-using Vixen.Sys.Props;
 
 namespace Props.Abstractions.Props
 {
@@ -23,19 +22,16 @@ namespace Props.Abstractions.Props
 				//GenerateElementsAsync().SafeFireAndForget();
 			}, 500);
 
-			StringType = StringTypes.ColorMixingRGB;
 			LightSize = 2;
 			Brightness = 100;
 			Gamma = 1.0;
-			SingleColorOption = System.Drawing.Color.RoyalBlue;
-			SelectedColorSet = "RGB";
+			ColorConfiguration = LightColorConfiguration.CreateDefault();
 		}
 
 		#region Public Properties
 
-		/// <summary>Gets or sets the color wiring mode for the prop's light strings.</summary>
-		/// <value>One of the <see cref="StringTypes"/> enumeration values that specifies the color mode.</value>
-		public StringTypes StringType
+		/// <summary>Gets or sets the selected color configuration for the prop.</summary>
+		public LightColorConfiguration ColorConfiguration
 		{
 			get;
 			set => SetProperty(ref field, value);
@@ -93,32 +89,6 @@ namespace Props.Abstractions.Props
 
 		#endregion
 
-		private Color _singleColorOption;
-
-		/// <summary>Gets or sets the fixed color used when the string type is <see cref="StringTypes.SingleColor"/>.</summary>
-		/// <value>The <see cref="System.Drawing.Color"/> applied to all lights on the prop.</value>
-		public Color SingleColorOption
-		{
-			get => _singleColorOption;
-			set
-			{
-				_singleColorOption = value;
-				OnPropertyChanged(nameof(SingleColorOption));
-			}
-		}
-
-		/// <summary>Gets or sets the active color-set identifier used for multi-color or RGB string modes.</summary>
-		/// <value>A string key that identifies the selected color set (e.g., <c>"RGB"</c>).</value>
-		public string SelectedColorSet
-		{
-			get;
-			set
-			{
-				field = value;
-				OnPropertyChanged(nameof(SelectedColorSet));
-			}
-		}
-
 		#endregion
 
 		#region Protected Properties
@@ -147,7 +117,7 @@ namespace Props.Abstractions.Props
 			{
 				switch (e.PropertyName)
 				{
-					case nameof(StringType):
+					case nameof(ColorConfiguration):
 						GenerateDebouncer.Debounce();
 						break;					
 				}
@@ -179,7 +149,7 @@ namespace Props.Abstractions.Props
 				string stringName = $"{AutoPropStringName} {i + 1}";
 				ElementNode stringNode = ElementNodeService.Instance.CreateSingle(node, stringName, true, false);
 
-				if (StringType == StringTypes.ColorMixingRGB)
+				if (ColorConfiguration.LightType == LightType.FullColor)
 				{
 					AddNodeElements(stringNode, nodesPerString);
 				}
@@ -336,17 +306,17 @@ namespace Props.Abstractions.Props
 		/// Retrieves the color configuration for the current light prop.
 		/// </summary>
 		/// <returns>
-		/// A <see cref="ColorConfiguration"/> object that specifies the color type, 
-		/// full color order, and single color based on the <see cref="StringType"/> of the prop.
+		/// A <see cref="LightColorConfiguration"/> object that specifies the color type, 
+		/// full color order, and single color based on the <see cref="ColorConfiguration"/> of the prop.
 		/// </returns>
 		/// <remarks>
-		/// The color configuration is determined by the <see cref="StringType"/> property:
+		/// The color configuration is determined by the <see cref="ColorConfiguration"/> property:
 		/// <list type="bullet">
 		/// <item>
-		/// <description>If the <see cref="StringType"/> is <see cref="StringTypes.ColorMixingRGB"/>, the color type is set to <see cref="ElementColorType.FullColor"/>, and the full color order is "RGB".</description>
+		/// <description>If the active light type is full color, the color type is set to <see cref="ElementColorType.FullColor"/>.</description>
 		/// </item>
 		/// <item>
-		/// <description>If the <see cref="StringType"/> is <see cref="StringTypes.SingleColor"/>, the color type is set to <see cref="ElementColorType.SingleColor"/>, and the single color is set to red.</description>
+		/// <description>If the active light type is single color, the color type is set to <see cref="ElementColorType.SingleColor"/>.</description>
 		/// </item>
 		/// </list>
 		/// </remarks>
@@ -355,11 +325,11 @@ namespace Props.Abstractions.Props
 		// 	// TODO Get color order info from the Prop properties at some point
 		// 	ColorConfiguration cf = new()
 		// 	{
-		// 		ColorType = StringType == StringTypes.ColorMixingRGB
+		// 		ColorType = ColorConfiguration.LightType == LightType.FullColor
 		// 			? ElementColorType.FullColor
 		// 			: ElementColorType.SingleColor,
-		// 		FullColorOrder = StringType == StringTypes.ColorMixingRGB ? "RGB" : String.Empty,
-		// 		SingleColor = StringType == StringTypes.SingleColor ? Color.Red : Color.Empty
+		// 		FullColorOrder = ColorConfiguration.FullColorOrder?.Name ?? string.Empty,
+		// 		SingleColor = ColorConfiguration.LightType == LightType.SingleColor ? ColorConfiguration.SingleColor : Color.Empty
 		// 	};
 		// 	return cf;
 		// }
@@ -456,25 +426,22 @@ namespace Props.Abstractions.Props
 		protected string GetColorSummary()
 		{
 			string summary = "<h2>Light Coloring</h2><body>" +
-			                 $"<b>Light Type:</b> <br>";
-				//			$"<b>Light Type:</b> {EnumValueTypeConverter.GetDescription(StringType)}<br>";
+			                 $"<b>Light Type:</b> {ColorConfiguration.LightType}<br>";
 
-			if (StringType == StringTypes.SingleColor)
+			switch (ColorConfiguration.LightType)
 			{
-				summary += "<b>Single Color:</b><ul style=\"margin-top: 0;\">" +
-					       $"<li>Red is {SingleColorOption.R}</li>" + 
-						   $"<li>Green is {SingleColorOption.G}</li>" +
-						   $"<li>Blue is {SingleColorOption.B}</li></ul>";
-			}
-
-			else if (StringType == StringTypes.MultiColor)
-			{
-				summary += $"<b>Multiple Colors:</b> {SelectedColorSet}";
-			}
-
-			else if (StringType == StringTypes.ColorMixingRGB)
-			{
-				summary += $"<b>RGB Colors:</b> {SelectedColorSet}";
+				case LightType.SingleColor:
+					summary += "<b>Single Color:</b><ul style=\"margin-top: 0;\">" +
+					           $"<li>Red is {ColorConfiguration.SingleColor.R}</li>" +
+					           $"<li>Green is {ColorConfiguration.SingleColor.G}</li>" +
+					           $"<li>Blue is {ColorConfiguration.SingleColor.B}</li></ul>";
+					break;
+				case LightType.MultipleDiscreteColors:
+					summary += $"<b>Multiple Colors:</b> {ColorConfiguration.DiscreteColorSet?.Name ?? "None"}";
+					break;
+				case LightType.FullColor:
+					summary += $"<b>Full Color Order:</b> {ColorConfiguration.FullColorOrder?.Name ?? "None"}";
+					break;
 			}
 
 			summary += "</body>";

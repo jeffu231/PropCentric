@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Numerics;
+using Props.Abstractions.Features;
 using Props.Abstractions.Props;
 using Props.Runtime.PolyLine;
 using Props.Runtime.PolyLine.Visuals;
@@ -17,9 +19,16 @@ public class PolyLineTestData
         var prop = new PolyLineProp(new PolyLinePropToVisualInputMapper(), new PolyLineVisualModelBuilder())
         {
             Name = "Configured PolyLine",
-            LightSize = 2
+            LightSize = 2,
+            ColorConfiguration = new LightColorConfiguration(
+                LightType.FullColor,
+                Color.White,
+                new DiscreteColorSetDefinition("GRBW", [Color.Green, Color.Red, Color.Blue, Color.White]),
+                new FullColorOrderDefinition(
+                    "GRBW",
+                    [LightColorChannel.Green, LightColorChannel.Red, LightColorChannel.Blue, LightColorChannel.White]))
         };
-        
+
         prop.ReplaceSegments(CreateSegments());
 
         return prop;
