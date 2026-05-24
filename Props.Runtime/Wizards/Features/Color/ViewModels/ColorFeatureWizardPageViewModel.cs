@@ -58,23 +58,14 @@ public sealed class ColorFeatureWizardPageViewModel : GraphicsWizardPageViewMode
 
     public TaskCommand SaveCustomSetCommand { get; }
 
+    [ViewModelToModel]
     public LightType LightType
     {
-        get => WizardPage.LightType;
-        set
-        {
-            if (WizardPage.LightType == value)
-            {
-                return;
-            }
-
-            WizardPage.LightType = value;
-            RaisePropertyChanged(nameof(LightType));
-            RaisePropertyChanged(nameof(IsSingleColorMode));
-            RaisePropertyChanged(nameof(IsMultipleDiscreteColorsMode));
-            RaisePropertyChanged(nameof(IsFullColorMode));
-        }
+        get => GetValue<LightType>(LightTypeProperty);
+        set => SetValue(LightTypeProperty, value);
     }
+
+    private static readonly IPropertyData LightTypeProperty = RegisterProperty<LightType>(nameof(LightType));
 
     public bool IsSingleColorMode => WizardPage.IsSingleColorMode;
 
@@ -88,72 +79,51 @@ public sealed class ColorFeatureWizardPageViewModel : GraphicsWizardPageViewMode
 
     public ObservableCollection<DiscreteColorSetDefinition> AvailableDiscreteColorSets => WizardPage.AvailableDiscreteColorSets;
 
+    [ViewModelToModel]
     public DiscreteColorSetDefinition? SelectedDiscreteColorSet
     {
-        get => WizardPage.SelectedDiscreteColorSet;
-        set
-        {
-            if (ReferenceEquals(WizardPage.SelectedDiscreteColorSet, value))
-            {
-                return;
-            }
-
-            WizardPage.SelectedDiscreteColorSet = value;
-            RaisePropertyChanged(nameof(SelectedDiscreteColorSet));
-        }
+        get => GetValue<DiscreteColorSetDefinition?>(SelectedDiscreteColorSetProperty);
+        set => SetValue(SelectedDiscreteColorSetProperty, value);
     }
+
+    private static readonly IPropertyData SelectedDiscreteColorSetProperty =
+        RegisterProperty<DiscreteColorSetDefinition?>(nameof(SelectedDiscreteColorSet));
 
     public ObservableCollection<EditableDiscreteColorItem> WorkingDiscreteColors => WizardPage.WorkingDiscreteColors;
 
+    [ViewModelToModel]
     public EditableDiscreteColorItem? SelectedWorkingDiscreteColor
     {
-        get => WizardPage.SelectedWorkingDiscreteColor;
-        set
-        {
-            if (ReferenceEquals(WizardPage.SelectedWorkingDiscreteColor, value))
-            {
-                return;
-            }
-
-            WizardPage.SelectedWorkingDiscreteColor = value;
-            RaisePropertyChanged(nameof(SelectedWorkingDiscreteColor));
-            RaisePropertyChanged(nameof(CanRemoveWorkingDiscreteColor));
-        }
+        get => GetValue<EditableDiscreteColorItem?>(SelectedWorkingDiscreteColorProperty);
+        set => SetValue(SelectedWorkingDiscreteColorProperty, value);
     }
+
+    private static readonly IPropertyData SelectedWorkingDiscreteColorProperty =
+        RegisterProperty<EditableDiscreteColorItem?>(nameof(SelectedWorkingDiscreteColor));
 
     public bool CanRemoveWorkingDiscreteColor => WizardPage.CanRemoveWorkingDiscreteColor;
 
+    [ViewModelToModel]
     public string NewDiscreteColorSetName
     {
-        get => WizardPage.NewDiscreteColorSetName;
-        set
-        {
-            if (string.Equals(WizardPage.NewDiscreteColorSetName, value, StringComparison.Ordinal))
-            {
-                return;
-            }
-
-            WizardPage.NewDiscreteColorSetName = value;
-            RaisePropertyChanged(nameof(NewDiscreteColorSetName));
-        }
+        get => GetValue<string>(NewDiscreteColorSetNameProperty);
+        set => SetValue(NewDiscreteColorSetNameProperty, value);
     }
+
+    private static readonly IPropertyData NewDiscreteColorSetNameProperty =
+        RegisterProperty<string>(nameof(NewDiscreteColorSetName), string.Empty);
 
     public ObservableCollection<FullColorOrderDefinition> AvailableFullColorOrders => WizardPage.AvailableFullColorOrders;
 
+    [ViewModelToModel]
     public FullColorOrderDefinition? SelectedFullColorOrder
     {
-        get => WizardPage.SelectedFullColorOrder;
-        set
-        {
-            if (ReferenceEquals(WizardPage.SelectedFullColorOrder, value))
-            {
-                return;
-            }
-
-            WizardPage.SelectedFullColorOrder = value;
-            RaisePropertyChanged(nameof(SelectedFullColorOrder));
-        }
+        get => GetValue<FullColorOrderDefinition?>(SelectedFullColorOrderProperty);
+        set => SetValue(SelectedFullColorOrderProperty, value);
     }
+
+    private static readonly IPropertyData SelectedFullColorOrderProperty =
+        RegisterProperty<FullColorOrderDefinition?>(nameof(SelectedFullColorOrder));
 
     protected override void ValidateFields(List<IFieldValidationResult> validationResults)
     {

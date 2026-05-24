@@ -20,6 +20,7 @@ The proof is straightforward. Open the Color feature page for both Tree and Poly
 - [x] (2026-05-24 17:28 -05:00) Added focused command-surface tests and validated Milestone 1 with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~ColorFeatureWizardPageTests|FullyQualifiedName~ColorFeatureWizardPageViewModelTests|FullyQualifiedName~ColorPickerDialogViewModelTests"` and `dotnet build Props.Runtime/Props.Runtime.csproj`.
 - [x] (2026-05-24 17:37 -05:00) Completed the next boundary-narrowing step by removing public `Page` exposure from `ColorFeatureWizardPageViewModel` and keeping all view-facing interactions on the explicit view-model surface.
 - [x] (2026-05-24 17:43 -05:00) Completed the next structural cleanup step by extracting `EditableDiscreteColorItem` into its own file to match the repository's one-type-per-file rule.
+- [x] (2026-05-24 17:49 -05:00) Applied a targeted `ViewModelToModel` refactor for the low-risk scalar pass-through properties in `ColorFeatureWizardPageViewModel` while keeping collection and preview-sensitive state explicit.
 - [ ] Validate with focused tests, full tests, build, and manual harness exercise.
 
 ## Surprises & Discoveries
@@ -60,6 +61,9 @@ The proof is straightforward. Open the Color feature page for both Tree and Poly
 - Observation: `EditableDiscreteColorItem` could be separated cleanly without affecting the page/view-model behavior.
   Evidence: after moving the type from `ColorFeatureWizardPage.cs` into `EditableDiscreteColorItem.cs`, the focused Color feature tests continued to pass unchanged.
 
+- Observation: `ViewModelToModel` fits the simple scalar page pass-throughs, but the collection and preview-sensitive members still need explicit logic.
+  Evidence: `LightType`, `SelectedDiscreteColorSet`, `SelectedWorkingDiscreteColor`, `NewDiscreteColorSetName`, and `SelectedFullColorOrder` were converted to Catel registered properties with `ViewModelToModel`, while `WorkingDiscreteColors` and the preview-related notification paths remained manual.
+
 ## Decision Log
 
 - Decision: preserve the current user-facing flow and page layout while refactoring the interaction plumbing.
@@ -93,6 +97,8 @@ Follow-up review corrected one detail in that slice: warning presentation now us
 The next boundary-narrowing slice is now complete as well. The view model no longer exposes the underlying wizard page publicly, so the view-facing contract is now the explicit property and command surface rather than a page passthrough.
 
 The next structural cleanup slice is also complete. `EditableDiscreteColorItem` now lives in its own file, which brings the Color feature wizard back into line with the repository's one-type-per-file rule without changing behavior.
+
+The targeted `ViewModelToModel` refactor is now recorded as well. It reduced the repetitive scalar pass-through logic in `ColorFeatureWizardPageViewModel` without disturbing the parts of the view model that still need custom collection tracking and preview scheduling.
 
 ## Context and Orientation
 
