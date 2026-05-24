@@ -496,9 +496,19 @@ public sealed class ColorPickerDialogViewModel : ViewModelBase
     protected override Task<bool> CancelAsync()
         => Task.FromResult(true);
 
-    private Task OnConfirmAsync()
-        => SaveViewModelAsync();
+    private async Task OnConfirmAsync()
+    {
+        if (await SaveViewModelAsync())
+        {
+            await CloseViewModelAsync(true);
+        }
+    }
 
-    private Task OnCancelAsync()
-        => CancelViewModelAsync();
+    private async Task OnCancelAsync()
+    {
+        if (await CancelViewModelAsync())
+        {
+            await CloseViewModelAsync(false);
+        }
+    }
 }

@@ -22,7 +22,9 @@ The user-visible proof is modest but important: the picker should behave the sam
 - [x] (2026-05-24 16:21 -05:00) Added focused picker command tests for preset selection and save/cancel command execution, then validated them with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~ColorPickerDialogViewModelTests"` and `dotnet build Props.Runtime/Props.Runtime.csproj`.
 - [x] (2026-05-24 16:29 -05:00) Implemented Milestone 3 by removing `Brush`-based preview properties from `ColorPickerDialogViewModel` and updating the view to convert `OriginalColor` and `SelectedColor` into brushes through `DrawingColorToBrushConverter`.
 - [x] (2026-05-24 16:29 -05:00) Added a focused preview-surface test and revalidated the picker with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~ColorPickerDialogViewModelTests"` and `dotnet build Props.Runtime/Props.Runtime.csproj`.
-- [ ] Validate with targeted tests, a build, and a manual picker exercise from the harness.
+- [x] (2026-05-24 16:41 -05:00) Reviewed the remaining code-behind and confirmed it is limited to spectrum-specific mouse capture and coordinate translation into `ColorPickerDialogViewModel.SelectSpectrumPoint(...)`.
+- [x] (2026-05-24 16:46 -05:00) Reran broader automated validation after the file locks cleared; `dotnet test PropCentric.Tests/PropCentric.Tests.csproj` passed with 86 tests and `dotnet build PropCentric.sln` passed.
+- [x] (2026-05-24 16:58 -05:00) Manual harness picker exercise completed. Functional verification confirmed OK and Cancel close behavior, preset selection, spectrum drag, and RGB/HSV editing all still behave correctly from the Color feature page.
 
 ## Surprises & Discoveries
 
@@ -49,6 +51,18 @@ The user-visible proof is modest but important: the picker should behave the sam
 
 - Observation: the picker preview panes only needed color-domain values from the view model; the WPF brush dependency was entirely in the binding surface.
   Evidence: after replacing `OriginalBrush` and `SelectedBrush` with XAML converter usage over `OriginalColor` and `SelectedColor`, the focused picker tests and runtime project build still passed without additional color-logic changes.
+
+- Observation: the remaining `ColorPickerDialogView.xaml.cs` code-behind is now confined to spectrum drag state and mouse-position translation, which matches the exception allowed by the local WPF skills.
+  Evidence: `Props.Runtime/Wizards/Features/Color/Views/ColorPickerDialogView.xaml.cs` now contains only the spectrum mouse handlers plus `UpdateSpectrumSelection(...)`, and that helper only forwards normalized surface coordinates into `ColorPickerDialogViewModel.SelectSpectrumPoint(...)`.
+
+- Observation: broader validation is currently blocked by external file locks rather than by picker code errors.
+  Evidence: `dotnet test PropCentric.Tests/PropCentric.Tests.csproj` failed with `CS2012` on `Vixen.Shim\obj\Debug\net10.0-windows\Vixen.Shim.dll`, and `dotnet build PropCentric.sln` failed with `CS2012` on `Props.WPFCommon\obj\Debug\net10.0-windows\Props.WPFCommon.dll`.
+
+- Observation: once the external locks cleared, the broader automated validation passed without requiring further picker changes.
+  Evidence: the rerun of `dotnet test PropCentric.Tests/PropCentric.Tests.csproj` passed with 86 tests, and `dotnet build PropCentric.sln` completed successfully.
+
+- Observation: moving OK and Cancel off the old click handlers exposed a dialog-close gap in the custom Catel commands.
+  Evidence: functional testing showed the picker buttons no longer closed the dialog, and the fix was to follow `SaveViewModelAsync()` / `CancelViewModelAsync()` with `CloseViewModelAsync(true|false)` in `ColorPickerDialogViewModel`.
 
 ## Decision Log
 
@@ -88,7 +102,13 @@ Focused command validation passed after the command migration. The remaining wor
 
 Milestone 3 is now complete. The picker view model no longer exposes WPF `Brush` values, and the preview panes are now driven by `System.Drawing.Color` values converted in XAML. That removes the clearest UI-agnosticity violation while preserving the same visual behavior.
 
-The remaining work is the final validation pass and the manual harness exercise to confirm the picker still behaves correctly when opened from the Color feature page.
+Milestone 4 is structurally complete. The remaining code-behind is limited to spectrum-specific pointer tracking and mouse capture, while button actions and dialog orchestration now live in the view model.
+
+The broader automated validation and the manual harness exercise are now complete.
+
+Functional testing surfaced one follow-up regression after the command migration: the custom OK and Cancel commands updated view-model state but did not explicitly close the Catel dialog. That is now fixed by explicitly closing the view model with the appropriate dialog result after save or cancel succeeds, and the focused picker tests now assert both state transition and closure.
+
+The color picker standards refactor is now complete. The dialog follows the Catel shell pattern, button and preset actions are command-driven, the view model no longer exposes WPF brush types, the remaining code-behind is limited to spectrum-specific pointer handling, and both automated plus manual validation passed.
 
 ## Context and Orientation
 

@@ -129,9 +129,10 @@ public class ColorPickerDialogViewModelTests
         var viewModel = new ColorPickerDialogViewModel(Color.White);
 
         viewModel.ConfirmCommand.Execute();
-        await WaitForAsync(() => viewModel.IsSaved);
+        await WaitForAsync(() => viewModel.IsSaved && viewModel.IsClosed);
 
         Assert.True(viewModel.IsSaved);
+        Assert.True(viewModel.IsClosed);
     }
 
     [Fact]
@@ -140,9 +141,10 @@ public class ColorPickerDialogViewModelTests
         var viewModel = new ColorPickerDialogViewModel(Color.White);
 
         viewModel.CancelDialogCommand.Execute();
-        await WaitForAsync(() => viewModel.IsCanceled);
+        await WaitForAsync(() => viewModel.IsCanceled && viewModel.IsClosed);
 
         Assert.True(viewModel.IsCanceled);
+        Assert.True(viewModel.IsClosed);
     }
 
     private static async Task WaitForAsync(Func<bool> condition)
