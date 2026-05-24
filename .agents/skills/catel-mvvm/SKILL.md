@@ -31,7 +31,7 @@ C# WPF coding guidelines and best practices. MUST follow these rules. Use when r
 
 ## Views and Data Binding
 
-- Base Class: Ensure views inherit from Catel.Windows.Controls.DataWindow or Catel.Windows.Controls.UserControl.
+- Base Class: Ensure views inherit from Catel.Windows.Controls.Window or Catel.Windows.Controls.UserControl.
 - View-to-ViewModel Mapping: Rely on Catel's automatic view model locator rather than explicitly setting DataContext in code.
 - Compiled Bindings: Wherever possible in Catel Views, use {Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type catel:UserControl}}, Path=ViewModel.PropertyName} to ensure binding safety.
 

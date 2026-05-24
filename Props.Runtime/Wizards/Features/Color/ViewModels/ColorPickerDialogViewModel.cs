@@ -4,9 +4,6 @@ using Catel.Data;
 using Catel.MVVM;
 using Props.Runtime.Wizards.Features.Color.Models;
 using DrawingColor = System.Drawing.Color;
-using MediaBrush = System.Windows.Media.Brush;
-using MediaColor = System.Windows.Media.Color;
-using SolidColorBrush = System.Windows.Media.SolidColorBrush;
 
 namespace Props.Runtime.Wizards.Features.Color.ViewModels;
 
@@ -41,6 +38,15 @@ public sealed class ColorPickerDialogViewModel : ViewModelBase
             new("Green", DrawingColor.Lime),
             new("Blue", DrawingColor.Blue)
         };
+        ConfirmCommand = new TaskCommand(OnConfirmAsync);
+        CancelDialogCommand = new TaskCommand(OnCancelAsync);
+        SelectPresetCommand = new Command<ColorPresetOption?>(preset =>
+        {
+            if (preset is not null)
+            {
+                SelectPreset(preset);
+            }
+        });
 
         SelectColor(initialColor);
     }
@@ -58,7 +64,6 @@ public sealed class ColorPickerDialogViewModel : ViewModelBase
             _originalColor = value;
             RaisePropertyChanged(nameof(OriginalColor));
             RaisePropertyChanged(nameof(OriginalHex));
-            RaisePropertyChanged(nameof(OriginalBrush));
         }
     }
 
@@ -75,7 +80,6 @@ public sealed class ColorPickerDialogViewModel : ViewModelBase
             _selectedColor = value;
             RaisePropertyChanged(nameof(SelectedColor));
             RaisePropertyChanged(nameof(SelectedHex));
-            RaisePropertyChanged(nameof(SelectedBrush));
         }
     }
 
@@ -215,11 +219,13 @@ public sealed class ColorPickerDialogViewModel : ViewModelBase
 
     public string SelectedHex => ToHex(SelectedColor);
 
-    public MediaBrush OriginalBrush => new SolidColorBrush(ToMediaColor(OriginalColor));
-
-    public MediaBrush SelectedBrush => new SolidColorBrush(ToMediaColor(SelectedColor));
-
     public ObservableCollection<ColorPresetOption> Presets { get; }
+
+    public TaskCommand ConfirmCommand { get; }
+
+    public TaskCommand CancelDialogCommand { get; }
+
+    public Command<ColorPresetOption?> SelectPresetCommand { get; }
 
     public void SelectPreset(ColorPresetOption preset)
     {
@@ -484,7 +490,15 @@ public sealed class ColorPickerDialogViewModel : ViewModelBase
         => string.Create(
             CultureInfo.InvariantCulture,
             $"#{color.R:X2}{color.G:X2}{color.B:X2}");
+    protected override Task<bool> SaveAsync()
+        => Task.FromResult(true);
 
-    private static MediaColor ToMediaColor(DrawingColor color)
-        => MediaColor.FromRgb(color.R, color.G, color.B);
+    protected override Task<bool> CancelAsync()
+        => Task.FromResult(true);
+
+    private Task OnConfirmAsync()
+        => SaveViewModelAsync();
+
+    private Task OnCancelAsync()
+        => CancelViewModelAsync();
 }

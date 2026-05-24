@@ -20,6 +20,15 @@ public class ColorPickerDialogViewModelTests
         Assert.Equal("#FF1493", viewModel.SelectedHex);
     }
 
+    [Fact]
+    public void PreviewState_IsExposedAsColorValuesInsteadOfBrushes()
+    {
+        var viewModel = new ColorPickerDialogViewModel(Color.Orange);
+
+        Assert.Equal(Color.Orange.ToArgb(), viewModel.OriginalColor.ToArgb());
+        Assert.Equal(Color.Orange.ToArgb(), viewModel.SelectedColor.ToArgb());
+    }
+
     [Theory]
     [InlineData(255, 0, 0, 0, 100, 100)]
     [InlineData(0, 255, 0, 120, 100, 100)]
@@ -100,6 +109,53 @@ public class ColorPickerDialogViewModelTests
 
         Assert.Equal(Color.Lime.ToArgb(), viewModel.SelectedColor.ToArgb());
         Assert.Equal("#00FF00", viewModel.SelectedHex);
+    }
+
+    [Fact]
+    public void SelectPresetCommand_UpdatesSelectedColorAndHex()
+    {
+        var viewModel = new ColorPickerDialogViewModel(Color.White);
+        var preset = new ColorPresetOption("Blue", Color.Blue);
+
+        viewModel.SelectPresetCommand.Execute(preset);
+
+        Assert.Equal(Color.Blue.ToArgb(), viewModel.SelectedColor.ToArgb());
+        Assert.Equal("#0000FF", viewModel.SelectedHex);
+    }
+
+    [Fact]
+    public async Task ConfirmCommand_MarksViewModelAsSaved()
+    {
+        var viewModel = new ColorPickerDialogViewModel(Color.White);
+
+        viewModel.ConfirmCommand.Execute();
+        await WaitForAsync(() => viewModel.IsSaved);
+
+        Assert.True(viewModel.IsSaved);
+    }
+
+    [Fact]
+    public async Task CancelDialogCommand_MarksViewModelAsCanceled()
+    {
+        var viewModel = new ColorPickerDialogViewModel(Color.White);
+
+        viewModel.CancelDialogCommand.Execute();
+        await WaitForAsync(() => viewModel.IsCanceled);
+
+        Assert.True(viewModel.IsCanceled);
+    }
+
+    private static async Task WaitForAsync(Func<bool> condition)
+    {
+        for (var attempt = 0; attempt < 20; attempt++)
+        {
+            if (condition())
+            {
+                return;
+            }
+
+            await Task.Delay(10);
+        }
     }
 
     [Fact]

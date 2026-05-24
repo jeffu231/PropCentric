@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Input;
-using Props.Runtime.Wizards.Features.Color.Models;
 using Props.Runtime.Wizards.Features.Color.ViewModels;
 
 namespace Props.Runtime.Wizards.Features.Color.Views;
@@ -8,34 +7,13 @@ namespace Props.Runtime.Wizards.Features.Color.Views;
 /// <summary>
 /// Code-behind for the reusable color picker dialog.
 /// </summary>
-public partial class ColorPickerDialogView : Window
+public partial class ColorPickerDialogView
 {
     private bool _isDraggingSpectrum;
 
     public ColorPickerDialogView()
     {
         InitializeComponent();
-    }
-
-    private void OkButton_OnClick(object sender, RoutedEventArgs e)
-    {
-        DialogResult = true;
-        Close();
-    }
-
-    private void CancelButton_OnClick(object sender, RoutedEventArgs e)
-    {
-        DialogResult = false;
-        Close();
-    }
-
-    private void PresetButton_OnClick(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is ColorPickerDialogViewModel viewModel &&
-            sender is FrameworkElement { Tag: ColorPresetOption preset })
-        {
-            viewModel.SelectPreset(preset);
-        }
     }
 
     private void SpectrumSurface_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
