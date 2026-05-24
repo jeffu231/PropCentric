@@ -21,7 +21,7 @@ public sealed record LightColorConfiguration(
     public static LightColorConfiguration CreateDefault() => new(
         LightType.FullColor,
         Color.RoyalBlue,
-        new DiscreteColorSetDefinition("RGB", [Color.Red, Color.Green, Color.Blue]),
+        new DiscreteColorSetDefinition("RGB", [Color.Red, Color.Lime, Color.Blue]),
         new FullColorOrderDefinition(
             "RGB",
             [LightColorChannel.Red, LightColorChannel.Green, LightColorChannel.Blue]));

@@ -138,6 +138,7 @@ public class PropDiscoveryTests
         Assert.NotNull(provider.GetService<IPropDraftMapper<TreePropDraft, TreeProp>>());
         Assert.NotNull(provider.GetService<IWizardPreviewCoordinator<TreePropDraft>>());
         Assert.NotNull(provider.GetService<ISegmentCaptureNormalizer>());
+        Assert.NotNull(provider.GetService<IColorConfigurationCatalog>());
         Assert.NotNull(provider.GetService<TreeProp>());
         Assert.NotNull(provider.GetService<TreePropSetup>());
         Assert.NotNull(provider.GetService<RotationFeatureWizardPage>());
@@ -159,6 +160,7 @@ public class PropDiscoveryTests
         Assert.NotNull(provider.GetService<IPropVisualModelBuilder<PolyLineVisualInput, PolyLinePropVisualModel>>());
         Assert.NotNull(provider.GetService<IPropDraftMapper<PolyLinePropDraft, PolyLineProp>>());
         Assert.NotNull(provider.GetService<IWizardPreviewCoordinator<PolyLinePropDraft>>());
+        Assert.NotNull(provider.GetService<IColorConfigurationCatalog>());
         Assert.NotNull(provider.GetService<PolyLineProp>());
         Assert.NotNull(provider.GetService<PolyLinePropSetup>());
         Assert.NotNull(provider.GetService<SegmentsFeatureWizardPage>());

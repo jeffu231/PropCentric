@@ -19,7 +19,9 @@ The first user-visible proof should be in the existing harness flows for `TreePr
 - [x] (2026-05-24 11:34 -05:00) Implemented Milestone 1: replaced `StringTypes` with `LightType`, expanded `IHasColor`, introduced `LightColorConfiguration` and related value objects, and added `IHasColorSettingsDraft`.
 - [x] (2026-05-24 11:34 -05:00) Migrated `TreeProp`, `PolyLineProp`, their drafts, draft mappers, shared light wizard bases, and Tree visual-input plumbing away from `StringType`.
 - [x] (2026-05-24 11:34 -05:00) Updated focused discovery and draft-mapping tests, then validated Milestone 1 with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~PropDiscoveryTests|FullyQualifiedName~TreeDraftMappingTests|FullyQualifiedName~PolyLineDraftMappingTests|FullyQualifiedName~DraftBackedWizardPageTests|FullyQualifiedName~TreeVisualModelBuilderTests"` and `dotnet build PropCentric.sln`.
-- [ ] Implement reusable color-set catalog services and in-memory persistence for custom multiple-discrete color sets.
+- [x] (2026-05-24 12:36 -05:00) Implemented Milestone 2: added `IColorConfigurationCatalog`, added the in-memory `InMemoryColorConfigurationCatalog`, seeded the required predefined discrete color sets and full-color orders, and registered the catalog through `AddPropSystem`.
+- [x] (2026-05-24 12:36 -05:00) Added focused catalog tests for predefined contents, duplicate-name rejection, empty-set rejection, immediate custom-set availability, and DI registration in discovery tests.
+- [x] (2026-05-24 12:36 -05:00) Validated Milestone 2 with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~ColorConfigurationCatalogTests|FullyQualifiedName~PropDiscoveryTests"` and `dotnet build PropCentric.sln`.
 - [ ] Implement the WPF color picker dialog, the inline multiple-discrete color editor, and the reusable `ColorFeatureWizardPage`.
 - [ ] Update `TreeProp`, `PolyLineProp`, setup/draft/summary code, and tests to prove discovery, persistence, and editing behavior.
 
@@ -45,6 +47,9 @@ The first user-visible proof should be in the existing harness flows for `TreePr
 
 - Observation: C# records cannot declare a member named `Clone`.
   Evidence: the first Milestone 1 test run failed with `CS8859`, so the value-object copy helpers were renamed to `DeepClone`.
+
+- Observation: putting a test class under the namespace `PropCentric.Tests.Color` caused unqualified `Color.White` references elsewhere in the test project to bind to the namespace name instead of `System.Drawing.Color`.
+  Evidence: the first Milestone 2 test run failed with many `CS0234` errors such as "`White` does not exist in the namespace `PropCentric.Tests.Color`"; renaming the test namespace resolved it.
 
 ## Decision Log
 
@@ -80,13 +85,25 @@ The first user-visible proof should be in the existing harness flows for `TreePr
   Rationale: the configuration contains nested read-only lists. Explicit cloning keeps props and drafts from sharing the same underlying list instances during wizard edits.
   Date/Author: 2026-05-24 / Codex
 
+- Decision: place the in-memory catalog implementation in `Props.Registry` and register it explicitly in `AddPropSystem`.
+  Rationale: `Props.Registry` already owns system bootstrapping, and putting the implementation there avoids introducing a `Props.Registry -> Props.Runtime` project dependency.
+  Date/Author: 2026-05-24 / Codex
+
+- Decision: treat duplicate discrete-color-set names as case-insensitive matches.
+  Rationale: the requirements say user-defined names must be unique; case-insensitive comparison avoids near-duplicate names such as `RGB` versus `rgb`.
+  Date/Author: 2026-05-24 / Codex
+
 ## Outcomes & Retrospective
 
 Milestone 1 is now complete. The repository has a real color-domain contract layer: `LightType`, `LightColorChannel`, `DiscreteColorSetDefinition`, `FullColorOrderDefinition`, `LightColorConfiguration`, and `IHasColorSettingsDraft` now exist, and `IHasColor` is a real feature contract rather than an empty marker.
 
 The current props and drafts now follow that contract. `TreeProp` and `PolyLineProp` both implement `IHasColor`, both drafts persist `ColorConfiguration`, and the shared light wizard base no longer owns color mode state. The Tree visual-input pipeline also no longer carries an unused color-mode field.
 
-The Milestone 1 validation slice passed: the focused tests for discovery, draft mapping, shared draft-backed page behavior, and tree visual generation all passed, and `dotnet build PropCentric.sln` succeeded. Remaining work is now centered on the catalog service and the reusable Color feature UI rather than on contract migration.
+Milestone 1 validation passed: the focused tests for discovery, draft mapping, shared draft-backed page behavior, and tree visual generation all passed, and `dotnet build PropCentric.sln` succeeded.
+
+Milestone 2 is now also complete. The repository has a shared color catalog contract plus an in-memory implementation that exposes the required predefined discrete color sets and full-color orders, persists custom discrete color sets for the current process, enforces unique names, and is available from DI through `AddPropSystem`.
+
+Milestone 2 validation passed: the focused catalog and discovery tests passed, and `dotnet build PropCentric.sln` succeeded. The remaining work is now concentrated on the actual WPF editing surfaces and the reusable `ColorFeatureWizardPage`.
 
 ## Context and Orientation
 

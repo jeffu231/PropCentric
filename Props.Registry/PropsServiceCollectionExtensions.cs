@@ -71,6 +71,7 @@ public static class PropServiceCollectionExtensions
         services.AddSingleton<IPropFactory, PropFactory>();
         services.AddSingleton<IPropSetupFactory, PropSetupFactory>();
         services.TryAddSingleton<ISegmentCaptureNormalizer, SegmentCaptureNormalizer>();
+        services.TryAddSingleton<IColorConfigurationCatalog, InMemoryColorConfigurationCatalog>();
         
         Console.WriteLine("Singletons added");
         
