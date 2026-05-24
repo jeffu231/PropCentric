@@ -106,9 +106,14 @@
                                     ToolTip="{Binding Name}"
                                     Tag="{Binding}"
                                     Click="PresetButton_OnClick">
-                                <Rectangle Fill="{Binding Color, Converter={StaticResource DrawingColorToBrushConverter}}"
-                                           Stroke="Black"
-                                           StrokeThickness="1" />
+                                <Border Width="36"
+                                        Height="16"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Background="{Binding Color, Converter={StaticResource DrawingColorToBrushConverter}}"
+                                        BorderBrush="Black"
+                                        BorderThickness="1"
+                                        CornerRadius="2" />
                             </Button>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
