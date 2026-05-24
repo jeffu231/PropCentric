@@ -22,7 +22,10 @@ The first user-visible proof should be in the existing harness flows for `TreePr
 - [x] (2026-05-24 12:36 -05:00) Implemented Milestone 2: added `IColorConfigurationCatalog`, added the in-memory `InMemoryColorConfigurationCatalog`, seeded the required predefined discrete color sets and full-color orders, and registered the catalog through `AddPropSystem`.
 - [x] (2026-05-24 12:36 -05:00) Added focused catalog tests for predefined contents, duplicate-name rejection, empty-set rejection, immediate custom-set availability, and DI registration in discovery tests.
 - [x] (2026-05-24 12:36 -05:00) Validated Milestone 2 with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~ColorConfigurationCatalogTests|FullyQualifiedName~PropDiscoveryTests"` and `dotnet build PropCentric.sln`.
-- [ ] Implement the WPF color picker dialog, the inline multiple-discrete color editor, and the reusable `ColorFeatureWizardPage`.
+- [x] (2026-05-24 13:47 -05:00) Implemented Milestone 3: added the reusable color picker dialog view, supporting preset model, and a plain-property Catel view model with RGB/HSV synchronization, spectrum selection, quick swatches, and old/new color previews.
+- [x] (2026-05-24 13:47 -05:00) Added focused picker tests for RGB/HSV conversion, preset selection, spectrum selection, constructor seeding, and range handling.
+- [x] (2026-05-24 13:47 -05:00) Validated Milestone 3 with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~ColorPickerDialogViewModelTests|FullyQualifiedName~ColorConfigurationCatalogTests"` and `dotnet build PropCentric.sln`.
+- [ ] Implement the inline multiple-discrete color editor and the reusable `ColorFeatureWizardPage`.
 - [ ] Update `TreeProp`, `PolyLineProp`, setup/draft/summary code, and tests to prove discovery, persistence, and editing behavior.
 
 ## Surprises & Discoveries
@@ -50,6 +53,12 @@ The first user-visible proof should be in the existing harness flows for `TreePr
 
 - Observation: putting a test class under the namespace `PropCentric.Tests.Color` caused unqualified `Color.White` references elsewhere in the test project to bind to the namespace name instead of `System.Drawing.Color`.
   Evidence: the first Milestone 2 test run failed with many `CS0234` errors such as "`White` does not exist in the namespace `PropCentric.Tests.Color`"; renaming the test namespace resolved it.
+
+- Observation: using Catel's registered-property bag for the picker's primitive channel state produced invalid-cast failures during constructor synchronization.
+  Evidence: the first Milestone 3 test run failed inside `ColorPickerDialogViewModel.SelectColor(...)` while setting `RedProperty`; replacing the picker view model with plain CLR properties plus `RaisePropertyChanged` resolved the issue.
+
+- Observation: namespace segments named `Color` can shadow `System.Drawing.Color` in both production and test code unless aliases or non-conflicting namespaces are used.
+  Evidence: both the picker implementation and the earlier catalog tests required aliasing or namespace renaming to avoid compiler errors where `Color` was interpreted as a namespace.
 
 ## Decision Log
 
@@ -93,6 +102,14 @@ The first user-visible proof should be in the existing harness flows for `TreePr
   Rationale: the requirements say user-defined names must be unique; case-insensitive comparison avoids near-duplicate names such as `RGB` versus `rgb`.
   Date/Author: 2026-05-24 / Codex
 
+- Decision: implement the picker view model with plain CLR properties instead of Catel registered properties.
+  Rationale: the picker mostly manages tightly-coupled transient numeric state and color conversion logic. Plain properties made synchronization and testing simpler and avoided the property-bag casting issues seen in the first implementation.
+  Date/Author: 2026-05-24 / Codex
+
+- Decision: keep hue normalization wrap-around behavior, so negative hue values map into the `[0, 359]` range rather than clamping directly to zero.
+  Rationale: hue represents an angle on a circular color wheel, so wrap-around semantics are more correct than hard clamping.
+  Date/Author: 2026-05-24 / Codex
+
 ## Outcomes & Retrospective
 
 Milestone 1 is now complete. The repository has a real color-domain contract layer: `LightType`, `LightColorChannel`, `DiscreteColorSetDefinition`, `FullColorOrderDefinition`, `LightColorConfiguration`, and `IHasColorSettingsDraft` now exist, and `IHasColor` is a real feature contract rather than an empty marker.
@@ -104,6 +121,10 @@ Milestone 1 validation passed: the focused tests for discovery, draft mapping, s
 Milestone 2 is now also complete. The repository has a shared color catalog contract plus an in-memory implementation that exposes the required predefined discrete color sets and full-color orders, persists custom discrete color sets for the current process, enforces unique names, and is available from DI through `AddPropSystem`.
 
 Milestone 2 validation passed: the focused catalog and discovery tests passed, and `dotnet build PropCentric.sln` succeeded. The remaining work is now concentrated on the actual WPF editing surfaces and the reusable `ColorFeatureWizardPage`.
+
+Milestone 3 is now complete. The repository has a reusable color picker dialog under `Props.Runtime/Wizards/Features/Color` with RGB and HSV numeric editing, synchronized conversions, clickable preset swatches, spectrum-driven hue/saturation selection, and old-versus-new preview panes.
+
+Milestone 3 validation passed: the focused picker and catalog tests passed, and `dotnet build PropCentric.sln` succeeded. The remaining work is now centered on wiring this picker into the actual reusable `ColorFeatureWizardPage` and the inline multiple-discrete color-set editor.
 
 ## Context and Orientation
 
