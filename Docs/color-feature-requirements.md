@@ -54,11 +54,16 @@ part of the unimplemented IHasColor feature interface.
 
 - The feature wizard page will provide the user with the ability to choose the light type. This should be a combo box entry
   that provides the 3 choices.
+- The feature wizard page is a reusable feature page, not a prop-specific geometry page. It should behave like the Dimming
+  feature wizard page rather than like the Tree or PolyLine prop pages. Specifically, it should not host the prop preview
+  viewer or any OpenTK drawing surface of its own.
 - Based on the selection of Light Type, a dynamic section will provide the user with the ability to configure the light type options.
   - Single Color: Shows the Color Picker control for the user to define a single color.
   - Multiple Discrete Colors: 
     
   - Full Color
+- Only the configuration controls for the currently selected Light Type should be visible at one time. The inactive mode
+  sections should not remain visible in the layout.
 - The wizard page will behave like other feature wizards and provide summary information for the configration.
 - The wizard page will have full navigation like other feature wizards to go to the previous or next step, or cancel. 
 
@@ -74,6 +79,10 @@ part of the unimplemented IHasColor feature interface.
 - Below the above controls, will be a row of predefined colors. White, Red, Green, and Blue will be retangle boxes to click with the 
   rectangle being the color. Clicking will update the upper controls to have the correct HSV, RGB and spectrum point to 
   reflect the choosen color.
+- The predefined color boxes must visibly render their swatch colors in the picker UI so the user can identify them
+  without relying on the tooltip or label text alone.
+- Any single-color preview surface shown on the color feature wizard page must render the current selected color and update
+  immediately after the color picker accepts a new value.
 - A box at the bottom left will be a rectangle divided into an equal top and bottom half that shows the starting color
   as the background with the hex value of the starting color. The bottom half will be the same for the newly editing color so the user
   can see the old and the new color.
@@ -100,3 +109,7 @@ part of the unimplemented IHasColor feature interface.
 An example dialog for the Multiple Discrete Colors can be found in the ColorSetsSetupForm found here.  
 [Vixen Color Set Form](https://github.com/VixenLights/Vixen/blob/feature/VIX-3693/src/Vixen.Modules/Property/Color)
 Use this as the basis for the inline controls on the wizard when the multiple discrete colors is selected.
+
+Revision note: updated on 2026-05-24 to clarify that the reusable Color feature page must not host its own prop preview,
+that only the active Light Type section should be visible at a time, and that both the quick-pick swatches and single-color
+preview surface must visibly render and live-update their colors.

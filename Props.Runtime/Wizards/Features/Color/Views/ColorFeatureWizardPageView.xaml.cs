@@ -1,5 +1,4 @@
 using System.Windows;
-using Props.Runtime.Wizards.Core.Views;
 using Props.Runtime.Wizards.Features.Color.Pages;
 using Props.Runtime.Wizards.Features.Color.ViewModels;
 
@@ -8,14 +7,11 @@ namespace Props.Runtime.Wizards.Features.Color.Views;
 /// <summary>
 /// Code-behind for the reusable color feature wizard page.
 /// </summary>
-public partial class ColorFeatureWizardPageView : WizardPageViewBase
+public partial class ColorFeatureWizardPageView
 {
     public ColorFeatureWizardPageView()
     {
         InitializeComponent();
-
-        OpenTkCntrl = OpenTkControl;
-        Initialize();
     }
 
     private void PickSingleColorButton_OnClick(object sender, RoutedEventArgs e)
