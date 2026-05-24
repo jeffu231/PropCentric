@@ -25,7 +25,9 @@ The first user-visible proof should be in the existing harness flows for `TreePr
 - [x] (2026-05-24 13:47 -05:00) Implemented Milestone 3: added the reusable color picker dialog view, supporting preset model, and a plain-property Catel view model with RGB/HSV synchronization, spectrum selection, quick swatches, and old/new color previews.
 - [x] (2026-05-24 13:47 -05:00) Added focused picker tests for RGB/HSV conversion, preset selection, spectrum selection, constructor seeding, and range handling.
 - [x] (2026-05-24 13:47 -05:00) Validated Milestone 3 with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~ColorPickerDialogViewModelTests|FullyQualifiedName~ColorConfigurationCatalogTests"` and `dotnet build PropCentric.sln`.
-- [ ] Implement the inline multiple-discrete color editor and the reusable `ColorFeatureWizardPage`.
+- [x] (2026-05-24 15:02 -05:00) Implemented Milestone 4: added the reusable `ColorFeatureWizardPage`, its graphics-backed view model, WPF view/code-behind, and the inline multiple-discrete color editor wired to the reusable picker dialog.
+- [x] (2026-05-24 15:02 -05:00) Added focused color feature-page tests for draft-backed initialization, single-color updates, full-color selection, custom discrete-set save behavior, and feature-page discovery for Tree and PolyLine.
+- [x] (2026-05-24 15:02 -05:00) Validated Milestone 4 with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~ColorFeatureWizardPageTests|FullyQualifiedName~PropDiscoveryTests|FullyQualifiedName~ColorPickerDialogViewModelTests"` and `dotnet build PropCentric.sln`.
 - [ ] Update `TreeProp`, `PolyLineProp`, setup/draft/summary code, and tests to prove discovery, persistence, and editing behavior.
 
 ## Surprises & Discoveries
@@ -59,6 +61,9 @@ The first user-visible proof should be in the existing harness flows for `TreePr
 
 - Observation: namespace segments named `Color` can shadow `System.Drawing.Color` in both production and test code unless aliases or non-conflicting namespaces are used.
   Evidence: both the picker implementation and the earlier catalog tests required aliasing or namespace renaming to avoid compiler errors where `Color` was interpreted as a namespace.
+
+- Observation: feature-page code under a `...Features.Color...` namespace needs the same aliasing discipline as the picker and tests.
+  Evidence: the first Milestone 4 compile failed in `ColorFeatureWizardPage.cs` and `DrawingColorToBrushConverter.cs` because unqualified `Color` and `Brushes` references bound to the feature namespace or the wrong drawing/media type.
 
 ## Decision Log
 
@@ -110,6 +115,10 @@ The first user-visible proof should be in the existing harness flows for `TreePr
   Rationale: hue represents an angle on a circular color wheel, so wrap-around semantics are more correct than hard clamping.
   Date/Author: 2026-05-24 / Codex
 
+- Decision: keep the Color feature page draft-backed and apply edits immediately as the page state changes, including inline discrete-color edits.
+  Rationale: this matches the repository's shared-draft feature-page pattern, keeps navigation state stable when users move between wizard pages, and makes preview invalidation straightforward.
+  Date/Author: 2026-05-24 / Codex
+
 ## Outcomes & Retrospective
 
 Milestone 1 is now complete. The repository has a real color-domain contract layer: `LightType`, `LightColorChannel`, `DiscreteColorSetDefinition`, `FullColorOrderDefinition`, `LightColorConfiguration`, and `IHasColorSettingsDraft` now exist, and `IHasColor` is a real feature contract rather than an empty marker.
@@ -125,6 +134,10 @@ Milestone 2 validation passed: the focused catalog and discovery tests passed, a
 Milestone 3 is now complete. The repository has a reusable color picker dialog under `Props.Runtime/Wizards/Features/Color` with RGB and HSV numeric editing, synchronized conversions, clickable preset swatches, spectrum-driven hue/saturation selection, and old-versus-new preview panes.
 
 Milestone 3 validation passed: the focused picker and catalog tests passed, and `dotnet build PropCentric.sln` succeeded. The remaining work is now centered on wiring this picker into the actual reusable `ColorFeatureWizardPage` and the inline multiple-discrete color-set editor.
+
+Milestone 4 is now complete. The repository has a reusable `ColorFeatureWizardPage` discovered through the existing feature-page pipeline for props implementing `IHasColor`. The page edits the shared draft directly, switches among single-color, multiple-discrete, and full-color modes, uses the catalog for predefined and custom discrete sets, and invokes the reusable picker dialog for both the single-color and inline discrete-color editing flows.
+
+Milestone 4 validation passed: the focused color feature-page, discovery, and picker tests passed, and `dotnet build PropCentric.sln` succeeded. The remaining work is now the final cleanup slice: removing any remaining legacy color UI/integration gaps and tightening summaries and end-to-end edit-flow coverage.
 
 ## Context and Orientation
 

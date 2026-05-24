@@ -9,6 +9,7 @@ using Props.Runtime.PolyLine.Visuals;
 using Props.Runtime.Tree;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
+using Props.Runtime.Wizards.Features.Color.Pages;
 using Props.Runtime.Wizards.Features.Dimming.Mappers;
 using Props.Runtime.Wizards.Features.Dimming.Pages;
 using Props.Runtime.Wizards.Features.Rotation.Pages;
@@ -112,6 +113,18 @@ public class PropDiscoveryTests
     }
 
     [Fact]
+    public void FeatureWizardPageScanner_ScanRuntimeAssembly_FindsColorWizardRegistration()
+    {
+        IReadOnlyList<FeatureWizardPageDescriptor> registrations =
+            FeatureWizardPageScanner.Scan([typeof(ColorFeatureWizardPage).Assembly]);
+
+        var registration = Assert.Single(registrations, r => r.PageType == typeof(ColorFeatureWizardPage));
+        Assert.Equal(typeof(IHasColor), registration.FeatureInterface);
+        Assert.Null(registration.MapperType);
+        Assert.Equal(130, registration.Priority);
+    }
+
+    [Fact]
     public void ICanAxisRotate_UsesRotationFeatureFlag()
     {
         var attribute = typeof(ICanAxisRotate).GetCustomAttributes(typeof(PropFeatureAttribute), inherit: false)
@@ -141,6 +154,7 @@ public class PropDiscoveryTests
         Assert.NotNull(provider.GetService<IColorConfigurationCatalog>());
         Assert.NotNull(provider.GetService<TreeProp>());
         Assert.NotNull(provider.GetService<TreePropSetup>());
+        Assert.NotNull(provider.GetService<ColorFeatureWizardPage>());
         Assert.NotNull(provider.GetService<RotationFeatureWizardPage>());
     }
 
@@ -163,6 +177,7 @@ public class PropDiscoveryTests
         Assert.NotNull(provider.GetService<IColorConfigurationCatalog>());
         Assert.NotNull(provider.GetService<PolyLineProp>());
         Assert.NotNull(provider.GetService<PolyLinePropSetup>());
+        Assert.NotNull(provider.GetService<ColorFeatureWizardPage>());
         Assert.NotNull(provider.GetService<SegmentsFeatureWizardPage>());
     }
 
@@ -182,7 +197,9 @@ public class PropDiscoveryTests
         var treePages = resolver.GetPagesFor(typeof(TreeProp));
         var polyLinePages = resolver.GetPagesFor(typeof(PolyLineProp));
 
+        Assert.Contains(treePages, page => page.GetType() == typeof(ColorFeatureWizardPage));
         Assert.Contains(treePages, page => page.GetType() == typeof(RotationFeatureWizardPage));
+        Assert.Contains(polyLinePages, page => page.GetType() == typeof(ColorFeatureWizardPage));
         Assert.DoesNotContain(polyLinePages, page => page.GetType() == typeof(RotationFeatureWizardPage));
     }
 }

@@ -1,12 +1,7 @@
-using System.Globalization;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
 using Props.Runtime.Wizards.Features.Color.Models;
 using Props.Runtime.Wizards.Features.Color.ViewModels;
-using DrawingColor = System.Drawing.Color;
-using MediaBrushes = System.Windows.Media.Brushes;
 
 namespace Props.Runtime.Wizards.Features.Color.Views;
 
@@ -74,23 +69,4 @@ public partial class ColorPickerDialogView : Window
         var position = e.GetPosition(SpectrumSurface);
         viewModel.SelectSpectrumPoint(position.X, position.Y, SpectrumSurface.ActualWidth, SpectrumSurface.ActualHeight);
     }
-}
-
-/// <summary>
-/// Converts <see cref="Color"/> values into WPF brushes for binding.
-/// </summary>
-public sealed class DrawingColorToBrushConverter : IValueConverter
-{
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (value is not DrawingColor color)
-        {
-            return MediaBrushes.Transparent;
-        }
-
-        return new SolidColorBrush(System.Windows.Media.Color.FromRgb(color.R, color.G, color.B));
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        => throw new NotSupportedException();
 }

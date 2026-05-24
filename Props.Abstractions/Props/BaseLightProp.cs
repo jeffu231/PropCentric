@@ -425,29 +425,49 @@ namespace Props.Abstractions.Props
 		/// <returns>Returns the <see cref="string"/> summary in HTML format</returns>
 		protected string GetColorSummary()
 		{
-			string summary = "<h2>Light Coloring</h2><body>" +
-			                 $"<b>Light Type:</b> {ColorConfiguration.LightType}<br>";
+			var summary = "<h2>Light Coloring</h2><body>" +
+			              $"<b>Light Type:</b> {GetLightTypeDisplayName(ColorConfiguration.LightType)}<br>";
 
 			switch (ColorConfiguration.LightType)
 			{
 				case LightType.SingleColor:
-					summary += "<b>Single Color:</b><ul style=\"margin-top: 0;\">" +
-					           $"<li>Red is {ColorConfiguration.SingleColor.R}</li>" +
-					           $"<li>Green is {ColorConfiguration.SingleColor.G}</li>" +
-					           $"<li>Blue is {ColorConfiguration.SingleColor.B}</li></ul>";
+					summary += $"<b>Color:</b> {ToHex(ColorConfiguration.SingleColor)} " +
+					           $"(R {ColorConfiguration.SingleColor.R}, G {ColorConfiguration.SingleColor.G}, B {ColorConfiguration.SingleColor.B})";
 					break;
 				case LightType.MultipleDiscreteColors:
-					summary += $"<b>Multiple Colors:</b> {ColorConfiguration.DiscreteColorSet?.Name ?? "None"}";
+					summary += $"<b>Color Set:</b> {ColorConfiguration.DiscreteColorSet?.Name ?? "None"}<br>" +
+					           $"<b>Colors:</b> {FormatDiscreteColorList(ColorConfiguration.DiscreteColorSet)}";
 					break;
 				case LightType.FullColor:
-					summary += $"<b>Full Color Order:</b> {ColorConfiguration.FullColorOrder?.Name ?? "None"}";
+					summary += $"<b>Channel Order:</b> {ColorConfiguration.FullColorOrder?.Name ?? "None"}";
 					break;
 			}
 
-			summary += "</body>";
-
-			return summary;
+			return summary + "</body>";
 		}
+
+		private static string GetLightTypeDisplayName(LightType lightType)
+		{
+			return lightType switch
+			{
+				LightType.SingleColor => "Single color",
+				LightType.MultipleDiscreteColors => "Multiple discrete colors",
+				LightType.FullColor => "Full color",
+				_ => lightType.ToString()
+			};
+		}
+
+		private static string FormatDiscreteColorList(DiscreteColorSetDefinition? colorSet)
+		{
+			if (colorSet is null || colorSet.Colors.Count == 0)
+			{
+				return "None";
+			}
+
+			return string.Join(", ", colorSet.Colors.Select(ToHex));
+		}
+
+		private static string ToHex(Color color) => $"#{color.R:X2}{color.G:X2}{color.B:X2}";
 
 		#endregion
 	}
