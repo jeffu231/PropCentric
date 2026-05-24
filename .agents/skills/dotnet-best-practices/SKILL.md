@@ -103,3 +103,17 @@ C# coding guidelines and best practices. MUST follow these rules. Use when revie
 - Use meaningful names that reflect domain concepts
 - Keep methods focused and cohesive
 - Implement proper disposal patterns for resources
+
+## WPF
+
+- UI Agnosticism: Never use WPF types (e.g., MessageBox, Panel, TextBox) inside the ViewModel. 
+  All UI interactions must go through interfaces or services (e.g., IDialogService).
+- No Code-Behind: Only use XAML and Microsoft.Xaml.Behaviors.Wpf (EventToCommand) to trigger ViewModel logic. 
+  Code-behind must be strictly reserved for View-specific visual setups.
+- One-to-One Binding: Enforce one View-Model per View and rely purely on data binding (e.g., {Binding PropertyName}) 
+  rather than accessing UI elements by their x:Name
+
+## Winforms
+
+- Do not create any new UI using Winforms.
+- Legacy Winforms UI can be maintained.
