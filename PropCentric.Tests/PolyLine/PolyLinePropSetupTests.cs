@@ -12,6 +12,7 @@ using Props.Runtime.PolyLine.Setup;
 using Props.Runtime.PolyLine.Visuals;
 using Props.Runtime.PolyLine.Wizard;
 using Props.Runtime.PolyLine.Wizard.Pages;
+using Props.Runtime.Wizards.Features.Color.Pages;
 using Props.Runtime.Wizards.Features.Segments.Pages;
 
 namespace PropCentric.Tests.PolyLine;
@@ -153,6 +154,42 @@ public class PolyLinePropSetupTests : IDisposable
         });
     }
 
+    [Fact]
+    public async Task EditAsync_ColorPage_RoundTripsFullColorSelectionAcrossReopen()
+    {
+        await RunInStaAsync(async () =>
+        {
+            var catalog = new Props.Registry.InMemoryColorConfigurationCatalog();
+            var wizardService = new TestWizardService(
+                wizard =>
+                {
+                    var colorPage = Assert.IsType<ColorFeatureWizardPage>(wizard.Pages.Single(p => p is ColorFeatureWizardPage));
+                    colorPage.LightType = LightType.FullColor;
+                    colorPage.SelectedFullColorOrder = colorPage.AvailableFullColorOrders.Single(order => order.Name == "GRWB");
+                },
+                wizard =>
+                {
+                    var colorPage = Assert.IsType<ColorFeatureWizardPage>(wizard.Pages.Single(p => p is ColorFeatureWizardPage));
+                    Assert.Equal(LightType.FullColor, colorPage.LightType);
+                    Assert.Equal("GRWB", colorPage.SelectedFullColorOrder?.Name);
+                });
+            RegisterGlobalServices(wizardService);
+
+            var colorPageResolver = new TestFeatureWizardPageResolver([new ColorFeatureWizardPage(catalog)], []);
+            var setup = CreateSetup(wizardService, colorPageResolver);
+            var prop = PolyLineTestData.CreateTreeProp();
+
+            await setup.EditAsync(prop);
+
+            Assert.Equal(LightType.FullColor, prop.ColorConfiguration.LightType);
+            Assert.Equal("GRWB", prop.ColorConfiguration.FullColorOrder?.Name);
+            Assert.Contains("Light Type:</b> Full color", prop.GetSummary());
+            Assert.Contains("Channel Order:</b> GRWB", prop.GetSummary());
+
+            await setup.EditAsync(prop);
+        });
+    }
+
     public void Dispose()
     {
         var serviceLocator = ServiceLocator.Default;
@@ -274,11 +311,16 @@ public class PolyLinePropSetupTests : IDisposable
         }
     }
 
-    private sealed class TestWizardService(Action<IWizard>? onShow = null) : IWizardService
+    private sealed class TestWizardService(params Action<IWizard>[] callbacks) : IWizardService
     {
+        private readonly Queue<Action<IWizard>> _callbacks = new(callbacks);
+
         public Task<UIVisualizerResult> ShowWizardAsync(IWizard wizard)
         {
-            onShow?.Invoke(wizard);
+            if (_callbacks.Count > 0)
+            {
+                _callbacks.Dequeue().Invoke(wizard);
+            }
             return Task.FromResult(new UIVisualizerResult(true, new UIVisualizerContext(), new object()));
         }
     }

@@ -28,7 +28,8 @@ The first user-visible proof should be in the existing harness flows for `TreePr
 - [x] (2026-05-24 15:02 -05:00) Implemented Milestone 4: added the reusable `ColorFeatureWizardPage`, its graphics-backed view model, WPF view/code-behind, and the inline multiple-discrete color editor wired to the reusable picker dialog.
 - [x] (2026-05-24 15:02 -05:00) Added focused color feature-page tests for draft-backed initialization, single-color updates, full-color selection, custom discrete-set save behavior, and feature-page discovery for Tree and PolyLine.
 - [x] (2026-05-24 15:02 -05:00) Validated Milestone 4 with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~ColorFeatureWizardPageTests|FullyQualifiedName~PropDiscoveryTests|FullyQualifiedName~ColorPickerDialogViewModelTests"` and `dotnet build PropCentric.sln`.
-- [ ] Update `TreeProp`, `PolyLineProp`, setup/draft/summary code, and tests to prove discovery, persistence, and editing behavior.
+- [x] (2026-05-24 14:42 -05:00) Implemented Milestone 5: finished color integration cleanup, added setup-wrapper seams needed for non-UI round-trip testing, and added end-to-end Tree and PolyLine color edit/reopen coverage plus summary assertions.
+- [x] (2026-05-24 14:42 -05:00) Validated Milestone 5 with `dotnet test PropCentric.Tests/PropCentric.Tests.csproj --filter "FullyQualifiedName~TreePropSetupTests|FullyQualifiedName~PolyLinePropSetupTests|FullyQualifiedName~ColorFeatureWizardPageTests|FullyQualifiedName~PropDiscoveryTests"`, `dotnet test PropCentric.Tests/PropCentric.Tests.csproj`, and `dotnet build PropCentric.sln`.
 
 ## Surprises & Discoveries
 
@@ -64,6 +65,9 @@ The first user-visible proof should be in the existing harness flows for `TreePr
 
 - Observation: feature-page code under a `...Features.Color...` namespace needs the same aliasing discipline as the picker and tests.
   Evidence: the first Milestone 4 compile failed in `ColorFeatureWizardPage.cs` and `DrawingColorToBrushConverter.cs` because unqualified `Color` and `Brushes` references bound to the feature namespace or the wrong drawing/media type.
+
+- Observation: `TreePropSetup` was harder to test than `PolyLinePropSetup` because it directly created and presented the real WPF wizard, which immediately initialized the OpenTK preview control.
+  Evidence: the first Milestone 5 Tree round-trip test failed with `GLFW can only be called from the main thread!` while `TreePropWizardPageView` was being constructed from the real wizard window.
 
 ## Decision Log
 
@@ -119,6 +123,10 @@ The first user-visible proof should be in the existing harness flows for `TreePr
   Rationale: this matches the repository's shared-draft feature-page pattern, keeps navigation state stable when users move between wizard pages, and makes preview invalidation straightforward.
   Date/Author: 2026-05-24 / Codex
 
+- Decision: add the same optional wizard-factory and wizard-presenter seams to `TreePropSetup` that `PolyLinePropSetup` already used for testing.
+  Rationale: the setup wrapper still owns the real production flow by default, but the seams let tests validate create/edit round trips without constructing a live WPF window or OpenTK surface.
+  Date/Author: 2026-05-24 / Codex
+
 ## Outcomes & Retrospective
 
 Milestone 1 is now complete. The repository has a real color-domain contract layer: `LightType`, `LightColorChannel`, `DiscreteColorSetDefinition`, `FullColorOrderDefinition`, `LightColorConfiguration`, and `IHasColorSettingsDraft` now exist, and `IHasColor` is a real feature contract rather than an empty marker.
@@ -138,6 +146,10 @@ Milestone 3 validation passed: the focused picker and catalog tests passed, and 
 Milestone 4 is now complete. The repository has a reusable `ColorFeatureWizardPage` discovered through the existing feature-page pipeline for props implementing `IHasColor`. The page edits the shared draft directly, switches among single-color, multiple-discrete, and full-color modes, uses the catalog for predefined and custom discrete sets, and invokes the reusable picker dialog for both the single-color and inline discrete-color editing flows.
 
 Milestone 4 validation passed: the focused color feature-page, discovery, and picker tests passed, and `dotnet build PropCentric.sln` succeeded. The remaining work is now the final cleanup slice: removing any remaining legacy color UI/integration gaps and tightening summaries and end-to-end edit-flow coverage.
+
+Milestone 5 is now complete. Tree and PolyLine both have setup/edit tests that drive the reusable `ColorFeatureWizardPage`, confirm saved selections are applied back onto the prop, and confirm the same selections appear again when the prop is reopened for edit. The tests also assert the prop summaries now describe the selected color mode using the new `LightColorConfiguration` model.
+
+Milestone 5 validation passed: the focused setup/discovery/color tests passed, the full `PropCentric.Tests` suite passed with 79 tests, and `dotnet build PropCentric.sln` succeeded. The only remaining acceptance item is the manual harness check described below if a human wants to verify the WPF flow interactively.
 
 ## Context and Orientation
 
@@ -403,3 +415,4 @@ In `Props.Runtime/Wizards/Features/Color/Views`, define:
 Keep the UI stack on Catel MVVM and WPF. Keep discovery automatic through the existing startup scanning in `Props.Registry`. Avoid adding prop-specific DI bootstrap methods; the solution already has the right registration pattern for reusable feature infrastructure.
 
 Revision note: created this ExecPlan on 2026-05-24 because `Docs/color-feature-requirements.md` describes a significant feature migration, not a small isolated change, and the repository requires an ExecPlan for this scale of work.
+Revision note: updated this ExecPlan on 2026-05-24 after Milestone 5 implementation to record the added `TreePropSetup` test seams, the OpenTK/GLFW discovery, the completed round-trip coverage, and the final validation results.
