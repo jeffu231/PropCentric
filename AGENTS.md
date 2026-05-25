@@ -251,3 +251,21 @@ Current concrete polyline examples:
 # ExecPlans
 
 When writing complex features or significant refactors, use an ExecPlan (as described in .agents/PLANS.md) from design to implementation.
+
+# Skills
+
+Project-specific skills live under `.agents/skills/`. Always read the skill file from that directory before applying it — project versions contain extra rules and output conventions not present in system-level skill definitions.
+
+Available skills:
+
+| Skill | Path | When to use |
+|---|---|---|
+| `csharp-docs` | `.agents/skills/csharp-docs/SKILL.md` | Adding or modifying any public or protected C# API |
+| `csharp-async` | `.agents/skills/csharp-async/SKILL.md` | Writing or reviewing async/await C# code |
+| `dotnet-best-practices` | `.agents/skills/dotnet-best-practices/SKILL.md` | Reviewing or writing any C# code |
+| `dotnet-design-pattern-review` | `.agents/skills/dotnet-design-pattern-review/SKILL.md` | Reviewing interfaces, types, or architecture proposals |
+| `catel-mvvm` | `.agents/skills/catel-mvvm/SKILL.md` | Writing or reviewing WPF ViewModels, Views, or commands |
+| `commit-msg` | `.agents/skills/commit-msg/SKILL.md` | Composing git commit messages |
+| `summarize-changes` | `.agents/skills/summarize-changes/SKILL.md` | Summarizing a changeset or PR |
+
+Task documents that say "use the X skill" always refer to the project version at `.agents/skills/X/SKILL.md`.
