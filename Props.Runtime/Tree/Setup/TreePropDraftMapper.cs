@@ -14,6 +14,8 @@ public sealed class TreePropDraftMapper : IPropDraftMapper<TreePropDraft, TreePr
         draft.Strings = prop.Strings;
         draft.NodesPerString = prop.NodesPerString;
         draft.LightSize = prop.LightSize;
+        draft.Brightness = prop.Brightness;
+        draft.Gamma = prop.Gamma;
         draft.ColorConfiguration = prop.ColorConfiguration.DeepClone();
         draft.DegreesCoverage = prop.DegreesCoverage;
         draft.DegreeOffset = prop.DegreeOffset;
@@ -34,6 +36,8 @@ public sealed class TreePropDraftMapper : IPropDraftMapper<TreePropDraft, TreePr
         prop.Strings = draft.Strings;
         prop.NodesPerString = draft.NodesPerString;
         prop.LightSize = draft.LightSize;
+        prop.Brightness = draft.Brightness;
+        prop.Gamma = draft.Gamma;
         prop.ColorConfiguration = draft.ColorConfiguration.DeepClone();
         prop.DegreesCoverage = draft.DegreesCoverage;
         prop.DegreeOffset = draft.DegreeOffset;

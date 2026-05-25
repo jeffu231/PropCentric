@@ -26,6 +26,8 @@ public class TreeDraftMappingTests
         Assert.Equal(prop.Strings, draft.Strings);
         Assert.Equal(prop.NodesPerString, draft.NodesPerString);
         Assert.Equal(prop.LightSize, draft.LightSize);
+        Assert.Equal(prop.Brightness, draft.Brightness);
+        Assert.Equal(prop.Gamma, draft.Gamma);
         AssertColorConfigurationsEqual(prop.ColorConfiguration, draft.ColorConfiguration);
         Assert.Equal(prop.DegreesCoverage, draft.DegreesCoverage);
         Assert.Equal(prop.DegreeOffset, draft.DegreeOffset);
@@ -52,6 +54,8 @@ public class TreeDraftMappingTests
             Strings = 24,
             NodesPerString = 75,
             LightSize = 3,
+            Brightness = 72.5,
+            Gamma = 1.8,
             ColorConfiguration = new LightColorConfiguration(
                 LightType.SingleColor,
                 Color.Orange,
@@ -78,6 +82,8 @@ public class TreeDraftMappingTests
         Assert.Equal(draft.Strings, prop.Strings);
         Assert.Equal(draft.NodesPerString, prop.NodesPerString);
         Assert.Equal(draft.LightSize, prop.LightSize);
+        Assert.Equal(draft.Brightness, prop.Brightness);
+        Assert.Equal(draft.Gamma, prop.Gamma);
         AssertColorConfigurationsEqual(draft.ColorConfiguration, prop.ColorConfiguration);
         Assert.Equal(draft.DegreesCoverage, prop.DegreesCoverage);
         Assert.Equal(draft.DegreeOffset, prop.DegreeOffset);

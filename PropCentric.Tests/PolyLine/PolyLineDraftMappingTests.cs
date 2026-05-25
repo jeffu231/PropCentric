@@ -21,6 +21,8 @@ public class PolyLineDraftMappingTests
 
         Assert.Equal(prop.Name, draft.Name);
         Assert.Equal(prop.LightSize, draft.LightSize);
+        Assert.Equal(prop.Brightness, draft.Brightness);
+        Assert.Equal(prop.Gamma, draft.Gamma);
         AssertColorConfigurationsEqual(prop.ColorConfiguration, draft.ColorConfiguration);
 
         AssertSegmentsEqual(draft.Segments, prop.Segments);
@@ -37,6 +39,8 @@ public class PolyLineDraftMappingTests
         {
             Name = "PolyLine Draft",
             LightSize = 3,
+            Brightness = 65.5,
+            Gamma = 2.2,
             ColorConfiguration = new LightColorConfiguration(
                 LightType.SingleColor,
                 Color.Cyan,
@@ -51,6 +55,8 @@ public class PolyLineDraftMappingTests
 
         Assert.Equal(draft.Name, prop.Name);
         Assert.Equal(draft.LightSize, prop.LightSize);
+        Assert.Equal(draft.Brightness, prop.Brightness);
+        Assert.Equal(draft.Gamma, prop.Gamma);
         AssertColorConfigurationsEqual(draft.ColorConfiguration, prop.ColorConfiguration);
         AssertSegmentsEqual(draft.Segments, prop.Segments);
     }

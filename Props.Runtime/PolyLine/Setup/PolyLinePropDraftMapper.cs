@@ -13,6 +13,8 @@ public class PolyLinePropDraftMapper : IPropDraftMapper<PolyLinePropDraft, PolyL
     {
         draft.Name = prop.Name;
         draft.LightSize = prop.LightSize;
+        draft.Brightness = prop.Brightness;
+        draft.Gamma = prop.Gamma;
         draft.ColorConfiguration = prop.ColorConfiguration.DeepClone();
         draft.Segments = new ObservableCollection<SegmentDraftState>(
             prop.Segments.Select(x =>
@@ -23,6 +25,8 @@ public class PolyLinePropDraftMapper : IPropDraftMapper<PolyLinePropDraft, PolyL
     {
         prop.Name = draft.Name;
         prop.LightSize = draft.LightSize;
+        prop.Brightness = draft.Brightness;
+        prop.Gamma = draft.Gamma;
         prop.ColorConfiguration = draft.ColorConfiguration.DeepClone();
         prop.ReplaceSegments(draft.Segments.Select(x =>
             new Segment(x.Start, x.End, x.PointCount)).ToImmutableList());

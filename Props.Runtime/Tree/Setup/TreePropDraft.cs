@@ -10,7 +10,7 @@ namespace Props.Runtime.Tree.Setup;
 /// <summary>
 /// Wizard-owned draft that holds user-entered field values for a <see cref="TreeProp"/> during setup.
 /// </summary>
-public sealed class TreePropDraft : IPropDraft, IHasAxisRotationsDraft, IHasColorSettingsDraft, IHasLightSettingsDraft
+public sealed class TreePropDraft : IPropDraft, IHasAxisRotationsDraft, IHasColorSettingsDraft, IHasDimmingSettingsDraft, IHasLightSettingsDraft
 {
     /// <summary>Gets or sets the display name of the prop.</summary>
     public string Name { get; set; } = "Tree 1";
@@ -23,6 +23,12 @@ public sealed class TreePropDraft : IPropDraft, IHasAxisRotationsDraft, IHasColo
 
     /// <summary>Gets or sets the rendered diameter of each light node in pixels.</summary>
     public int LightSize { get; set; } = 2;
+
+    /// <summary>Gets or sets the maximum brightness level for the draft.</summary>
+    public double Brightness { get; set; } = 100;
+
+    /// <summary>Gets or sets the gamma correction factor for the draft.</summary>
+    public double Gamma { get; set; } = 1.0;
 
     /// <summary>Gets or sets the color configuration for the draft.</summary>
     public LightColorConfiguration ColorConfiguration { get; set; } = LightColorConfiguration.CreateDefault();
