@@ -12,6 +12,8 @@ Features can also provide optional setup wizard pages. Every feature wizard page
 
 Feature setup pages are added to a prop's wizard flow when the prop supports the corresponding feature interface.
 
+This is an opt-in composition mechanism, not a requirement. A prop may own and control its entire wizard page flow without using any feature pages if that produces a better setup experience. Feature pages should only be included when they provide real reuse or simplify the prop's setup flow.
+
 ## Requirements
 
 * Each feature can optionally have a setup wizard page that collects information from the user based on the feature interface. `SegmentsFeatureWizardPage` is the live-preview reference example, and `ColorFeatureWizardPage` is the non-viewer reference example.
@@ -20,6 +22,7 @@ Feature setup pages are added to a prop's wizard flow when the prop supports the
 * Each feature wizard page should declare a priority that determines ordering in the prop setup flow. Higher priority pages are inserted first.
 * Each prop setup wrapper should resolve applicable feature pages through the feature-page resolver and insert them before the summary page.
 * Each prop should be able to use the same universal feature-page resolution and insertion path.
+* Props are not required to use that path. A setup wrapper may choose not to include any feature pages, or may include only a subset of the applicable feature pages, when that keeps the prop's wizard flow clearer.
 * Feature wizard pages should implement `IFeatureWizardDraftPage`. The setup wrapper should initialize them once per wizard instance with a shared `FeatureWizardContext`.
 * Preview-driving feature data should live in the shared wizard draft, not in page-owned duplicate copies. This allows a feature page to rebuild the OpenGL preview immediately when the user changes a field.
 * Feature pages that host the viewer should use the same OpenGL drawing engine path as prop-specific pages. The feature page should rebuild preview by calling `IWizardPreviewSession.BuildPreviewAsync(...)`.

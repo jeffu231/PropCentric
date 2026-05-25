@@ -77,6 +77,7 @@ For this POC, that will be assemblies starting with Props.
 * Each Prop should have a setup process that provides for a Wizard flow that can collect information about the Prop from the user.
 * The Prop implementation should provide its core Wizard pages that are specific to the Prop.
 * Features will have Wizard pages that can be used to setup each feature. A Wizard page for a feature is optional.
+* A Prop may own and control its entire wizard page flow. Reusable Feature Wizard pages are optional composition tools and should only be used when they add real value for that Prop's setup experience.
 * Feature Wizard pages will be discoverable alongside the Feature itself and provide some type of registry look them up.
 * Feature Wizard pages should be reusable draft-backed pages that participate in the same setup flow regardless of whether they host the viewer.
 * Wizard pages of any type should not edit or have any awareness of a Prop directly. They should use shared wizard draft state and rely on the prop draft mapper to populate the Prop.

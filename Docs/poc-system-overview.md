@@ -167,6 +167,12 @@ The setup wrapper:
 - applies draft data back into the prop when the wizard is accepted
 - commits the prop
 
+Important composition rule:
+
+- a prop can own its entire wizard page flow if that is the clearest design for that prop
+- reusable feature pages are optional composition helpers, not required architecture
+- a prop should only include feature pages when they add real value compared with keeping the workflow prop-specific
+
 ### Why the wizard does not edit the prop directly
 
 This is a core design pattern in the POC.
@@ -204,6 +210,8 @@ For the polyline example:
 ### Feature-specific pages
 
 These are discovered independently and inserted based on prop feature support.
+
+They are optional. A prop does not need to use feature pages just because it implements a feature interface. If the best user flow is a fully prop-specific wizard, the prop can keep that flow entirely within its own pages and still use the same draft, mapper, preview, and commit architecture.
 
 For example, `DimmingFeatureWizardPage`, `ColorFeatureWizardPage`, `RotationFeatureWizardPage`, and `SegmentsFeatureWizardPage` are discovered through:
 
@@ -477,6 +485,8 @@ Create an `IPropSetup` implementation that:
 - initializes feature pages from the shared `FeatureWizardContext`
 - maps draft data back into the prop
 - commits the prop
+
+The setup wrapper is free to own the whole wizard flow itself. Resolving feature pages is optional and should only be done when reusable feature pages improve the flow for that prop.
 
 ### Step 4: Add the draft type
 
