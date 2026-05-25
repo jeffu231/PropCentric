@@ -71,14 +71,16 @@ public sealed class RotationFeatureWizardPage : WizardPageBase, IFeatureWizardDr
 
     public IWizardPreviewSession? PreviewSession { get; private set; }
 
-    public void Initialize(IPropDraft draft, IWizardPreviewSession previewSession)
+    public void Initialize(FeatureWizardContext context)
     {
-        if (draft is not IHasAxisRotationsDraft rotationsDraft)
+        ArgumentNullException.ThrowIfNull(context);
+
+        if (context.Draft is not IHasAxisRotationsDraft rotationsDraft)
         {
-            throw new InvalidOperationException($"Draft {draft.GetType()} does not implement {nameof(IHasAxisRotationsDraft)}.");
+            throw new InvalidOperationException($"Draft {context.Draft.GetType()} does not implement {nameof(IHasAxisRotationsDraft)}.");
         }
 
-        PreviewSession = previewSession;
+        PreviewSession = context.PreviewSession;
         Rotations = new ObservableCollection<RotationFeatureWizardItem>(
             rotationsDraft.AxisRotations.Select(rotation => new RotationFeatureWizardItem(rotation)));
         RefreshSummary();

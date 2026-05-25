@@ -71,9 +71,10 @@ public sealed class TreePropSetup : IPropSetup
         var draft = new TreePropDraft();
         _draftMapper.PopulateDraft(draft, treeProp);
         var previewSession = new WizardPreviewSession<TreePropDraft>(draft, _previewCoordinator);
+        var featureWizardContext = new FeatureWizardContext(draft, previewSession);
 
         var featurePages = _featurePageResolver.GetPagesFor(typeof(TreeProp));
-        _featurePageResolver.InitializePages(featurePages, draft, previewSession);
+        _featurePageResolver.InitializePages(featurePages, featureWizardContext);
         var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var treeWizard = _wizardFactory(draft, featurePages);
 
@@ -94,9 +95,10 @@ public sealed class TreePropSetup : IPropSetup
         var draft = new TreePropDraft();
         _draftMapper.PopulateDraft(draft, treeProp);
         var previewSession = new WizardPreviewSession<TreePropDraft>(draft, _previewCoordinator);
+        var featureWizardContext = new FeatureWizardContext(draft, previewSession);
 
         var featurePages = _featurePageResolver.GetPagesFor(typeof(TreeProp));
-        _featurePageResolver.InitializePages(featurePages, draft, previewSession);
+        _featurePageResolver.InitializePages(featurePages, featureWizardContext);
         var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var treeWizard = _wizardFactory(draft, featurePages);
 

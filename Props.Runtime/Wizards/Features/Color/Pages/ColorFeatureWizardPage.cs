@@ -217,14 +217,16 @@ public sealed class ColorFeatureWizardPage : WizardPageBase, IFeatureWizardDraft
 
     public bool IsFullColorMode => LightType == LightType.FullColor;
 
-    public void Initialize(IPropDraft draft, IWizardPreviewSession previewSession)
+    public void Initialize(FeatureWizardContext context)
     {
-        if (draft is not IHasColorSettingsDraft colorDraft)
+        ArgumentNullException.ThrowIfNull(context);
+
+        if (context.Draft is not IHasColorSettingsDraft colorDraft)
         {
-            throw new InvalidOperationException($"Draft {draft.GetType()} does not implement {nameof(IHasColorSettingsDraft)}.");
+            throw new InvalidOperationException($"Draft {context.Draft.GetType()} does not implement {nameof(IHasColorSettingsDraft)}.");
         }
 
-        PreviewSession = previewSession;
+        PreviewSession = context.PreviewSession;
         _draft = colorDraft;
 
         AvailableDiscreteColorSets = new ObservableCollection<DiscreteColorSetDefinition>(

@@ -144,7 +144,7 @@ public class ColorFeatureWizardPageViewModelTests
         };
 
         var page = new ColorFeatureWizardPage(new InMemoryColorConfigurationCatalog());
-        page.Initialize(draft, new TestPreviewSession(draft));
+        page.Initialize(new FeatureWizardContext(draft, new TestPreviewSession(draft)));
         return page;
     }
 

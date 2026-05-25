@@ -274,11 +274,11 @@ public class PolyLinePropSetupTests : IDisposable
 
         public IReadOnlyList<IFeatureWizardDataMapper> GetMappersFor(IReadOnlyList<IWizardPage> requestedPages) => mappers;
 
-        public void InitializePages(IReadOnlyList<IWizardPage> requestedPages, IPropDraft draft, IWizardPreviewSession previewSession)
+        public void InitializePages(IReadOnlyList<IWizardPage> requestedPages, FeatureWizardContext context)
         {
             foreach (var page in requestedPages.OfType<IFeatureWizardDraftPage>())
             {
-                page.Initialize(draft, previewSession);
+                page.Initialize(context);
             }
         }
     }
@@ -289,10 +289,10 @@ public class PolyLinePropSetupTests : IDisposable
 
         public IWizardPreviewSession? PreviewSession { get; private set; }
 
-        public void Initialize(IPropDraft draft, IWizardPreviewSession previewSession)
+        public void Initialize(FeatureWizardContext context)
         {
-            InitializedDraft = draft;
-            PreviewSession = previewSession;
+            InitializedDraft = context.Draft;
+            PreviewSession = context.PreviewSession;
         }
     }
 

@@ -22,7 +22,7 @@ public class ColorFeatureWizardPageTests
         var page = new ColorFeatureWizardPage(catalog);
         var previewSession = new TestPreviewSession(draft);
 
-        page.Initialize(draft, previewSession);
+        page.Initialize(new FeatureWizardContext(draft, previewSession));
 
         Assert.Same(previewSession, page.PreviewSession);
         Assert.Equal(LightType.MultipleDiscreteColors, page.LightType);
@@ -42,7 +42,7 @@ public class ColorFeatureWizardPageTests
             draft.ColorConfiguration.FullColorOrder);
 
         var page = new ColorFeatureWizardPage(new InMemoryColorConfigurationCatalog());
-        page.Initialize(draft, new TestPreviewSession(draft));
+        page.Initialize(new FeatureWizardContext(draft, new TestPreviewSession(draft)));
 
         page.SetSingleColor(Color.Cyan);
 
@@ -56,7 +56,7 @@ public class ColorFeatureWizardPageTests
         var draft = CreateDraft();
         var catalog = new InMemoryColorConfigurationCatalog();
         var page = new ColorFeatureWizardPage(catalog);
-        page.Initialize(draft, new TestPreviewSession(draft));
+        page.Initialize(new FeatureWizardContext(draft, new TestPreviewSession(draft)));
 
         page.LightType = LightType.MultipleDiscreteColors;
         page.NewDiscreteColorSetName = "Sunset";
@@ -75,7 +75,7 @@ public class ColorFeatureWizardPageTests
     {
         var draft = CreateDraft();
         var page = new ColorFeatureWizardPage(new InMemoryColorConfigurationCatalog());
-        page.Initialize(draft, new TestPreviewSession(draft));
+        page.Initialize(new FeatureWizardContext(draft, new TestPreviewSession(draft)));
 
         page.LightType = LightType.FullColor;
         page.SelectedFullColorOrder = page.AvailableFullColorOrders.Single(order => order.Name == "GRWB");

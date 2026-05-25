@@ -1,3 +1,4 @@
+using Props.Abstractions.Features;
 using System.Collections.ObjectModel;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Visuals;
@@ -19,7 +20,7 @@ public class RotationFeatureWizardPageTests
         var previewSession = new TestPreviewSession(draft);
         var page = new RotationFeatureWizardPage();
 
-        page.Initialize(draft, previewSession);
+        page.Initialize(new FeatureWizardContext(draft, previewSession));
 
         Assert.Same(previewSession, page.PreviewSession);
         Assert.Equal(draft.AxisRotations.Count, page.Rotations.Count);
@@ -34,7 +35,7 @@ public class RotationFeatureWizardPageTests
         var draft = CreateDraft();
         var page = new RotationFeatureWizardPage();
 
-        page.Initialize(draft, new TestPreviewSession(draft));
+        page.Initialize(new FeatureWizardContext(draft, new TestPreviewSession(draft)));
         page.Rotations[0].RotationAngle = 42;
         page.Rotations[1].Axis = "Z";
 

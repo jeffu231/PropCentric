@@ -1,6 +1,4 @@
 using Orc.Wizard;
-using Props.Abstractions.Setup;
-using Props.Abstractions.Visuals;
 
 namespace Props.Abstractions.Features;
 
@@ -34,7 +32,6 @@ public interface IFeatureWizardPageResolver
     /// Initializes any feature pages that opt into shared-draft behavior for the current wizard instance.
     /// </summary>
     /// <param name="pages">The resolved feature pages to initialize.</param>
-    /// <param name="draft">The shared draft for the current wizard flow.</param>
-    /// <param name="previewSession">The shared preview session for the current wizard flow.</param>
-    void InitializePages(IReadOnlyList<IWizardPage> pages, IPropDraft draft, IWizardPreviewSession previewSession);
+    /// <param name="context">The shared wizard context for the current wizard flow.</param>
+    void InitializePages(IReadOnlyList<IWizardPage> pages, FeatureWizardContext context);
 }

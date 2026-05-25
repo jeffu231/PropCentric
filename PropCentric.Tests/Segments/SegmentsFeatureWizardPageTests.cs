@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using PropCentric.Tests.PolyLine;
+using Props.Abstractions.Features;
 using Props.Abstractions.PropVisualModels;
 using Props.Abstractions.Setup.Drafts;
 using Props.Abstractions.Visuals;
@@ -21,7 +22,7 @@ public class SegmentsFeatureWizardPageTests
         var previewSession = new TestPreviewSession(draft);
         var page = new SegmentsFeatureWizardPage();
 
-        page.Initialize(draft, previewSession);
+        page.Initialize(new FeatureWizardContext(draft, previewSession));
 
         Assert.Same(previewSession, page.PreviewSession);
         Assert.Equal(draft.Segments.Count, page.Segments.Count);
@@ -36,7 +37,7 @@ public class SegmentsFeatureWizardPageTests
         var draft = CreateDraft();
         var page = new SegmentsFeatureWizardPage();
 
-        page.Initialize(draft, new TestPreviewSession(draft));
+        page.Initialize(new FeatureWizardContext(draft, new TestPreviewSession(draft)));
         page.Segments[0].PointCount = 12;
         page.Segments[1].PointCount = 34;
 

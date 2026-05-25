@@ -69,14 +69,16 @@ public sealed class SegmentsFeatureWizardPage : WizardPageBase, IFeatureWizardDr
 
     public IWizardPreviewSession? PreviewSession { get; private set; }
 
-    public void Initialize(IPropDraft draft, IWizardPreviewSession previewSession)
+    public void Initialize(FeatureWizardContext context)
     {
-        if (draft is not IHasSegmentsDraft segmentsDraft)
+        ArgumentNullException.ThrowIfNull(context);
+
+        if (context.Draft is not IHasSegmentsDraft segmentsDraft)
         {
-            throw new InvalidOperationException($"Draft {draft.GetType()} does not implement {nameof(IHasSegmentsDraft)}.");
+            throw new InvalidOperationException($"Draft {context.Draft.GetType()} does not implement {nameof(IHasSegmentsDraft)}.");
         }
 
-        PreviewSession = previewSession;
+        PreviewSession = context.PreviewSession;
         Segments = new ObservableCollection<SegmentFeatureWizardItem>(
             segmentsDraft.Segments.Select(segment => new SegmentFeatureWizardItem(segment)));
         RefreshTotals();

@@ -77,9 +77,10 @@ public sealed class PolyLinePropSetup : IPropSetup
         var draft = new PolyLinePropDraft();
         _draftMapper.PopulateDraft(draft, polyLineProp);
         var previewSession = new WizardPreviewSession<PolyLinePropDraft>(draft, _previewCoordinator);
+        var featureWizardContext = new FeatureWizardContext(draft, previewSession);
 
         var featurePages = _featurePageResolver.GetPagesFor(typeof(PolyLineProp));
-        _featurePageResolver.InitializePages(featurePages, draft, previewSession);
+        _featurePageResolver.InitializePages(featurePages, featureWizardContext);
         var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var wizard = _wizardFactory(draft, featurePages);
 
@@ -104,9 +105,10 @@ public sealed class PolyLinePropSetup : IPropSetup
         var draft = new PolyLinePropDraft();
         _draftMapper.PopulateDraft(draft, polyLineProp);
         var previewSession = new WizardPreviewSession<PolyLinePropDraft>(draft, _previewCoordinator);
+        var featureWizardContext = new FeatureWizardContext(draft, previewSession);
 
         var featurePages = _featurePageResolver.GetPagesFor(typeof(PolyLineProp));
-        _featurePageResolver.InitializePages(featurePages, draft, previewSession);
+        _featurePageResolver.InitializePages(featurePages, featureWizardContext);
         var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var wizard = _wizardFactory(draft, featurePages);
 
