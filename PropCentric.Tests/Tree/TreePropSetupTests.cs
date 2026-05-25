@@ -12,6 +12,7 @@ using Props.Runtime.Tree;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
 using Props.Runtime.Wizards.Features.Color.Pages;
+using Props.Runtime.Wizards.Features.Dimming.Pages;
 
 namespace PropCentric.Tests.Tree;
 
@@ -89,6 +90,59 @@ public class TreePropSetupTests : IDisposable
             Assert.Contains("Light Type:</b> Multiple discrete colors", prop.GetSummary());
             Assert.Contains("Color Set:</b> Holiday", prop.GetSummary());
             Assert.Contains("#FF0000, #00FF00, #0000FF, #FFFFFF", prop.GetSummary());
+
+            await setup.EditAsync(prop);
+        });
+    }
+
+    [Fact]
+    public async Task EditAsync_DimmingPage_RoundTripsDraftBackedDimmingAcrossReopen()
+    {
+        await RunInStaAsync(async () =>
+        {
+            var wizardService = new SequencedWizardService(
+                wizard =>
+                {
+                    var dimmingPage = Assert.IsType<DimmingFeatureWizardPage>(wizard.Pages.Single(page => page is DimmingFeatureWizardPage));
+                    dimmingPage.Brightness = 63;
+                    dimmingPage.Gamma = 2.1;
+                },
+                wizard =>
+                {
+                    var dimmingPage = Assert.IsType<DimmingFeatureWizardPage>(wizard.Pages.Single(page => page is DimmingFeatureWizardPage));
+                    Assert.Equal(63, dimmingPage.Brightness);
+                    Assert.Equal(2.1, dimmingPage.Gamma);
+                });
+
+            RegisterGlobalServices(wizardService);
+
+            var setup = new TreePropSetup(
+                new TestFeatureWizardPageResolver(() => [new DimmingFeatureWizardPage()]),
+                new TestPropFactory(),
+                new TreePropDraftMapper(),
+                new TreeWizardPreviewCoordinator(new TreeDraftToVisualInputMapper(), new TreeVisualModelBuilder()),
+                (draft, featurePages) =>
+                {
+                    var previewCoordinator = new TreeWizardPreviewCoordinator(new TreeDraftToVisualInputMapper(), new TreeVisualModelBuilder());
+                    var messageService = new TestMessageService();
+                    var wizard = new Props.Runtime.Tree.Wizard.TreePropWizard(
+                        TypeFactory.Default,
+                        messageService,
+                        new Props.Runtime.Tree.Wizard.Pages.TreePropWizardPage(draft, previewCoordinator));
+                    foreach (var page in featurePages)
+                    {
+                        wizard.AddPage(page);
+                    }
+
+                    return wizard;
+                },
+                async wizard => (await wizardService.ShowWizardAsync(wizard)).DialogResult);
+            var prop = TreeTestData.CreateTreeProp();
+
+            await setup.EditAsync(prop);
+
+            Assert.Equal(63, prop.Brightness);
+            Assert.Equal(2.1, prop.Gamma);
 
             await setup.EditAsync(prop);
         });

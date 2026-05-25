@@ -13,6 +13,7 @@ using Props.Runtime.PolyLine.Visuals;
 using Props.Runtime.PolyLine.Wizard;
 using Props.Runtime.PolyLine.Wizard.Pages;
 using Props.Runtime.Wizards.Features.Color.Pages;
+using Props.Runtime.Wizards.Features.Dimming.Pages;
 using Props.Runtime.Wizards.Features.Segments.Pages;
 
 namespace PropCentric.Tests.PolyLine;
@@ -185,6 +186,39 @@ public class PolyLinePropSetupTests : IDisposable
             Assert.Equal("GRWB", prop.ColorConfiguration.FullColorOrder?.Name);
             Assert.Contains("Light Type:</b> Full color", prop.GetSummary());
             Assert.Contains("Channel Order:</b> GRWB", prop.GetSummary());
+
+            await setup.EditAsync(prop);
+        });
+    }
+
+    [Fact]
+    public async Task EditAsync_DimmingPage_RoundTripsDraftBackedDimmingAcrossReopen()
+    {
+        await RunInStaAsync(async () =>
+        {
+            var wizardService = new TestWizardService(
+                wizard =>
+                {
+                    var dimmingPage = Assert.IsType<DimmingFeatureWizardPage>(wizard.Pages.Single(p => p is DimmingFeatureWizardPage));
+                    dimmingPage.Brightness = 58;
+                    dimmingPage.Gamma = 1.7;
+                },
+                wizard =>
+                {
+                    var dimmingPage = Assert.IsType<DimmingFeatureWizardPage>(wizard.Pages.Single(p => p is DimmingFeatureWizardPage));
+                    Assert.Equal(58, dimmingPage.Brightness);
+                    Assert.Equal(1.7, dimmingPage.Gamma);
+                });
+            RegisterGlobalServices(wizardService);
+
+            var dimmingPageResolver = new TestFeatureWizardPageResolver([new DimmingFeatureWizardPage()], []);
+            var setup = CreateSetup(wizardService, dimmingPageResolver);
+            var prop = PolyLineTestData.CreateTreeProp();
+
+            await setup.EditAsync(prop);
+
+            Assert.Equal(58, prop.Brightness);
+            Assert.Equal(1.7, prop.Gamma);
 
             await setup.EditAsync(prop);
         });

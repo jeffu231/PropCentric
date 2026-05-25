@@ -10,7 +10,6 @@ using Props.Runtime.Tree;
 using Props.Runtime.Tree.Setup;
 using Props.Runtime.Tree.Visuals;
 using Props.Runtime.Wizards.Features.Color.Pages;
-using Props.Runtime.Wizards.Features.Dimming.Mappers;
 using Props.Runtime.Wizards.Features.Dimming.Pages;
 using Props.Runtime.Wizards.Features.Rotation.Pages;
 using Props.Runtime.Wizards.Features.Segments.Pages;
@@ -84,7 +83,7 @@ public class PropDiscoveryTests
 
         var registration = Assert.Single(registrations, r => r.PageType == typeof(DimmingFeatureWizardPage));
         Assert.Equal(typeof(IHasDimming), registration.FeatureInterface);
-        Assert.Equal(typeof(DimmingFeatureWizardDataMapper), registration.MapperType);
+        Assert.Null(registration.MapperType);
         Assert.Equal(100, registration.Priority);
     }
 

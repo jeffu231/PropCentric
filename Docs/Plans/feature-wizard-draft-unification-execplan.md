@@ -17,9 +17,8 @@ The observable architectural result is that `DimmingFeatureWizardPage`, `ColorFe
 - [x] (2026-05-25 10:47-05:00) Chosen the target direction: consolidate all feature pages on shared-draft backing and retire feature data mappers.
 - [x] (2026-05-25 10:47-05:00) Chosen the `FeatureWizardContext` object as the final per-page initialization contract for feature pages.
 - [x] (2026-05-25 13:57-05:00) Implemented `FeatureWizardContext` in `Props.Abstractions`, updated resolver/setup initialization to use it, and migrated Color, Rotation, and Segments pages plus their tests.
-- [ ] Add setup-only draft contracts for dimming and any other remaining mapper-owned feature state.
-- [ ] Migrate `DimmingFeatureWizardPage` to the shared-draft pattern.
-- [ ] Update prop drafts and prop draft mappers so dimming state round-trips through drafts.
+- [x] (2026-05-25 14:18-05:00) Added `IHasDimmingSettingsDraft`, implemented it on Tree and PolyLine drafts, and updated both prop draft mappers plus mapping tests to round-trip brightness and gamma through shared drafts.
+- [x] (2026-05-25 14:15-05:00) Migrated `DimmingFeatureWizardPage` to the shared-draft pattern, removed its mapper declaration, and added focused page, discovery, and setup round-trip tests.
 - [ ] Simplify resolver, discovery metadata, and setup wrappers to remove mapper-specific orchestration.
 - [ ] Update tests to cover the unified pattern and prove mapper support is no longer required.
 - [ ] Run focused and full test validation.
@@ -40,6 +39,12 @@ The observable architectural result is that `DimmingFeatureWizardPage`, `ColorFe
 
 - Observation: introducing the context object was a low-risk first slice because the existing draft-backed pages and test doubles already behaved as if draft and preview session were one wizard-scoped unit.
   Evidence: after replacing the two-parameter initialization calls with `FeatureWizardContext`, the focused test set for Color, Rotation, Segments, Tree setup, and PolyLine setup passed unchanged in behavior.
+
+- Observation: keeping `Brightness` as `double` on the draft preserved the prop-domain shape while still allowing the legacy dimming page UI to remain integer-based during the migration.
+  Evidence: Tree and PolyLine draft-mapping tests now round-trip fractional brightness values through `TreePropDraftMapper` and `PolyLinePropDraftMapper` without loss before the page layer is touched.
+
+- Observation: the dimming page could become draft-backed without any view-model redesign because its existing Catel `ViewModelToModel` bindings only depend on page properties, not on where those properties store canonical state.
+  Evidence: `DimmingFeatureWizardPageViewModel` remained unchanged while new focused tests passed for `DimmingFeatureWizardPage`, `TreePropSetup`, `PolyLinePropSetup`, and discovery after the page switched from mapper-backed state to draft-backed state.
 
 ## Decision Log
 
@@ -65,7 +70,7 @@ The observable architectural result is that `DimmingFeatureWizardPage`, `ColorFe
 
 ## Outcomes & Retrospective
 
-The first implementation slice is complete. The repository now has a stable `FeatureWizardContext` abstraction in `Props.Abstractions`, and the existing draft-backed feature pages use it consistently. This confirms the chosen contract shape before the larger dimming migration and mapper-removal work. The remaining work is to move dimming into the same model and then delete the now-transitional mapper-based orchestration.
+The first two migration slices are complete. The repository now has a stable `FeatureWizardContext` abstraction in `Props.Abstractions`, all current feature pages are draft-backed, and dimming data plus dimming-page editing both flow through shared drafts for Tree and PolyLine. The remaining work is now purely architectural cleanup: remove the unused mapper-oriented abstractions and setup orchestration that no feature pages require anymore.
 
 ## Context and Orientation
 
@@ -91,7 +96,7 @@ The target state is that feature pages use one common backing model across the r
 
 First, implement the chosen feature-page initialization shape. Introduce a wizard-scoped context type, `FeatureWizardContext`, that contains `IPropDraft Draft` and `IWizardPreviewSession PreviewSession`. Update `IFeatureWizardDraftPage` so feature pages initialize from that single object. Then update `IFeatureWizardPageResolver` and `FeatureWizardPageResolver` so resolver initialization also uses the same context object. This establishes the long-term contract before dimming migration begins.
 
-Second, add setup-only draft contracts for dimming under `Props.Abstractions/Setup/Drafts`. The repository already uses narrow setup-only interfaces such as `IHasColorSettingsDraft`, `IHasAxisRotationsDraft`, and `IHasSegmentsDraft`. Dimming should follow the same pattern. A likely shape is `IHasDimmingSettingsDraft` exposing `int Brightness` and `double Gamma`, or `double Brightness` and `double Gamma` if preserving the prop’s normalized type is more important than matching the current page type exactly. Decide this once and keep the same representation across draft, page, and mapper logic.
+Second, add setup-only draft contracts for dimming under `Props.Abstractions/Setup/Drafts`. The repository already uses narrow setup-only interfaces such as `IHasColorSettingsDraft`, `IHasAxisRotationsDraft`, and `IHasSegmentsDraft`. Dimming should follow the same pattern. This repository now chooses `IHasDimmingSettingsDraft` with `double Brightness` and `double Gamma` so draft state preserves the prop-domain representation without lossy round-tripping.
 
 Third, update the concrete drafts and draft mappers. `TreePropDraft` and `PolyLinePropDraft` should implement the new dimming draft contract because those props already support `IHasDimming`. Their prop draft mappers must populate dimming values from the prop into the draft before editing and apply draft values back into the prop after acceptance. This is the key step that moves dimming persistence into the main draft pipeline.
 
@@ -245,4 +250,4 @@ The feature-page resolver should end in a simpler shape:
 
 where the page stores the typed dimming draft reference obtained during initialization and treats it as the canonical backing state.
 
-Revision note: Updated this ExecPlan after implementing the `FeatureWizardContext` first slice. The plan now records that the shared context object has been introduced and validated across the existing draft-backed pages and setup tests, leaving dimming migration as the next major step.
+Revision note: Updated this ExecPlan after migrating `DimmingFeatureWizardPage` to shared draft backing and validating the path with focused page, discovery, and setup tests. The plan now records that mapper-infrastructure removal is the next immediate step.
