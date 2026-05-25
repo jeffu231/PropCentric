@@ -8,8 +8,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Props.Abstractions", "Props
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Props.Runtime", "Props.Runtime\Props.Runtime.csproj", "{AF11D41F-C4CB-405D-AB9F-77B10BD59ECC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Props.Wizards", "Props.Wizards\Props.Wizards.csproj", "{5A5C97B8-2D42-4D41-A850-A1B373BDF8CB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vixen.Shim", "Vixen.Shim\Vixen.Shim.csproj", "{5E497013-07B8-4C48-8ACD-BFB606953A62}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Props.WPFCommon", "Props.WPFCommon\Props.WPFCommon.csproj", "{266A53BF-2105-4360-B060-BE9B53A4B8FB}"
@@ -44,10 +42,6 @@ Global
 		{AF11D41F-C4CB-405D-AB9F-77B10BD59ECC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF11D41F-C4CB-405D-AB9F-77B10BD59ECC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF11D41F-C4CB-405D-AB9F-77B10BD59ECC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5A5C97B8-2D42-4D41-A850-A1B373BDF8CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5A5C97B8-2D42-4D41-A850-A1B373BDF8CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5A5C97B8-2D42-4D41-A850-A1B373BDF8CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5A5C97B8-2D42-4D41-A850-A1B373BDF8CB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5E497013-07B8-4C48-8ACD-BFB606953A62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5E497013-07B8-4C48-8ACD-BFB606953A62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E497013-07B8-4C48-8ACD-BFB606953A62}.Release|Any CPU.ActiveCfg = Release|Any CPU
