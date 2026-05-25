@@ -22,7 +22,7 @@ Feature setup pages are added to a prop's wizard flow when the prop supports the
 * Legacy feature pages may declare a mapper type that can populate page state from the prop before the wizard opens and apply page state back to the prop after the user confirms.
 * Draft-backed feature pages should implement `IFeatureWizardDraftPage`. The setup wrapper should initialize them with the shared `IPropDraft` and `IWizardPreviewSession` for that wizard instance.
 * Preview-driving feature data should live in the shared wizard draft, not in page-owned duplicate copies. This allows a feature page to rebuild the OpenGL preview immediately when the user changes a field.
-* Feature pages that host the viewer should use the same OpenGL drawing engine path as prop-specific pages. The feature page should rebuild preview by calling `IWizardPreviewSession.BuildPreview()`.
+* Feature pages that host the viewer should use the same OpenGL drawing engine path as prop-specific pages. The feature page should rebuild preview by calling `IWizardPreviewSession.BuildPreviewAsync(...)`.
 * `SegmentsFeatureWizardPage` is the reference pattern for a draft-backed live-preview feature page:
   * it targets `IHasSegments`
   * it uses `IHasSegmentsDraft` and `SegmentDraftState`
@@ -34,3 +34,8 @@ Feature setup pages are added to a prop's wizard flow when the prop supports the
   * it edits shared draft `AxisRotations` values directly
   * those `AxisRotations` define baseline setup-time prop orientation only
   * they are not the same thing as runtime motion/state such as pan, tilt, elevation, or other rendered fixture movement
+* `ColorFeatureWizardPage` is the reference pattern for a draft-backed reusable color-settings page:
+  * it targets `IHasColor`
+  * it uses `IHasColorSettingsDraft`
+  * it edits shared `LightColorConfiguration` state directly
+  * it does not host the OpenGL prop preview viewer

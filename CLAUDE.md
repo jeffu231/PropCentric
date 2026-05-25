@@ -33,8 +33,20 @@ Common references:
 
 - `Docs/naming-conventions.md` for type and pipeline naming
 - `Docs/poc-system-overview.md` for the current end-to-end architecture
+- `Docs/feature-wizards-requirements.md` for mapper-backed vs draft-backed feature-page expectations
+- `Docs/color-feature-requirements.md` for reusable color feature behavior and UI constraints
 - `Docs/segmentable-props.md` for segmentable-prop behavior and constraints
 - `Docs/core-design-goals.md` for architecture intent and review criteria
+
+## XML Docs
+
+When modifying any public or protected C# API, update its XML
+documentation in the same change. This includes summary text,
+parameter docs, return docs, remarks, and exception docs when
+behavior changes. Treat stale XML docs as defects, not cleanup.
+
+Use the `csharp-docs` skill for changes that add or modify public
+or protected C# classes, interfaces, methods, properties, or events.
 
 ### Main Projects
 
@@ -83,6 +95,7 @@ Props declare supported capabilities by implementing feature interfaces such as:
 - `IHasDimming`
 - `IHasColor`
 - `IHasSegments`
+- `ICanAxisRotate`
 
 Each feature interface is decorated with `[PropFeature(...)]`. `PropFeatureInferrer` inspects those interfaces and computes the `PropFeatureFlags` for each discovered prop type.
 
@@ -98,6 +111,7 @@ The setup wrapper is responsible for:
 - creating a draft model
 - populating the draft from the prop
 - resolving feature wizard pages
+- initializing any draft-backed feature pages with the shared draft and `IWizardPreviewSession`
 - resolving feature data mappers
 - showing the wizard
 - applying draft and feature data back into the prop
@@ -106,6 +120,7 @@ The setup wrapper is responsible for:
 Wizard pages should not edit props directly.
 
 For `IHasSegments` props, the reusable segments feature page edits `PointCount` values only. It is not a geometry editor.
+For `IHasColor` props, the reusable color feature page edits shared `LightColorConfiguration` draft state and does not host its own OpenGL prop viewer.
 
 ## Draft / Mapping / Visual Pattern
 
@@ -168,7 +183,9 @@ Wizard preview uses an `IWizardPreviewCoordinator<TDraft>` implementation to:
 
 - map the draft to visual input
 - optionally reuse a previously built preview
-- return the visual model used by the drawing engine
+- return the visual model used by the drawing engine via `BuildPreviewAsync(...)`
+
+`IWizardPreviewSession` exposes the shared draft plus async preview rebuilding for a single wizard instance. Prop pages and preview-capable draft-backed feature pages use that shared session instead of prop-specific preview wiring.
 
 Pattern:
 
@@ -227,10 +244,11 @@ Current concrete polyline examples:
 
 - `Docs/naming-conventions.md` is the naming source of truth.
 - `Docs/poc-system-overview.md` is the current architecture overview.
+- `Docs/feature-wizards-requirements.md` captures reusable feature-page expectations.
+- `Docs/color-feature-requirements.md` captures color feature behavior and UI constraints.
 - `Docs/segmentable-props.md` is the source of truth for segmentable-prop design in this POC.
 - `Docs/core-design-goals.md` is the architecture intent document used for reviews.
 
 # ExecPlans
 
 When writing complex features or significant refactors, use an ExecPlan (as described in .agents/PLANS.md) from design to implementation.
-
