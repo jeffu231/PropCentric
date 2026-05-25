@@ -12,7 +12,7 @@ public interface IWizardPreviewSession
     IPropDraft Draft { get; }
 
     /// <summary>Builds the current preview model from the shared draft.</summary>
-    IPropVisualModel BuildPreview();
+    Task<IPropVisualModel> BuildPreviewAsync(CancellationToken cancellationToken = default);
 }
 
 /// <summary>

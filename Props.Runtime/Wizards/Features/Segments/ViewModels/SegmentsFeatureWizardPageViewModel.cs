@@ -15,7 +15,7 @@ public sealed class SegmentsFeatureWizardPageViewModel : GraphicsWizardPageViewM
 {
     public SegmentsFeatureWizardPageViewModel(SegmentsFeatureWizardPage featureWizardPage) : base(featureWizardPage)
     {
-        PreviewBuilder = () => featureWizardPage.PreviewSession?.BuildPreview()
+        PreviewBuilder = cancellationToken => featureWizardPage.PreviewSession?.BuildPreviewAsync(cancellationToken)
             ?? throw new InvalidOperationException("Segments preview session has not been initialized.");
 
         HookSegmentHandlers(featureWizardPage.Segments);

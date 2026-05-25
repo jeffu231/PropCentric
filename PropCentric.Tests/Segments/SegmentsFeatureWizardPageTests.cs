@@ -65,6 +65,7 @@ public class SegmentsFeatureWizardPageTests
 
         Props.Abstractions.Setup.IPropDraft IWizardPreviewSession.Draft => Draft;
 
-        public IPropVisualModel BuildPreview() => new PolyLinePropVisualModel { Elements = [] };
+        public Task<IPropVisualModel> BuildPreviewAsync(CancellationToken cancellationToken = default)
+            => Task.FromResult<IPropVisualModel>(new PolyLinePropVisualModel { Elements = [] });
     }
 }

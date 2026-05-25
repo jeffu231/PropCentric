@@ -104,6 +104,7 @@ public class ColorFeatureWizardPageTests
 
         Props.Abstractions.Setup.IPropDraft IWizardPreviewSession.Draft => Draft;
 
-        public IPropVisualModel BuildPreview() => new TreePropVisualModel { Elements = [] };
+        public Task<IPropVisualModel> BuildPreviewAsync(CancellationToken cancellationToken = default)
+            => Task.FromResult<IPropVisualModel>(new TreePropVisualModel { Elements = [] });
     }
 }

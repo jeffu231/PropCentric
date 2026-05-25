@@ -13,7 +13,7 @@ public sealed class PolyLinePropWizardPageViewModel
 {
     public PolyLinePropWizardPageViewModel(PolyLinePropWizardPage wizardPage) : base(wizardPage)
     {
-        PreviewBuilder = () => wizardPage.Coordinator.BuildPreview(wizardPage.Draft);
+        PreviewBuilder = cancellationToken => wizardPage.Coordinator.BuildPreviewAsync(wizardPage.Draft, cancellationToken);
     }
     
     [ViewModelToModel]

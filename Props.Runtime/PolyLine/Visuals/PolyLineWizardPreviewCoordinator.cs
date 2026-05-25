@@ -12,6 +12,7 @@ public sealed class PolyLineWizardPreviewCoordinator : IWizardPreviewCoordinator
 {
     private readonly IVisualInputMapper<PolyLinePropDraft, PolyLineVisualInput> _mapper;
     private readonly IPropVisualModelBuilder<PolyLineVisualInput, PolyLinePropVisualModel> _builder;
+    private readonly SemaphoreSlim _gate = new(1, 1);
     private PolyLineVisualInput? _lastInput;
     private IPropVisualModel? _lastModel;
 
@@ -27,16 +28,26 @@ public sealed class PolyLineWizardPreviewCoordinator : IWizardPreviewCoordinator
     }
 
     /// <inheritdoc />
-    public IPropVisualModel BuildPreview(PolyLinePropDraft draft)
+    public async Task<IPropVisualModel> BuildPreviewAsync(PolyLinePropDraft draft, CancellationToken cancellationToken = default)
     {
         var input = _mapper.Map(draft);
-        if (input == _lastInput && _lastModel is not null)
-        {
-            return _lastModel;
-        }
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
 
-        _lastInput = input;
-        _lastModel = _builder.Create(input);
-        return _lastModel;
+        try
+        {
+            if (input == _lastInput && _lastModel is not null)
+            {
+                return _lastModel;
+            }
+
+            var model = await Task.Run(() => _builder.Create(input), cancellationToken).ConfigureAwait(false);
+            _lastInput = input;
+            _lastModel = model;
+            return model;
+        }
+        finally
+        {
+            _gate.Release();
+        }
     }
 }

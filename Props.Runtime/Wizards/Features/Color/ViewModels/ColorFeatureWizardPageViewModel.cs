@@ -34,7 +34,7 @@ public sealed class ColorFeatureWizardPageViewModel : GraphicsWizardPageViewMode
     {
         _interactionService = interactionService;
         _messageService = messageService;
-        PreviewBuilder = () => featureWizardPage.PreviewSession?.BuildPreview()
+        PreviewBuilder = cancellationToken => featureWizardPage.PreviewSession?.BuildPreviewAsync(cancellationToken)
             ?? throw new InvalidOperationException("Color preview session has not been initialized.");
 
         _trackedWorkingDiscreteColors = featureWizardPage.WorkingDiscreteColors;

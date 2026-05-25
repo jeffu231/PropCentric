@@ -10,7 +10,7 @@ namespace PropCentric.Tests.Tree;
 public class TreeWizardPreviewCoordinatorTests
 {
     [Fact]
-    public void TreeWizardPreviewCoordinator_BuildPreview_WithSameDraftValues_ReturnsCachedModel()
+    public async Task TreeWizardPreviewCoordinator_BuildPreviewAsync_WithSameDraftValues_ReturnsCachedModel()
     {
         var coordinator = new TreeWizardPreviewCoordinator(
             new TreeDraftToVisualInputMapper(),
@@ -22,14 +22,14 @@ public class TreeWizardPreviewCoordinatorTests
             AxisRotations = TestDataHelper.CreateRotations((Props.Abstractions.PropVisualModels.Axis.XAxis, 0))
         };
 
-        var first = coordinator.BuildPreview(draft);
-        var second = coordinator.BuildPreview(draft);
+        var first = await coordinator.BuildPreviewAsync(draft);
+        var second = await coordinator.BuildPreviewAsync(draft);
 
         Assert.Same(first, second);
     }
     
     [Fact]
-    public void TreeWizardPreviewCoordinator_BuildPreview_WithDifferentDraftValues_ReturnsDifferentModel()
+    public async Task TreeWizardPreviewCoordinator_BuildPreviewAsync_WithDifferentDraftValues_ReturnsDifferentModel()
     {
         var coordinator = new TreeWizardPreviewCoordinator(
             new TreeDraftToVisualInputMapper(),
@@ -48,14 +48,14 @@ public class TreeWizardPreviewCoordinatorTests
             AxisRotations = TestDataHelper.CreateRotations((Props.Abstractions.PropVisualModels.Axis.XAxis, 0))
         };
 
-        var first = coordinator.BuildPreview(draft);
-        var second = coordinator.BuildPreview(draft2);
+        var first = await coordinator.BuildPreviewAsync(draft);
+        var second = await coordinator.BuildPreviewAsync(draft2);
 
         Assert.NotSame(first, second);
     }
 
     [Fact]
-    public void TreeWizardPreviewCoordinator_BuildPreview_WhenRotationAngleChangesOnSameDraft_RebuildsModel()
+    public async Task TreeWizardPreviewCoordinator_BuildPreviewAsync_WhenRotationAngleChangesOnSameDraft_RebuildsModel()
     {
         var coordinator = new TreeWizardPreviewCoordinator(
             new TreeDraftToVisualInputMapper(),
@@ -67,11 +67,11 @@ public class TreeWizardPreviewCoordinatorTests
             AxisRotations = TestDataHelper.CreateRotations((Props.Abstractions.PropVisualModels.Axis.ZAxis, 0))
         };
 
-        var first = coordinator.BuildPreview(draft);
+        var first = await coordinator.BuildPreviewAsync(draft);
 
         draft.AxisRotations[0].RotationAngle = 90;
 
-        var second = coordinator.BuildPreview(draft);
+        var second = await coordinator.BuildPreviewAsync(draft);
 
         Assert.NotSame(first, second);
     }

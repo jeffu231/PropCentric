@@ -12,6 +12,7 @@ public sealed class TreeWizardPreviewCoordinator : IWizardPreviewCoordinator<Tre
 {
     private readonly IVisualInputMapper<TreePropDraft, TreeVisualInput> _mapper;
     private readonly IPropVisualModelBuilder<TreeVisualInput, TreePropVisualModel> _builder;
+    private readonly SemaphoreSlim _gate = new(1, 1);
     private TreeVisualInput? _lastInput;
     private IPropVisualModel? _lastModel;
 
@@ -30,18 +31,28 @@ public sealed class TreeWizardPreviewCoordinator : IWizardPreviewCoordinator<Tre
     /// Creates the Visual Model for a preview to use based on the draft input data.
     /// </summary>
     /// <param name="draft"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public IPropVisualModel BuildPreview(TreePropDraft draft)
+    public async Task<IPropVisualModel> BuildPreviewAsync(TreePropDraft draft, CancellationToken cancellationToken = default)
     {
         var input = _mapper.Map(draft);
-        if (input == _lastInput && _lastModel is not null)
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+
+        try
         {
-            //return the cached version of the model since there are no changes.
-            return _lastModel;
+            if (input == _lastInput && _lastModel is not null)
+            {
+                return _lastModel;
+            }
+
+            var model = await Task.Run(() => _builder.Create(input), cancellationToken).ConfigureAwait(false);
+            _lastInput = input;
+            _lastModel = model;
+            return model;
         }
-        
-        _lastInput = input;
-        _lastModel = _builder.Create(input);
-        return _lastModel;
+        finally
+        {
+            _gate.Release();
+        }
     }
 }

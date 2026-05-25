@@ -15,7 +15,7 @@ namespace PropCentric.Tests.Wizards;
 public class WizardPreviewSessionTests
 {
     [Fact]
-    public void BuildPreview_DelegatesToCoordinatorUsingSharedDraft()
+    public async Task BuildPreviewAsync_DelegatesToCoordinatorUsingSharedDraft()
     {
         var draft = new PolyLinePropDraft
         {
@@ -35,7 +35,7 @@ public class WizardPreviewSessionTests
         var coordinator = new TrackingCoordinator();
         var session = new WizardPreviewSession<PolyLinePropDraft>(draft, coordinator);
 
-        var model = session.BuildPreview();
+        var model = await session.BuildPreviewAsync();
 
         Assert.Same(draft, session.Draft);
         Assert.Same(draft, coordinator.LastDraft);
@@ -53,10 +53,10 @@ public class WizardPreviewSessionTests
 
         public IPropVisualModel ModelToReturn { get; }
 
-        public IPropVisualModel BuildPreview(PolyLinePropDraft draft)
+        public Task<IPropVisualModel> BuildPreviewAsync(PolyLinePropDraft draft, CancellationToken cancellationToken = default)
         {
             LastDraft = draft;
-            return ModelToReturn;
+            return Task.FromResult(ModelToReturn);
         }
     }
 }

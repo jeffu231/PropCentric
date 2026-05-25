@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Catel.Data;
 using Orc.Wizard;
 using Props.Abstractions.PropVisualModels;
@@ -10,6 +11,7 @@ public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelB
     where TWizardPage : class, IWizardPage
 {
     private readonly Debouncer _previewDebouncer = new(TimeSpan.FromMilliseconds(150));
+    private int _previewRequestVersion;
 
     /// <summary>
     /// Constructor
@@ -19,7 +21,7 @@ public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelB
     {
         DrawingEngine = new OpenGLPropDrawingEngine();
         DrawingEngine.SetModels([]);
-        PropertyChanged += (_, _) => _previewDebouncer.Invoke(TriggerPreviewRebuild);
+        PropertyChanged += OnViewModelPropertyChanged;
     }
 
     /// <summary>
@@ -38,7 +40,7 @@ public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelB
     /// Set by a concrete ViewModel to supply a fresh <see cref="IPropVisualModel"/> on each preview rebuild.
     /// The closure should read the current draft state at call time.
     /// </summary>
-    protected Func<IPropVisualModel>? PreviewBuilder { get; set; }
+    protected Func<CancellationToken, Task<IPropVisualModel>>? PreviewBuilder { get; set; }
 
     /// <summary>
     /// OpenGL prop drawing engine.
@@ -50,7 +52,7 @@ public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelB
 
     protected override async Task InitializeAsync()
     {
-        TriggerPreviewRebuild();
+        await TriggerPreviewRebuildAsync();
     }
 
     /// <summary>
@@ -58,16 +60,45 @@ public class GraphicsWizardPageViewModelBase<TWizardPage> : WizardPageViewModelB
     /// </summary>
     protected void SchedulePreviewRebuild()
     {
-        _previewDebouncer.Invoke(TriggerPreviewRebuild);
+        _ = SchedulePreviewRebuildAsync();
     }
 
-    private void TriggerPreviewRebuild()
+    private async Task SchedulePreviewRebuildAsync()
+    {
+        try
+        {
+            await _previewDebouncer.InvokeAsync(TriggerPreviewRebuildAsync);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(CurrentPreviewModel))
+        {
+            return;
+        }
+
+        SchedulePreviewRebuild();
+    }
+
+    private async Task TriggerPreviewRebuildAsync(CancellationToken cancellationToken = default)
     {
         if (PreviewBuilder is null)
         {
             return;
         }
-        CurrentPreviewModel = PreviewBuilder();
+
+        var requestVersion = Interlocked.Increment(ref _previewRequestVersion);
+        var previewModel = await PreviewBuilder(cancellationToken);
+        if (cancellationToken.IsCancellationRequested || requestVersion != _previewRequestVersion)
+        {
+            return;
+        }
+
+        CurrentPreviewModel = previewModel;
         DrawingEngine.SetModels(CurrentPreviewModel is null ? [] : [CurrentPreviewModel]);
     }
 }

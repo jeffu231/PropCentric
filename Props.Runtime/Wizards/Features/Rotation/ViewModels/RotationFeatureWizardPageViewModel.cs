@@ -15,7 +15,7 @@ public sealed class RotationFeatureWizardPageViewModel : GraphicsWizardPageViewM
 {
     public RotationFeatureWizardPageViewModel(RotationFeatureWizardPage featureWizardPage) : base(featureWizardPage)
     {
-        PreviewBuilder = () => featureWizardPage.PreviewSession?.BuildPreview()
+        PreviewBuilder = cancellationToken => featureWizardPage.PreviewSession?.BuildPreviewAsync(cancellationToken)
             ?? throw new InvalidOperationException("Rotation preview session has not been initialized.");
 
         HookRotationHandlers(featureWizardPage.Rotations);

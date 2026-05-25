@@ -72,13 +72,14 @@ public class DraftBackedWizardPageTests
     private sealed class StubPreviewCoordinator<TDraft> : IWizardPreviewCoordinator<TDraft>
         where TDraft : class, IPropDraft
     {
-        public IPropVisualModel BuildPreview(TDraft draft)
+        public Task<IPropVisualModel> BuildPreviewAsync(TDraft draft, CancellationToken cancellationToken = default)
         {
-            return new StubPropVisualModel
-            {
-                Id = Guid.NewGuid(),
-                Elements = []
-            };
+            return Task.FromResult<IPropVisualModel>(
+                new StubPropVisualModel
+                {
+                    Id = Guid.NewGuid(),
+                    Elements = []
+                });
         }
     }
 

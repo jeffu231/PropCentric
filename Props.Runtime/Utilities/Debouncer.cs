@@ -6,6 +6,7 @@ namespace Props.Runtime.Utilities;
 /// </summary>
 public sealed class Debouncer(TimeSpan delay)
 {
+    private readonly Lock _syncRoot = new();
     private CancellationTokenSource _cts = new();
 
     /// <summary>
@@ -13,22 +14,25 @@ public sealed class Debouncer(TimeSpan delay)
     /// if called again before the delay elapses.
     /// </summary>
     /// <param name="action">The action to invoke after the debounce period.</param>
-    public void Invoke(Action action)
+    public async Task InvokeAsync(Func<CancellationToken, Task> action)
     {
-        _cts.Cancel();
-        _cts = new CancellationTokenSource();
-        var token = _cts.Token;
-        var syncContext = SynchronizationContext.Current;
-        Task.Delay(delay, token).ContinueWith(
-            _ =>
-            {
-                if (syncContext is not null)
-                    syncContext.Post(_ => action(), null);
-                else
-                    action();
-            },
-            token,
-            TaskContinuationOptions.OnlyOnRanToCompletion,
-            TaskScheduler.Default);
+        CancellationTokenSource currentCts;
+
+        lock (_syncRoot)
+        {
+            _cts.Cancel();
+            _cts.Dispose();
+            _cts = new CancellationTokenSource();
+            currentCts = _cts;
+        }
+
+        try
+        {
+            await Task.Delay(delay, currentCts.Token);
+            await action(currentCts.Token);
+        }
+        catch (OperationCanceledException) when (currentCts.IsCancellationRequested)
+        {
+        }
     }
 }

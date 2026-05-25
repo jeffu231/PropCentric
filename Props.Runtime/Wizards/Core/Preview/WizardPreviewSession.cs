@@ -25,8 +25,8 @@ public sealed class WizardPreviewSession<TDraft> : IWizardPreviewSession<TDraft>
     IPropDraft IWizardPreviewSession.Draft => Draft;
 
     /// <inheritdoc />
-    public IPropVisualModel BuildPreview()
+    public Task<IPropVisualModel> BuildPreviewAsync(CancellationToken cancellationToken = default)
     {
-        return _coordinator.BuildPreview(Draft);
+        return _coordinator.BuildPreviewAsync(Draft, cancellationToken);
     }
 }

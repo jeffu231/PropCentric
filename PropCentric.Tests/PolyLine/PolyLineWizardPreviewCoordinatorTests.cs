@@ -15,29 +15,29 @@ namespace PropCentric.Tests.PolyLine;
 public class PolyLineWizardPreviewCoordinatorTests
 {
     [Fact]
-    public void BuildPreview_UnchangedInput_ReusesCachedModel()
+    public async Task BuildPreviewAsync_UnchangedInput_ReusesCachedModel()
     {
         var builder = new CountingBuilder();
         var coordinator = new PolyLineWizardPreviewCoordinator(new PolyLineDraftToVisualInputMapper(), builder);
         var draft = CreateDraft();
 
-        var first = coordinator.BuildPreview(draft);
-        var second = coordinator.BuildPreview(draft);
+        var first = await coordinator.BuildPreviewAsync(draft);
+        var second = await coordinator.BuildPreviewAsync(draft);
 
         Assert.Same(first, second);
         Assert.Equal(1, builder.CallCount);
     }
 
     [Fact]
-    public void BuildPreview_ChangedSegmentPointCount_RebuildsModel()
+    public async Task BuildPreviewAsync_ChangedSegmentPointCount_RebuildsModel()
     {
         var builder = new CountingBuilder();
         var coordinator = new PolyLineWizardPreviewCoordinator(new PolyLineDraftToVisualInputMapper(), builder);
         var draft = CreateDraft();
 
-        var first = coordinator.BuildPreview(draft);
+        var first = await coordinator.BuildPreviewAsync(draft);
         draft.Segments[0].PointCount += 1;
-        var second = coordinator.BuildPreview(draft);
+        var second = await coordinator.BuildPreviewAsync(draft);
 
         Assert.NotSame(first, second);
         Assert.Equal(2, builder.CallCount);

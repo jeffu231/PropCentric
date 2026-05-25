@@ -14,7 +14,7 @@ public class TreePropWizardPageViewModel : LightWizardPageViewModel<TreePropWiza
 {
     public TreePropWizardPageViewModel(TreePropWizardPage wizardPage) : base(wizardPage)
     {
-        PreviewBuilder = () => wizardPage.Coordinator.BuildPreview(wizardPage.Draft);
+        PreviewBuilder = cancellationToken => wizardPage.Coordinator.BuildPreviewAsync(wizardPage.Draft, cancellationToken);
     }
 
     #region Strings property

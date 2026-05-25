@@ -23,5 +23,5 @@ public interface IWizardPreviewCoordinator<in TDraft>
     /// A cached <see cref="IPropVisualModel"/> if the input is unchanged, or a freshly built model
     /// if any geometry-relevant field has changed since the last call.
     /// </returns>
-    IPropVisualModel BuildPreview(TDraft draft);
+    Task<IPropVisualModel> BuildPreviewAsync(TDraft draft, CancellationToken cancellationToken = default);
 }
