@@ -75,17 +75,11 @@ public sealed class TreePropSetup : IPropSetup
 
         var featurePages = _featurePageResolver.GetPagesFor(typeof(TreeProp));
         _featurePageResolver.InitializePages(featurePages, featureWizardContext);
-        var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var treeWizard = _wizardFactory(draft, featurePages);
-
-        foreach (var mapper in featureMappers)
-        {
-            mapper.PopulateFrom(treeProp);
-        }
 
         bool? result = await _wizardPresenter(treeWizard);
         if (result.HasValue && result.Value)
-            return await BuildPropGroupAsync(treeProp, draft, featureMappers);
+            return await BuildPropGroupAsync(treeProp, draft);
 
         return null;
     }
@@ -99,25 +93,19 @@ public sealed class TreePropSetup : IPropSetup
 
         var featurePages = _featurePageResolver.GetPagesFor(typeof(TreeProp));
         _featurePageResolver.InitializePages(featurePages, featureWizardContext);
-        var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var treeWizard = _wizardFactory(draft, featurePages);
-
-        foreach (var mapper in featureMappers) mapper.PopulateFrom(treeProp);
 
         bool? result = await _wizardPresenter(treeWizard);
         if (result.HasValue && result.Value)
         {
             _draftMapper.ApplyDraft(draft, treeProp);
-            foreach (var mapper in featureMappers) mapper.ApplyTo(treeProp);
             await treeProp.CommitAsync();
         }
     }
 
-    private async Task<IPropGroup> BuildPropGroupAsync(TreeProp treeProp, TreePropDraft draft,
-        IReadOnlyList<IFeatureWizardDataMapper> mappers)
+    private async Task<IPropGroup> BuildPropGroupAsync(TreeProp treeProp, TreePropDraft draft)
     {
         _draftMapper.ApplyDraft(draft, treeProp);
-        foreach (var mapper in mappers) mapper.ApplyTo(treeProp);
         await treeProp.CommitAsync();
 
         var propGroup = new PropGroup();

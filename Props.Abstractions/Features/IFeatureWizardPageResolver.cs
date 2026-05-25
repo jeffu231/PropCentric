@@ -3,7 +3,7 @@ using Orc.Wizard;
 namespace Props.Abstractions.Features;
 
 /// <summary>
-/// Resolves feature wizard pages and their companion data mappers for a given prop type.
+/// Resolves feature wizard pages for a given prop type.
 /// </summary>
 /// <remarks>
 /// Reflection runs once at startup in <see cref="Props.Registry.FeatureWizardPageScanner"/>;
@@ -19,14 +19,6 @@ public interface IFeatureWizardPageResolver
     /// covering every feature interface that <paramref name="propType"/> implements.
     /// </returns>
     IReadOnlyList<IWizardPage> GetPagesFor(Type propType);
-
-    /// <summary>Returns the instantiated data mappers that correspond to the given wizard pages.</summary>
-    /// <param name="pages">The wizard pages returned by a prior call to <see cref="GetPagesFor"/>.</param>
-    /// <returns>
-    /// A read-only list of <see cref="IFeatureWizardDataMapper"/> instances, one per page that has
-    /// a declared mapper type. Use <c>foreach</c> directly; each mapper is paired to the matching page.
-    /// </returns>
-    IReadOnlyList<IFeatureWizardDataMapper> GetMappersFor(IReadOnlyList<IWizardPage> pages);
 
     /// <summary>
     /// Initializes any feature pages that opt into shared-draft behavior for the current wizard instance.

@@ -5,8 +5,8 @@ using Props.Abstractions.Features;
 namespace Props.Registry;
 
 /// <summary>
-/// Resolves feature wizard pages and their companion data mappers for a given prop type
-/// using registrations discovered by <see cref="FeatureWizardPageScanner"/>.
+/// Resolves feature wizard pages for a given prop type using registrations discovered by
+/// <see cref="FeatureWizardPageScanner"/>.
 /// </summary>
 public class FeatureWizardPageResolver(
     IReadOnlyList<FeatureWizardPageDescriptor> registrations,
@@ -18,19 +18,6 @@ public class FeatureWizardPageResolver(
             .OrderByDescending(r => r.Priority)
             .Select(r => (IWizardPage)serviceProvider.GetRequiredService(r.PageType))
             .ToList();
-
-    public IReadOnlyList<IFeatureWizardDataMapper> GetMappersFor(IReadOnlyList<IWizardPage> pages)
-    {
-        var result = new List<IFeatureWizardDataMapper>();
-        foreach (var page in pages)
-        {
-            var reg = registrations.FirstOrDefault(r => r.PageType == page.GetType());
-            if (reg?.MapperType is { } mapperType)
-                result.Add((IFeatureWizardDataMapper)ActivatorUtilities.CreateInstance(
-                    serviceProvider, mapperType, page));
-        }
-        return result;
-    }
 
     public void InitializePages(IReadOnlyList<IWizardPage> pages, FeatureWizardContext context)
     {

@@ -77,7 +77,7 @@ public class PolyLinePropSetupTests : IDisposable
 
             var setup = CreateSetup(
                 wizardService,
-                new TestFeatureWizardPageResolver([page], []));
+                new TestFeatureWizardPageResolver([page]));
             var prop = PolyLineTestData.CreateTreeProp();
 
             await setup.EditAsync(prop);
@@ -117,7 +117,7 @@ public class PolyLinePropSetupTests : IDisposable
 
             var setup = CreateSetup(
                 wizardService,
-                new TestFeatureWizardPageResolver([page], []));
+                new TestFeatureWizardPageResolver([page]));
             var prop = PolyLineTestData.CreateTreeProp();
 
             await setup.EditAsync(prop, recaptureContext);
@@ -145,7 +145,7 @@ public class PolyLinePropSetupTests : IDisposable
 
             var setup = CreateSetup(
                 wizardService,
-                new TestFeatureWizardPageResolver([page], []));
+                new TestFeatureWizardPageResolver([page]));
             var prop = PolyLineTestData.CreateTreeProp();
 
             await setup.EditAsync(prop);
@@ -176,7 +176,7 @@ public class PolyLinePropSetupTests : IDisposable
                 });
             RegisterGlobalServices(wizardService);
 
-            var colorPageResolver = new TestFeatureWizardPageResolver([new ColorFeatureWizardPage(catalog)], []);
+            var colorPageResolver = new TestFeatureWizardPageResolver([new ColorFeatureWizardPage(catalog)]);
             var setup = CreateSetup(wizardService, colorPageResolver);
             var prop = PolyLineTestData.CreateTreeProp();
 
@@ -211,7 +211,7 @@ public class PolyLinePropSetupTests : IDisposable
                 });
             RegisterGlobalServices(wizardService);
 
-            var dimmingPageResolver = new TestFeatureWizardPageResolver([new DimmingFeatureWizardPage()], []);
+            var dimmingPageResolver = new TestFeatureWizardPageResolver([new DimmingFeatureWizardPage()]);
             var setup = CreateSetup(wizardService, dimmingPageResolver);
             var prop = PolyLineTestData.CreateTreeProp();
 
@@ -243,7 +243,7 @@ public class PolyLinePropSetupTests : IDisposable
             new PolyLineVisualModelBuilder());
 
         return new PolyLinePropSetup(
-            featureResolver ?? new TestFeatureWizardPageResolver([], []),
+            featureResolver ?? new TestFeatureWizardPageResolver([]),
             new TestPropFactory(),
             new PolyLinePropDraftMapper(),
             previewCoordinator,
@@ -301,12 +301,9 @@ public class PolyLinePropSetupTests : IDisposable
     }
 
     private sealed class TestFeatureWizardPageResolver(
-        IReadOnlyList<IWizardPage> pages,
-        IReadOnlyList<IFeatureWizardDataMapper> mappers) : IFeatureWizardPageResolver
+        IReadOnlyList<IWizardPage> pages) : IFeatureWizardPageResolver
     {
         public IReadOnlyList<IWizardPage> GetPagesFor(Type propType) => pages;
-
-        public IReadOnlyList<IFeatureWizardDataMapper> GetMappersFor(IReadOnlyList<IWizardPage> requestedPages) => mappers;
 
         public void InitializePages(IReadOnlyList<IWizardPage> requestedPages, FeatureWizardContext context)
         {

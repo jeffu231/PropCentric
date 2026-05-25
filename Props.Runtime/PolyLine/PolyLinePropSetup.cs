@@ -81,18 +81,12 @@ public sealed class PolyLinePropSetup : IPropSetup
 
         var featurePages = _featurePageResolver.GetPagesFor(typeof(PolyLineProp));
         _featurePageResolver.InitializePages(featurePages, featureWizardContext);
-        var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var wizard = _wizardFactory(draft, featurePages);
-
-        foreach (var mapper in featureMappers)
-        {
-            mapper.PopulateFrom(polyLineProp);
-        }
 
         var result = await _wizardPresenter(wizard);
         if (result == true)
         {
-            return await BuildPropGroupAsync(polyLineProp, draft, featureMappers);
+            return await BuildPropGroupAsync(polyLineProp, draft);
         }
 
         return null;
@@ -109,38 +103,21 @@ public sealed class PolyLinePropSetup : IPropSetup
 
         var featurePages = _featurePageResolver.GetPagesFor(typeof(PolyLineProp));
         _featurePageResolver.InitializePages(featurePages, featureWizardContext);
-        var featureMappers = _featurePageResolver.GetMappersFor(featurePages);
         var wizard = _wizardFactory(draft, featurePages);
-
-        foreach (var mapper in featureMappers)
-        {
-            mapper.PopulateFrom(polyLineProp);
-        }
 
         var result = await _wizardPresenter(wizard);
         if (result == true)
         {
             _draftMapper.ApplyDraft(draft, polyLineProp);
-            foreach (var mapper in featureMappers)
-            {
-                mapper.ApplyTo(polyLineProp);
-            }
-
             await polyLineProp.CommitAsync();
         }
     }
 
     private async Task<IPropGroup> BuildPropGroupAsync(
         PolyLineProp polyLineProp,
-        PolyLinePropDraft draft,
-        IReadOnlyList<IFeatureWizardDataMapper> mappers)
+        PolyLinePropDraft draft)
     {
         _draftMapper.ApplyDraft(draft, polyLineProp);
-        foreach (var mapper in mappers)
-        {
-            mapper.ApplyTo(polyLineProp);
-        }
-
         await polyLineProp.CommitAsync();
 
         var propGroup = new PropGroup();

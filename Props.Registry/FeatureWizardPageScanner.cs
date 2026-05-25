@@ -44,7 +44,6 @@ public static class FeatureWizardPageScanner
                 {
                     PageType = type,
                     FeatureInterface = attr.FeatureInterface,
-                    MapperType = attr.MapperType,
                     Priority = attr.Priority
                 });
             }

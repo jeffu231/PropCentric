@@ -83,7 +83,6 @@ public class PropDiscoveryTests
 
         var registration = Assert.Single(registrations, r => r.PageType == typeof(DimmingFeatureWizardPage));
         Assert.Equal(typeof(IHasDimming), registration.FeatureInterface);
-        Assert.Null(registration.MapperType);
         Assert.Equal(100, registration.Priority);
     }
 
@@ -95,7 +94,6 @@ public class PropDiscoveryTests
 
         var registration = Assert.Single(registrations, r => r.PageType == typeof(SegmentsFeatureWizardPage));
         Assert.Equal(typeof(IHasSegments), registration.FeatureInterface);
-        Assert.Null(registration.MapperType);
         Assert.Equal(150, registration.Priority);
     }
 
@@ -107,7 +105,6 @@ public class PropDiscoveryTests
 
         var registration = Assert.Single(registrations, r => r.PageType == typeof(RotationFeatureWizardPage));
         Assert.Equal(typeof(ICanAxisRotate), registration.FeatureInterface);
-        Assert.Null(registration.MapperType);
         Assert.Equal(140, registration.Priority);
     }
 
@@ -119,7 +116,6 @@ public class PropDiscoveryTests
 
         var registration = Assert.Single(registrations, r => r.PageType == typeof(ColorFeatureWizardPage));
         Assert.Equal(typeof(IHasColor), registration.FeatureInterface);
-        Assert.Null(registration.MapperType);
         Assert.Equal(130, registration.Priority);
     }
 

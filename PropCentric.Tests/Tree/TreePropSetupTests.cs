@@ -197,8 +197,6 @@ public class TreePropSetupTests : IDisposable
     {
         public IReadOnlyList<IWizardPage> GetPagesFor(Type propType) => pageFactory();
 
-        public IReadOnlyList<IFeatureWizardDataMapper> GetMappersFor(IReadOnlyList<IWizardPage> requestedPages) => [];
-
         public void InitializePages(IReadOnlyList<IWizardPage> requestedPages, FeatureWizardContext context)
         {
             foreach (var page in requestedPages.OfType<IFeatureWizardDraftPage>())

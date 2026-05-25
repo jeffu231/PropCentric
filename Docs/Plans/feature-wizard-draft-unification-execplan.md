@@ -19,8 +19,8 @@ The observable architectural result is that `DimmingFeatureWizardPage`, `ColorFe
 - [x] (2026-05-25 13:57-05:00) Implemented `FeatureWizardContext` in `Props.Abstractions`, updated resolver/setup initialization to use it, and migrated Color, Rotation, and Segments pages plus their tests.
 - [x] (2026-05-25 14:18-05:00) Added `IHasDimmingSettingsDraft`, implemented it on Tree and PolyLine drafts, and updated both prop draft mappers plus mapping tests to round-trip brightness and gamma through shared drafts.
 - [x] (2026-05-25 14:15-05:00) Migrated `DimmingFeatureWizardPage` to the shared-draft pattern, removed its mapper declaration, and added focused page, discovery, and setup round-trip tests.
-- [ ] Simplify resolver, discovery metadata, and setup wrappers to remove mapper-specific orchestration.
-- [ ] Update tests to cover the unified pattern and prove mapper support is no longer required.
+- [x] (2026-05-25 14:19-05:00) Removed `IFeatureWizardDataMapper`, deleted the unused dimming mapper, simplified `FeatureWizardPageAttribute`, `FeatureWizardPageDescriptor`, `IFeatureWizardPageResolver`, `FeatureWizardPageResolver`, `TreePropSetup`, and `PolyLinePropSetup`, and updated tests to the draft-only path.
+- [ ] Align repository docs with the now draft-only feature wizard pattern.
 - [ ] Run focused and full test validation.
 
 ## Surprises & Discoveries
@@ -46,6 +46,9 @@ The observable architectural result is that `DimmingFeatureWizardPage`, `ColorFe
 - Observation: the dimming page could become draft-backed without any view-model redesign because its existing Catel `ViewModelToModel` bindings only depend on page properties, not on where those properties store canonical state.
   Evidence: `DimmingFeatureWizardPageViewModel` remained unchanged while new focused tests passed for `DimmingFeatureWizardPage`, `TreePropSetup`, `PolyLinePropSetup`, and discovery after the page switched from mapper-backed state to draft-backed state.
 
+- Observation: once the last mapper-backed page was migrated, the resolver and setup cleanup was mechanically simple because no production code still depended on mapper metadata or mapper populate/apply loops.
+  Evidence: deleting `IFeatureWizardDataMapper`, removing `GetMappersFor(...)`, and simplifying both prop setup wrappers required only direct removal of dead paths plus small test-double updates; the focused discovery and setup test slice still passed immediately after the cleanup.
+
 ## Decision Log
 
 - Decision: converge on shared draft state as the only backing model for feature wizard pages.
@@ -70,7 +73,7 @@ The observable architectural result is that `DimmingFeatureWizardPage`, `ColorFe
 
 ## Outcomes & Retrospective
 
-The first two migration slices are complete. The repository now has a stable `FeatureWizardContext` abstraction in `Props.Abstractions`, all current feature pages are draft-backed, and dimming data plus dimming-page editing both flow through shared drafts for Tree and PolyLine. The remaining work is now purely architectural cleanup: remove the unused mapper-oriented abstractions and setup orchestration that no feature pages require anymore.
+The core migration is complete. The repository now has a stable `FeatureWizardContext` abstraction in `Props.Abstractions`, all current feature pages are draft-backed, dimming data plus dimming-page editing both flow through shared drafts for Tree and PolyLine, and the mapper-oriented abstractions plus setup orchestration have been removed from production code. The remaining work is documentation alignment and broader validation, not another architectural transition.
 
 ## Context and Orientation
 
@@ -250,4 +253,4 @@ The feature-page resolver should end in a simpler shape:
 
 where the page stores the typed dimming draft reference obtained during initialization and treats it as the canonical backing state.
 
-Revision note: Updated this ExecPlan after migrating `DimmingFeatureWizardPage` to shared draft backing and validating the path with focused page, discovery, and setup tests. The plan now records that mapper-infrastructure removal is the next immediate step.
+Revision note: Updated this ExecPlan after removing the mapper-oriented feature wizard infrastructure from production code and validating the simplified resolver/setup path with focused tests. The plan now records documentation alignment and broader validation as the remaining work.
