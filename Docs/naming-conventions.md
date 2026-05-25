@@ -65,7 +65,6 @@ Maps an input type to resolved instances. Method naming uses `Get*For`:
 
 ```
 IFeatureWizardPageResolver.GetPagesFor(Type propType)
-IFeatureWizardPageResolver.GetMappersFor(IReadOnlyList<IWizardPage> pages)
 ```
 
 ### Provider
@@ -95,7 +94,6 @@ Wizards/
 
   Features/
     {Feature}/
-      Mappers/
       Pages/
       ViewModels/
       Views/
@@ -117,7 +115,6 @@ Props.Runtime.Wizards.Core.Views
 Feature namespaces:
 
 ```
-Props.Runtime.Wizards.Features.{Feature}.Mappers
 Props.Runtime.Wizards.Features.{Feature}.Pages
 Props.Runtime.Wizards.Features.{Feature}.ViewModels
 Props.Runtime.Wizards.Features.{Feature}.Views
@@ -128,7 +125,6 @@ Props.Runtime.Wizards.Features.{Feature}.Views
 | Type | Naming |
 |---|---|
 | Wizard page | `{Feature}FeatureWizardPage` (e.g. `DimmingFeatureWizardPage`) |
-| Data mapper | `{Feature}FeatureWizardDataMapper` (e.g. `DimmingFeatureWizardDataMapper`) |
 | View model | `{Feature}FeatureWizardPageViewModel` (e.g. `DimmingFeatureWizardPageViewModel`) |
 | View | `{Feature}FeatureWizardPageView` (e.g. `DimmingFeatureWizardPageView`) |
 

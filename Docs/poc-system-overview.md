@@ -24,7 +24,7 @@ Defines the core contracts and shared base types:
 
 - `IProp`, `BaseProp<TModel>`, `BaseLightProp<TModel>`
 - feature interfaces such as `IHasLights`, `IHasDimming`, `IHasColor`, `IHasSegments`, and `ICanAxisRotate`
-- setup-draft contracts such as `IHasColorSettingsDraft`, `IHasSegmentsDraft`, and `IHasAxisRotationsDraft` under `Props.Abstractions.Setup.Drafts`
+- setup-draft contracts such as `IHasColorSettingsDraft`, `IHasDimmingSettingsDraft`, `IHasSegmentsDraft`, and `IHasAxisRotationsDraft` under `Props.Abstractions.Setup.Drafts`
 - setup contracts such as `IPropSetup`, `IPropSetupContext`, `IPropDraftMapper<,>`, and `ISegmentCaptureNormalizer`
 - visual contracts such as `IVisualInputMapper<,>`, `IPropVisualModelBuilder<,>`, `IWizardPreviewCoordinator<>`, and `IWizardPreviewSession`
 - visual element types such as `LightPoint`, `LightPointCloud`, and `IPropVisualModel`
@@ -162,10 +162,9 @@ The setup wrapper:
 - creates a wizard draft model
 - populates the draft from the prop for edit flows
 - resolves feature wizard pages for the prop type
-- initializes draft-backed feature pages for the current wizard instance
-- resolves feature data mappers for legacy mapper-backed pages
+- initializes feature pages for the current wizard instance from the shared `FeatureWizardContext`
 - creates the prop-specific wizard
-- applies draft and feature data back into the prop when the wizard is accepted
+- applies draft data back into the prop when the wizard is accepted
 - commits the prop
 
 ### Why the wizard does not edit the prop directly
@@ -217,24 +216,20 @@ Relevant files:
 - [FeatureWizardPageScanner.cs](C:/Dev/PropCentric/Props.Registry/FeatureWizardPageScanner.cs)
 - [FeatureWizardPageResolver.cs](C:/Dev/PropCentric/Props.Registry/FeatureWizardPageResolver.cs)
 
-### Feature page patterns
+### Feature page pattern
 
-There are now two supported feature-page patterns:
+Feature wizard pages now follow one shared pattern.
 
-- mapper-backed pages, such as `DimmingFeatureWizardPage`
-- draft-backed pages, such as `ColorFeatureWizardPage`, `RotationFeatureWizardPage`, and `SegmentsFeatureWizardPage`
-
-Mapper-backed pages can declare a companion `IFeatureWizardDataMapper` that moves data between the page and the prop.
-
-Draft-backed pages implement `IFeatureWizardDraftPage` and are initialized with:
+Feature pages implement `IFeatureWizardDraftPage` and are initialized with a `FeatureWizardContext` containing:
 
 - the shared wizard draft
 - the shared `IWizardPreviewSession` for that wizard instance
 
-This lets a feature page participate in live preview without duplicating preview-driving state in a page-local model.
+This lets a feature page participate in live preview without duplicating preview-driving state in a page-local model, while still allowing non-viewer pages to use the same backing contract.
 
 Current implemented examples:
 
+- `DimmingFeatureWizardPage` is a reusable dimming page for `IHasDimming` props. It edits shared draft `Brightness` and `Gamma` values directly.
 - `ColorFeatureWizardPage` is a draft-backed reusable color-settings page for `IHasColor` props. It edits the shared `LightColorConfiguration` draft state directly and exposes color-specific preview state in-page rather than hosting the shared OpenGL prop viewer.
 - `RotationFeatureWizardPage` is a draft-backed reusable rotation page for `ICanAxisRotate` props. It edits shared draft `AxisRotations` values directly and rebuilds preview immediately.
 - `SegmentsFeatureWizardPage` is a draft-backed reusable segments page for `IHasSegments` props. It hosts the shared OpenGL viewer and reflects `PointCount` edits immediately.
@@ -266,7 +261,7 @@ This pattern isolates the translation between UI/setup state and domain state.
 
 ### Draft-backed feature edits
 
-Some feature pages now edit shared draft state directly instead of holding disconnected page copies.
+Feature pages edit shared draft state directly instead of holding disconnected page copies.
 
 For the color flow:
 
@@ -285,6 +280,12 @@ For the tree flow:
 - `TreePropDraft` implements `IHasAxisRotationsDraft`
 - `IHasAxisRotationsDraft` exposes `ObservableCollection<AxisRotationModel>`
 - `RotationFeatureWizardPage` wraps those draft rotation items for display and editing
+
+For dimming:
+
+- `TreePropDraft` and `PolyLinePropDraft` implement `IHasDimmingSettingsDraft`
+- `IHasDimmingSettingsDraft` exposes shared `Brightness` and `Gamma`
+- `DimmingFeatureWizardPage` reads and writes those shared draft values directly
 
 This is important because the preview coordinator already reads from the shared prop draft. When a feature page edits that same draft state, preview can rebuild immediately without waiting for wizard completion.
 
@@ -416,11 +417,10 @@ This matters because feature pages and prop pages can now trigger rebuilds frequ
 
 After the wizard is accepted:
 
-1. the draft mapper applies prop-specific data
-2. legacy feature mappers apply feature-specific page data
-3. `CommitAsync()` finalizes the prop
+1. the draft mapper applies prop and feature data from the shared draft
+2. `CommitAsync()` finalizes the prop
 
-For draft-backed feature pages such as Color, Rotation, and Segments, the feature-specific edits are already in the shared draft, so the prop draft mapper applies them as part of the normal draft-to-prop step.
+For feature pages such as Dimming, Color, Rotation, and Segments, the feature-specific edits are already in the shared draft, so the prop draft mapper applies them as part of the normal draft-to-prop step.
 
 For light props, commit typically does two things:
 
@@ -474,8 +474,8 @@ Create an `IPropSetup` implementation that:
 - creates/edits the prop
 - creates the draft
 - resolves feature pages
-- initializes any draft-backed feature pages
-- maps draft and legacy feature-page data back into the prop
+- initializes feature pages from the shared `FeatureWizardContext`
+- maps draft data back into the prop
 - commits the prop
 
 ### Step 4: Add the draft type
@@ -542,7 +542,7 @@ Create the core wizard page(s) needed to collect prop-specific data.
 
 If the prop implements existing features such as dimming, the corresponding feature wizard pages can be discovered and inserted automatically.
 
-If a feature page should rebuild preview immediately while the user edits it, make that page draft-backed by implementing `IFeatureWizardDraftPage`.
+If a feature page should rebuild preview immediately while the user edits it, have that page implement `IFeatureWizardDraftPage` and update shared draft state directly.
 
 If the feature page is color-focused rather than geometry-focused, it should still edit the shared draft directly, but it does not need to host the OpenGL prop viewer.
 
@@ -584,8 +584,9 @@ The implemented segmentable-prop slice establishes these rules:
 - `PolyLineProp` is open-only in this first slice
 - segment feature pages edit `PointCount`, not capture geometry
 - continuity is validated during normalization before rendering
-- the Segments feature page uses the shared wizard draft and preview session instead of a prop-bound mapper
+- the Segments feature page uses the shared wizard draft and preview session
 - color feature pages edit `LightColorConfiguration` in the shared draft and reuse the same feature-page discovery path as other features
+- dimming, color, rotation, and segments all use the same shared-draft feature-page model
 
 ## Why This Pattern Matters
 
@@ -600,8 +601,8 @@ It is that each concern is isolated:
 - mappers isolate translation
 - builders isolate geometry logic
 - feature pages are reusable
-- color, rotation, and segments now all follow the shared draft-backed feature-page pattern
-- live preview can be shared across prop pages and draft-backed feature pages
+- dimming, color, rotation, and segments now all follow the shared draft-backed feature-page pattern
+- live preview can be shared across prop pages and feature pages
 - async preview rebuilds keep frequent edit-time updates off the synchronous UI path
 - DI resolves the full pipeline automatically
 

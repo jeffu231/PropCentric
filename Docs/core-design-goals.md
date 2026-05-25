@@ -35,7 +35,7 @@ PropVisualModel in this POC is a direct mapping to the PropModel in the feature 
 * Props should have some base classes that can provide core implmentations for things like light based props or fixture based props.
 * The Prop Setup wrapper will be responsible for orchestrating the create and edit of a Prop. This will accept / return an IProp interface for edit
 and return a PropGroup for create.
-* The Prop Setup wrapper will map the Prop specific data from the Prop Wizard page into the Prop and orchestrate the Feature Data Mappers.
+* The Prop Setup wrapper will map shared draft data from the Prop Wizard pages and reusable Feature Wizard pages into the Prop.
 * Props may contain configuration data that is collected in setup but does not directly drive the Visual Model.
 Some fields affect rendering, while others support behaviors such as patching, addressing, grouping, or other runtime features.
 Only the subset required for drawing should be mapped into the Visual Model input transfer object.
@@ -78,8 +78,8 @@ For this POC, that will be assemblies starting with Props.
 * The Prop implementation should provide its core Wizard pages that are specific to the Prop.
 * Features will have Wizard pages that can be used to setup each feature. A Wizard page for a feature is optional.
 * Feature Wizard pages will be discoverable alongside the Feature itself and provide some type of registry look them up.
-* Feature Wizard pages will also be able to declare a data mapper to map the data they collect into a feature interface on a Prop.
-* Wizard pages of any type should not edit or have any awareness of a Prop directly. They should use their own model and then use a mapping flow and the feature data mappers to pull data from the Wizard and populate the Prop.
+* Feature Wizard pages should be reusable draft-backed pages that participate in the same setup flow regardless of whether they host the viewer.
+* Wizard pages of any type should not edit or have any awareness of a Prop directly. They should use shared wizard draft state and rely on the prop draft mapper to populate the Prop.
 * Wizards should have base interfaces and classes that can provide for many of the common functions that a Wizard may have. These include things like the ability to have a viewer that can draw the Prop Visual Model during setup.
 * The Wizards should be able to display a visual of the Prop as they are collecting data without modifying the Prop using the Drawing Engine. The wizard will pass the updated transfer record into the Visual Model to redraw.
 
@@ -110,7 +110,7 @@ Not part of POC at this time. Placeholder requirement.
 * Use Catel MVVM with WPF for all UI flows. Catel version 6.2. [Catel](https://github.com/Catel/Catel/tree/master)
 * Orc.Wizard will be used for all Wizard flows. Version 5.2. [Orc.Wizard](https://github.com/WildGums/Orc.Wizard)
 * Orchestra.Core will be used to support the Wizards. No expansion beyond Wizard support. Version 7.3. [Orchestra](https://github.com/WildGums/Orchestra)
-* Reflection should be limited to the one time startup discovery process of Props, Features, Feature Wizard Pages, and Feature Data Mappers. In all other cases it is strongly discouraged. 
+* Reflection should be limited to the one time startup discovery process of Props, Features, and Feature Wizard Pages. In all other cases it is strongly discouraged. 
 * Coding to interfaces should be the preferred option.
 * Feature Flags should be used to determine if casting to a feature interface can be done. Do not use casting to determine features outside of the discovery process. Is or as casting can be used once it is verified a Prop supports a feature.
 * Use of dependency injection is strongly recommended. Use Catel DI for UI flows and Microsoft DI for any other areas.

@@ -33,7 +33,7 @@ Common references:
 
 - `Docs/naming-conventions.md` for type and pipeline naming
 - `Docs/poc-system-overview.md` for the current end-to-end architecture
-- `Docs/feature-wizards-requirements.md` for mapper-backed vs draft-backed feature-page expectations
+- `Docs/feature-wizards-requirements.md` for the shared draft-backed feature-page pattern
 - `Docs/color-feature-requirements.md` for reusable color feature behavior and UI constraints
 - `Docs/segmentable-props.md` for segmentable-prop behavior and constraints
 - `Docs/core-design-goals.md` for architecture intent and review criteria
@@ -111,10 +111,9 @@ The setup wrapper is responsible for:
 - creating a draft model
 - populating the draft from the prop
 - resolving feature wizard pages
-- initializing any draft-backed feature pages with the shared draft and `IWizardPreviewSession`
-- resolving feature data mappers
+- initializing feature pages with the shared `FeatureWizardContext`
 - showing the wizard
-- applying draft and feature data back into the prop
+- applying draft data back into the prop
 - calling `await prop.CommitAsync()`
 
 Wizard pages should not edit props directly.
@@ -185,7 +184,7 @@ Wizard preview uses an `IWizardPreviewCoordinator<TDraft>` implementation to:
 - optionally reuse a previously built preview
 - return the visual model used by the drawing engine via `BuildPreviewAsync(...)`
 
-`IWizardPreviewSession` exposes the shared draft plus async preview rebuilding for a single wizard instance. Prop pages and preview-capable draft-backed feature pages use that shared session instead of prop-specific preview wiring.
+`IWizardPreviewSession` exposes the shared draft plus async preview rebuilding for a single wizard instance. Prop pages and preview-capable feature pages use that shared session instead of prop-specific preview wiring.
 
 Pattern:
 

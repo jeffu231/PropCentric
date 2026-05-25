@@ -20,8 +20,8 @@ The observable architectural result is that `DimmingFeatureWizardPage`, `ColorFe
 - [x] (2026-05-25 14:18-05:00) Added `IHasDimmingSettingsDraft`, implemented it on Tree and PolyLine drafts, and updated both prop draft mappers plus mapping tests to round-trip brightness and gamma through shared drafts.
 - [x] (2026-05-25 14:15-05:00) Migrated `DimmingFeatureWizardPage` to the shared-draft pattern, removed its mapper declaration, and added focused page, discovery, and setup round-trip tests.
 - [x] (2026-05-25 14:19-05:00) Removed `IFeatureWizardDataMapper`, deleted the unused dimming mapper, simplified `FeatureWizardPageAttribute`, `FeatureWizardPageDescriptor`, `IFeatureWizardPageResolver`, `FeatureWizardPageResolver`, `TreePropSetup`, and `PolyLinePropSetup`, and updated tests to the draft-only path.
-- [ ] Align repository docs with the now draft-only feature wizard pattern.
-- [ ] Run focused and full test validation.
+- [x] (2026-05-25 14:33-05:00) Updated `Docs/feature-wizards-requirements.md`, `Docs/poc-system-overview.md`, `Docs/core-design-goals.md`, `Docs/naming-conventions.md`, `AGENTS.md`, and `CLAUDE.md` to describe the draft-only feature wizard architecture.
+- [x] (2026-05-25 14:35-05:00) Ran `dotnet test PropCentric.Tests/PropCentric.Tests.csproj` and `dotnet build PropCentric.sln`; the full test suite passed with 94/94 tests and the solution build succeeded.
 
 ## Surprises & Discoveries
 
@@ -49,6 +49,9 @@ The observable architectural result is that `DimmingFeatureWizardPage`, `ColorFe
 - Observation: once the last mapper-backed page was migrated, the resolver and setup cleanup was mechanically simple because no production code still depended on mapper metadata or mapper populate/apply loops.
   Evidence: deleting `IFeatureWizardDataMapper`, removing `GetMappersFor(...)`, and simplifying both prop setup wrappers required only direct removal of dead paths plus small test-double updates; the focused discovery and setup test slice still passed immediately after the cleanup.
 
+- Observation: the repository docs had several architectural statements that treated feature data mappers as a first-class pattern, so documentation alignment required touching both design docs and contributor instructions.
+  Evidence: `Docs/feature-wizards-requirements.md`, `Docs/poc-system-overview.md`, `Docs/core-design-goals.md`, `Docs/naming-conventions.md`, `AGENTS.md`, and `CLAUDE.md` all contained active guidance about mapper-backed feature pages or feature data mappers before this update.
+
 ## Decision Log
 
 - Decision: converge on shared draft state as the only backing model for feature wizard pages.
@@ -73,7 +76,7 @@ The observable architectural result is that `DimmingFeatureWizardPage`, `ColorFe
 
 ## Outcomes & Retrospective
 
-The core migration is complete. The repository now has a stable `FeatureWizardContext` abstraction in `Props.Abstractions`, all current feature pages are draft-backed, dimming data plus dimming-page editing both flow through shared drafts for Tree and PolyLine, and the mapper-oriented abstractions plus setup orchestration have been removed from production code. The remaining work is documentation alignment and broader validation, not another architectural transition.
+The migration is complete. The repository now has a stable `FeatureWizardContext` abstraction in `Props.Abstractions`, all current feature pages are draft-backed, dimming data plus dimming-page editing both flow through shared drafts for Tree and PolyLine, the mapper-oriented abstractions plus setup orchestration have been removed from production code, the repository docs now describe the same model consistently, and the full test suite plus solution build passed after the cleanup.
 
 ## Context and Orientation
 
@@ -81,19 +84,12 @@ A “draft” in this repository is the wizard-owned temporary state object used
 
 A “feature wizard page” is a reusable Orc.Wizard page discovered by `FeatureWizardPageAttribute` and inserted into a prop setup flow when the prop type implements the corresponding feature interface. Examples live under `Props.Runtime/Wizards/Features`.
 
-The current split is this:
-
-- `Props.Runtime/Wizards/Features/Dimming/Pages/DimmingFeatureWizardPage.cs` is mapper-backed. Its state lives on the page itself. `Props.Runtime/Wizards/Features/Dimming/Mappers/DimmingFeatureWizardDataMapper.cs` copies data between the page and the prop.
-- `Props.Runtime/Wizards/Features/Color/Pages/ColorFeatureWizardPage.cs`, `Props.Runtime/Wizards/Features/Rotation/Pages/RotationFeatureWizardPage.cs`, and `Props.Runtime/Wizards/Features/Segments/Pages/SegmentsFeatureWizardPage.cs` are draft-backed. They currently receive the shared `IPropDraft` and `IWizardPreviewSession` for the current wizard instance and should be migrated first to a `FeatureWizardContext`.
-- `Props.Registry/FeatureWizardPageResolver.cs` and `Props.Abstractions/Features/IFeatureWizardPageResolver.cs` still support both patterns.
-- `Props.Runtime/Tree/TreePropSetup.cs` and `Props.Runtime/PolyLine/PolyLinePropSetup.cs` still orchestrate both patterns.
-
-The target state is that feature pages use one common backing model across the repository:
+The current implemented state is that feature pages use one common backing model across the repository:
 
 - the shared prop draft holds all wizard-editable feature state
-- feature pages are initialized once per wizard instance against that shared draft
+- feature pages are initialized once per wizard instance against a shared `FeatureWizardContext`
 - feature pages may use the shared preview session, but preview hosting is optional and does not change the backing-state pattern
-- prop draft mappers, not feature data mappers, handle draft -> prop persistence at wizard acceptance time
+- prop draft mappers, not feature-specific page mappers, handle draft -> prop persistence at wizard acceptance time
 
 ## Plan of Work
 
@@ -114,7 +110,7 @@ Sixth, normalize tests around the unified model. Existing tests already cover dr
 - Tree and PolyLine setup/edit flows round-trip dimming values through the draft without any feature data mapper
 - feature-page resolver and prop setup tests no longer depend on `GetMappersFor(...)`
 
-Finally, remove dead code and refresh docs. Update `Docs/feature-wizards-requirements.md`, `Docs/poc-system-overview.md`, and any plan or review notes that still present mapper-backed pages as a supported long-term pattern. After the migration, those docs should describe mapper-backed pages as historical context only, or omit them entirely.
+Finally, remove dead code and refresh docs. Update `Docs/feature-wizards-requirements.md`, `Docs/poc-system-overview.md`, and any contributor guidance that still presents mapper-backed pages as a supported long-term pattern. After the migration, those docs should describe the shared draft-backed model as the only supported pattern.
 
 ## Concrete Steps
 
@@ -163,7 +159,6 @@ Acceptance is behavioral and architectural.
 For code-level acceptance:
 
 - `Props.Runtime/Wizards/Features/Dimming/Pages/DimmingFeatureWizardPage.cs` implements the shared draft-backed feature-page contract.
-- `Props.Runtime/Wizards/Features/Dimming/Mappers/DimmingFeatureWizardDataMapper.cs` is deleted.
 - `Props.Abstractions/Features/IFeatureWizardDataMapper.cs` is deleted.
 - `Props.Abstractions/Features/IFeatureWizardPageResolver.cs` no longer exposes `GetMappersFor(...)`.
 - `Props.Runtime/Tree/TreePropSetup.cs` and `Props.Runtime/PolyLine/PolyLinePropSetup.cs` no longer create, populate, or apply feature data mappers.
@@ -187,9 +182,9 @@ For manual acceptance in the harness app:
 
 ## Idempotence and Recovery
 
-Perform the migration in additive steps. First add dimming draft contracts and draft-mapper support, then convert the dimming page to read from the draft, then remove feature data mapper support only after all tests pass with the new path. This keeps rollback simple because the old mapper path can remain temporarily until dimming is proven to round-trip correctly through drafts.
+Perform the migration in additive steps. First add dimming draft contracts and draft-mapper support, then convert the dimming page to read from the draft, then remove feature data mapper support only after all tests pass with the new path. This kept rollback simple because the old mapper path could remain temporarily until dimming was proven to round-trip correctly through drafts.
 
-If the repository needs a shorter transition, it is acceptable to keep `IFeatureWizardDataMapper` temporarily while `DimmingFeatureWizardPage` is moved to the new pattern, but the end of the plan must delete the old contract and remove the duplicate setup orchestration. Do not stop at a halfway state where both patterns remain first-class.
+During the migration it was acceptable to keep `IFeatureWizardDataMapper` temporarily while `DimmingFeatureWizardPage` moved to the new pattern, but the endpoint of the plan was to delete the old contract and remove the duplicate setup orchestration. Do not reintroduce a halfway state where both patterns remain first-class.
 
 ## Artifacts and Notes
 
@@ -253,4 +248,4 @@ The feature-page resolver should end in a simpler shape:
 
 where the page stores the typed dimming draft reference obtained during initialization and treats it as the canonical backing state.
 
-Revision note: Updated this ExecPlan after removing the mapper-oriented feature wizard infrastructure from production code and validating the simplified resolver/setup path with focused tests. The plan now records documentation alignment and broader validation as the remaining work.
+Revision note: Updated this ExecPlan after aligning the repository docs and contributor guidance with the completed draft-only feature wizard architecture, then closing the plan with full test and build validation.
